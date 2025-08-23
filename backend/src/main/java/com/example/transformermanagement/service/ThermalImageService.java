@@ -6,16 +6,16 @@ import com.example.transformermanagement.repository.InspectionRepository;
 import com.example.transformermanagement.repository.ThermalImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,8 +28,14 @@ public class ThermalImageService {
     @Autowired
     private InspectionRepository inspectionRepository;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    private final S3Client s3Client;
+
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
+
+    public ThermalImageService(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
 
     public List<ThermalImage> getAllThermalImages() {
         return thermalImageRepository.findAll();
@@ -43,25 +49,22 @@ public class ThermalImageService {
         Inspection inspection = inspectionRepository.findById(inspectionId)
                 .orElseThrow(() -> new RuntimeException("Inspection not found with id: " + inspectionId));
         thermalImage.setInspection(inspection);
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir, fileName);
-        Files.createDirectories(filePath.getParent());
-        Files.write(filePath, file.getBytes());
-        thermalImage.setImageUrl("/api/thermal-images/images/" + fileName);
-        return thermalImageRepository.save(thermalImage);
-    }
 
-    public Resource loadImageAsResource(String filename) {
-        try {
-            Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
-                return resource;
-            } else {
-                throw new RuntimeException("File not found " + filename);
-            }
-        } catch (MalformedURLException ex) {
-            throw new RuntimeException("File not found " + filename, ex);
-        }
+        String original = file.getOriginalFilename();
+        String sanitized = (original == null ? "image" : original).replaceAll("[^a-zA-Z0-9._-]", "_");
+        String key = "thermal-images/" + Instant.now().toEpochMilli() + "_" + UUID.randomUUID() + "_" + sanitized;
+
+        PutObjectRequest putReq = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType(file.getContentType())
+                .build();
+
+        s3Client.putObject(putReq, RequestBody.fromBytes(file.getBytes()));
+
+        URL fileUrl = s3Client.utilities().getUrl(GetUrlRequest.builder().bucket(bucketName).key(key).build());
+        thermalImage.setImageUrl(fileUrl.toString());
+
+        return thermalImageRepository.save(thermalImage);
     }
 }
