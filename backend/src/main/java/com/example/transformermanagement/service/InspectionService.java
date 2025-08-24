@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class InspectionService {
@@ -15,6 +16,10 @@ public class InspectionService {
 
     public List<Inspection> getAllInspections() {
         return inspectionRepository.findAll();
+    }
+
+    public List<Inspection> getInspectionsByTransformerId(UUID transformerId) {
+        return inspectionRepository.findByTransformer_Id(transformerId);
     }
 
     public Optional<Inspection> getInspectionById(java.util.UUID id) {

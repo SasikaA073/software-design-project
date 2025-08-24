@@ -46,12 +46,6 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.4</version>
 		</dependency>
-		<!-- AWS SDK v2 S3 -->
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-			<version>2.25.62</version>
-		</dependency>
 	</dependencies>	<build>
 		<plugins>
 			<plugin>

@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface ThermalImageRepository extends JpaRepository<ThermalImage, UUID> {
     List<ThermalImage> findByInspectionId(UUID inspectionId);
+    List<ThermalImage> findByInspectionIdAndImageTypeIgnoreCase(UUID inspectionId, String imageType);
 }

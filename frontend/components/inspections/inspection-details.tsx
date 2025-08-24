@@ -25,6 +25,8 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const [weatherCondition, setWeatherCondition] = useState<"Sunny" | "Cloudy" | "Rainy">("Sunny")
   const [uploadProgress, setUploadProgress] = useState(0)
   const [showUpload, setShowUpload] = useState(false)
+  const [uploadingBaseline, setUploadingBaseline] = useState(false)
+  const [uploadingMaintenance, setUploadingMaintenance] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -83,33 +85,62 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
     })
   }
 
-  // Show side-by-side if at least one image exists, otherwise show upload
-  const primaryImage = useMemo(() => (images && images.length > 0 ? images[0] : null), [images])
-  const secondaryImage = useMemo(() => (images && images.length > 1 ? images[1] : images[0] || null), [images])
+  // Get baseline and maintenance images
+  const baselineImage = useMemo(() => images.find(img => img.imageType === "Baseline"), [images])
+  const maintenanceImage = useMemo(() => images.find(img => img.imageType === "Maintenance"), [images])
 
-  // Handle upload and refresh images after upload
-  const handleUpload = async (file: File) => {
+  // Check if we have any images
+  const hasAnyImages = useMemo(() => images && images.length > 0, [images])
+
+  // Dual upload handlers
+  const handleUploadBaseline = async (file: File) => {
+    setUploadingBaseline(true)
     setUploadProgress(0)
-    setLoading(true)
-    console.log("inspectinID", inspectionId);
     try {
-      const res: Awaited<ReturnType<typeof api.uploadThermalImage>> = await api.uploadThermalImage(
-        inspectionId,
-        file,
-        "Baseline"
-      )
+      const res = await api.uploadThermalImage(inspectionId, file, "Baseline")
       if (res.success) {
-        // Refresh images
         const imgsRes = await api.getThermalImages(inspectionId)
-        if (imgsRes.success) setImages(imgsRes.data)
-        setShowUpload(false)
+        if (imgsRes.success) {
+          setImages(imgsRes.data)
+        }
       } else {
-        setError(res.message || "Failed to upload image")
+        setError(res.message || "Failed to upload baseline image")
       }
     } catch (e: any) {
-      setError(e.message || "Failed to upload image")
+      setError(e.message || "Failed to upload baseline image")
     } finally {
-      setLoading(false)
+      setUploadingBaseline(false)
+    }
+  }
+
+  const handleUploadMaintenance = async (file: File) => {
+    setUploadingMaintenance(true)
+    setUploadProgress(0)
+    try {
+      const res = await api.uploadThermalImage(inspectionId, file, "Maintenance")
+      if (res.success) {
+        const imgsRes = await api.getThermalImages(inspectionId)
+        if (imgsRes.success) {
+          setImages(imgsRes.data)
+        }
+      } else {
+        setError(res.message || "Failed to upload maintenance image")
+      }
+    } catch (e: any) {
+      setError(e.message || "Failed to upload maintenance image")
+    } finally {
+      setUploadingMaintenance(false)
+    }
+  }
+
+  const handleReplaceImage = (imageType: "Baseline" | "Maintenance") => {
+    // Allow replacing existing images
+    if (imageType === "Baseline") {
+      // Remove the baseline image from state to show uploader
+      setImages(prev => prev.filter(img => img.imageType !== "Baseline"))
+    } else {
+      // Remove the maintenance image from state to show uploader
+      setImages(prev => prev.filter(img => img.imageType !== "Maintenance"))
     }
   }
 
@@ -140,7 +171,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Transformer No</span>
-              <span className="font-medium">{inspection?.transformerNo || "-"}</span>
+              <span className="font-medium">{inspection?.transformer?.transformerNo || "-"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Pole No</span>
@@ -174,7 +205,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Thermometer className="w-5 h-5 text-primary" />
-              {primaryImage ? "Thermal Image Comparison" : "Thermal Image"}
+              Thermal Images
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -182,37 +213,96 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
               <div className="h-72 flex items-center justify-center text-muted-foreground">Loading...</div>
             ) : error ? (
               <div className="h-72 flex items-center justify-center text-red-600 text-sm">{error}</div>
-            ) : primaryImage ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[primaryImage, secondaryImage].map((img, idx) => (
-                  <div key={idx} className="relative rounded-md overflow-hidden border">
-                    <div className="absolute left-3 top-3 z-10">
-                      <span className="text-xs px-2 py-1 rounded-full bg-muted/80 backdrop-blur border">
-                        {idx === 0 ? "Baseline" : "Current"}
-                      </span>
-                    </div>
-                    {/* Image */}
-                    <img src={img.imageUrl} alt={`Thermal ${idx === 0 ? "baseline" : "current"}`} className="w-full h-[360px] object-cover" />
-                    <div className="px-3 py-2 text-xs text-muted-foreground border-t">{img.uploadedAt ? formatDate(img.uploadedAt) : ""}</div>
-                  </div>
-                ))}
-              </div>
-            ) : !showUpload ? (
+            ) : !hasAnyImages && !showUpload ? (
               <div className="text-center py-12 space-y-4">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
                   <ImageIcon className="w-8 h-8 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Upload a thermal image of the transformer</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Upload a thermal image to identify potential issues.</p>
+                  <h3 className="font-medium mb-2">Upload baseline and maintenance thermal images</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Upload both images to identify potential issues.</p>
                   <Button onClick={() => setShowUpload(true)} className="gap-2">
                     <Upload className="w-4 h-4" />
-                    Upload Thermal Image
+                    Upload Thermal Images
                   </Button>
                 </div>
               </div>
             ) : (
-              <ThermalImageUpload onCancel={() => setShowUpload(false)} onProgress={setUploadProgress} onUpload={handleUpload} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Baseline Image Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold">Baseline Image</h4>
+                    {baselineImage && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleReplaceImage("Baseline")}
+                        disabled={uploadingBaseline}
+                      >
+                        Replace
+                      </Button>
+                    )}
+                  </div>
+                  {baselineImage ? (
+                    <div className="relative rounded-md overflow-hidden border">
+                      <img
+                        src={baselineImage.imageUrl}
+                        alt="Thermal Baseline"
+                        className="w-full h-[360px] object-cover"
+                      />
+                      <div className="px-3 py-2 text-xs text-muted-foreground border-t">
+                        {baselineImage.uploadedAt ? formatDate(baselineImage.uploadedAt) : ""}
+                      </div>
+                    </div>
+                  ) : (
+                    <ThermalImageUpload
+                      imageType="Baseline"
+                      onCancel={() => setShowUpload(false)}
+                      onProgress={setUploadProgress}
+                      onUpload={handleUploadBaseline}
+                      isUploading={uploadingBaseline}
+                    />
+                  )}
+                </div>
+
+                {/* Maintenance Image Section */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold">Maintenance Image</h4>
+                    {maintenanceImage && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleReplaceImage("Maintenance")}
+                        disabled={uploadingMaintenance}
+                      >
+                        Replace
+                      </Button>
+                    )}
+                  </div>
+                  {maintenanceImage ? (
+                    <div className="relative rounded-md overflow-hidden border">
+                      <img
+                        src={maintenanceImage.imageUrl}
+                        alt="Thermal Maintenance"
+                        className="w-full h-[360px] object-cover"
+                      />
+                      <div className="px-3 py-2 text-xs text-muted-foreground border-t">
+                        {maintenanceImage.uploadedAt ? formatDate(maintenanceImage.uploadedAt) : ""}
+                      </div>
+                    </div>
+                  ) : (
+                    <ThermalImageUpload
+                      imageType="Maintenance"
+                      onCancel={() => setShowUpload(false)}
+                      onProgress={setUploadProgress}
+                      onUpload={handleUploadMaintenance}
+                      isUploading={uploadingMaintenance}
+                    />
+                  )}
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>

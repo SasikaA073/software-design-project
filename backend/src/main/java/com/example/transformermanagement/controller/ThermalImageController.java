@@ -21,15 +21,23 @@ public class ThermalImageController {
     private ThermalImageService thermalImageService;
 
     @GetMapping
-    public List<ThermalImage> getAllThermalImages(@RequestParam(required = false) UUID inspectionId) {
-        if (inspectionId != null) {
+    public List<ThermalImage> getAllThermalImages(@RequestParam(required = false) UUID inspectionId,
+                                                  @RequestParam(required = false) String imageType) {
+        if (inspectionId != null && imageType != null && !imageType.isBlank()) {
+            return thermalImageService.getThermalImagesByInspectionIdAndType(inspectionId, imageType);
+        } else if (inspectionId != null) {
             return thermalImageService.getThermalImagesByInspectionId(inspectionId);
         }
         return thermalImageService.getAllThermalImages();
     }
 
     @PostMapping("/upload")
-    public ThermalImage uploadImage(@RequestParam("inspectionId") UUID inspectionId, @RequestPart("image") ThermalImage thermalImage, @RequestPart("file") MultipartFile file) throws IOException {
+    public ThermalImage uploadImage(@RequestParam("inspectionId") UUID inspectionId,
+                                    @RequestPart("image") ThermalImage thermalImage,
+                                    @RequestPart("file") MultipartFile file) throws IOException {
+        if (thermalImage.getImageType() == null || thermalImage.getImageType().isBlank()) {
+            throw new IllegalArgumentException("imageType is required (Baseline or Maintenance)");
+        }
         return thermalImageService.saveThermalImage(inspectionId, thermalImage, file);
     }
 }

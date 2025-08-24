@@ -43,10 +43,12 @@ export function InspectionList({ onViewInspection }: InspectionListProps) {
     fetchInspections()
   }, [])
 
+
+
   const filteredInspections = inspections.filter((inspection) => {
     const matchesSearch =
-      inspection.transformerNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inspection.inspectionNo?.toLowerCase().includes(searchTerm.toLowerCase())
+      inspection?.transformer?.transformerNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inspection?.transformer?.transformerNo.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "all" || inspection.status?.toLowerCase().replace(" ", "") === statusFilter
     return matchesSearch && matchesStatus
   })
@@ -132,7 +134,7 @@ export function InspectionList({ onViewInspection }: InspectionListProps) {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{inspection.transformerNo}</span>
+                      <span className="font-semibold">{inspection?.transformer?.transformerNo}</span>
                       <Badge className={getStatusColor(inspection.status)}>{inspection.status}</Badge>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">

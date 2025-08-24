@@ -9,6 +9,7 @@ import { AddInspectionDialog } from "@/components/inspections/add-inspection-dia
 import { InspectionDetails } from "@/components/inspections/inspection-details"
 import { api } from "@/lib/api";
 import type { TransformerData, InspectionData } from "@/lib/api"
+import { useRouter } from "next/navigation"
 
 
 interface TransformerDetailsProps {
@@ -23,6 +24,7 @@ export function TransformerDetails({ transformerId, onBack }: TransformerDetails
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedInspectionId, setSelectedInspectionId] = useState<string | null>(null)
+  const router = useRouter()
 
   const fetchData = async () => {
     setLoading(true)
@@ -83,11 +85,18 @@ export function TransformerDetails({ transformerId, onBack }: TransformerDetails
     })
   }
 
-  if (selectedInspectionId) {
-    return (
-      <InspectionDetails inspectionId={selectedInspectionId} onBack={() => setSelectedInspectionId(null)} />
-    )
-  }
+  // if (selectedInspectionId) {
+  //   return (
+  //     <InspectionDetails inspectionId={selectedInspectionId} onBack={() => setSelectedInspectionId(null)} />
+  //   )
+  // }
+
+  // Refresh inspections when dialog closes after adding
+  useEffect(() => {
+    if (!showAddInspection) {
+      fetchData();
+    }
+  }, [showAddInspection])
 
   return (
     <div className="space-y-6">
@@ -185,7 +194,7 @@ export function TransformerDetails({ transformerId, onBack }: TransformerDetails
                     variant="outline"
                     size="sm"
                     className="gap-2 bg-transparent"
-                    onClick={() => setSelectedInspectionId(inspection.id!)}
+                    onClick={() => router.push(`/inspections/${inspection.id}`)}
                   >
                     <Eye className="w-4 h-4" />
                     View

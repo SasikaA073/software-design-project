@@ -25,6 +25,7 @@ export interface TransformerData {
 export interface InspectionData {
   id?: string;
   inspectionNo: string;
+  transformer?:TransformerData;
   transformerId: string;
   transformerNo: string;
   inspectedDate: string;
@@ -199,7 +200,7 @@ class ApiService {
   async uploadThermalImage(
     inspectionId: string,
     file: File,
-    imageType: string
+  imageType: "Baseline" | "Maintenance"
   ): Promise<ApiResponse<ThermalImageData>> {
     const formData = new FormData()
     formData.append("file", file)
@@ -234,6 +235,28 @@ class ApiService {
       return { data, success: true };
     } catch (error: any) {
       return { data: [], success: false, message: error.message };
+    }
+  }
+
+  async getBaselineImage(inspectionId: string): Promise<ApiResponse<ThermalImageData | null>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/thermal-images?inspectionId=${inspectionId}&imageType=Baseline`)
+      if (!response.ok) throw new Error("Failed to fetch baseline image")
+      const data = await response.json()
+      return { data: data[0] || null, success: true }
+    } catch (error: any) {
+      return { data: null, success: false, message: error.message }
+    }
+  }
+
+  async getMaintenanceImages(inspectionId: string): Promise<ApiResponse<ThermalImageData[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/thermal-images?inspectionId=${inspectionId}&imageType=Maintenance`)
+      if (!response.ok) throw new Error("Failed to fetch maintenance images")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
     }
   }
 

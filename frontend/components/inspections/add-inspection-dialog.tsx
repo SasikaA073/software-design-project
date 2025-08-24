@@ -81,6 +81,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
 
 
     setSubmitting(true)
+    console.log("transformerID", transformer.id)
 
     try {
 

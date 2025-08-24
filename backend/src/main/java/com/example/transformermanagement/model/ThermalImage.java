@@ -20,7 +20,8 @@ public class ThermalImage {
     @Column(nullable = false)
     private String imageUrl;
 
-    private String imageType;
+    @Column(nullable = false)
+    private String imageType; // Baseline or Maintenance
     private BigDecimal temperatureReading;
     private Boolean anomalyDetected;
 

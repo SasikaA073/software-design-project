@@ -41,7 +41,9 @@ const mockAlerts: Alert[] = [
   },
 ]
 
-export function AlertsPanel() {
+export function AlertsPanel({ open }: { open: boolean }) {
+  if (!open) return null // only render if open
+
   const getAlertIcon = (type: string) => {
     switch (type) {
       case "temperature":
@@ -79,7 +81,7 @@ export function AlertsPanel() {
   }
 
   return (
-    <Card>
+    <Card className="absolute top-16 right-6 w-96 shadow-xl z-50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-accent" />
