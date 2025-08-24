@@ -1,4 +1,4 @@
-# Project Name
+# Transformer Management Web Application by Jewel001
 
 ## Overview
 This project consists of a **backend** (Spring Boot + Docker) and a **frontend** (Node.js/React). The backend exposes APIs, and the frontend consumes them to provide a user interface.
