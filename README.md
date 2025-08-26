@@ -43,7 +43,7 @@ The backend API should now be running at `http://localhost:8080` (or the configu
 1. Open a terminal and navigate to the **frontend** folder.
 2. Install dependencies:
    ```bash
-   npm install --legacy-peer-deps
+   npm install 
    ```
 3. Start the development server:
    ```bash
