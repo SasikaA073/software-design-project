@@ -49,8 +49,8 @@ export function Header() {
                 <User className="w-4 h-4 text-primary-foreground" />
               </div>
               <div className="text-left">
-                <div className="text-sm font-medium">Olivera Queen</div>
-                <div className="text-xs text-muted-foreground">olivera@gmail.com</div>
+                <div className="text-sm font-medium">Jewel001</div>
+                <div className="text-xs text-muted-foreground">jewel001@gmail.com</div>
               </div>
             </Button>
           </DropdownMenuTrigger>
