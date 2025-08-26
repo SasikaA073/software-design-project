@@ -103,5 +103,3 @@ project-root/
 
 This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
 Use Node.js v18+ for best compatibility.
-
-If npm install fails due to peer dependencies, --legacy-peer-deps is recommended.
