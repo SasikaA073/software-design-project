@@ -46,8 +46,8 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
         poleNo: formData.poleNo,
         region: formData.region,
         type,
-        capacity: 0, // Default, you can add this to the form if needed
-        noOfFeeders: 0, // Default, you can add this to the form if needed
+        capacity: Math.random()* 10000, // Default, you can add this to the form if needed
+        noOfFeeders: Math.random()*10, // Default, you can add this to the form if needed
         locationDetails: formData.locationDetails,
         status: "Operational", // Default status
       }

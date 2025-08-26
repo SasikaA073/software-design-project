@@ -24,6 +24,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
     transformerNo: transformerNo || "",
     dateOfInspection: "",
     time: "",
+    status: "",
   })
   const [transformers, setTransformers] = useState<TransformerData[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -68,7 +69,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.transformerNo) return
+    if (!formData.transformerNo || !formData.status) return
     const transformer = transformers.find((t) => t.transformerNo === formData.transformerNo)
     if (!transformer) return
 
@@ -78,22 +79,21 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
 
     const inspectionNo = `INSP-${Date.now()}`
 
-
-
     setSubmitting(true)
     console.log("transformerID", transformer.id)
 
+    
+    const stat = formData.status as "In Progress" | "Pending" | "Completed"
     try {
-
       await api.addInspection({
         inspectionNo,
         transformerId: transformer.id!,
         inspectedDate: inspectedDateIso,
-        status: "In Progress",
+        status: stat,
         inspectedBy: "",
       })
       onOpenChange(false)
-      setFormData({ branch: "", transformerNo: transformerNo || "", dateOfInspection: "", time: "" })
+      setFormData({ branch: "", transformerNo: transformerNo || "", dateOfInspection: "", time: "", status: "" })
     } finally {
       setSubmitting(false)
     }
@@ -149,6 +149,23 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <Select
+              value={formData.status}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, status: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="dateOfInspection">Date of Inspection</Label>
             <Input
               id="dateOfInspection"
@@ -169,7 +186,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button type="submit" className="flex-1" disabled={submitting}>
+            <Button type="submit" className="flex-1" disabled={submitting || !formData.status}>
               Confirm
             </Button>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">

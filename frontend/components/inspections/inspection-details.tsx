@@ -92,7 +92,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   // Check if we have any images
   const hasAnyImages = useMemo(() => images && images.length > 0, [images])
 
-  // Dual upload handlers
+  // Upload handlers
   const handleUploadBaseline = async (file: File) => {
     setUploadingBaseline(true)
     setUploadProgress(0)
@@ -130,17 +130,6 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
       setError(e.message || "Failed to upload maintenance image")
     } finally {
       setUploadingMaintenance(false)
-    }
-  }
-
-  const handleReplaceImage = (imageType: "Baseline" | "Maintenance") => {
-    // Allow replacing existing images
-    if (imageType === "Baseline") {
-      // Remove the baseline image from state to show uploader
-      setImages(prev => prev.filter(img => img.imageType !== "Baseline"))
-    } else {
-      // Remove the maintenance image from state to show uploader
-      setImages(prev => prev.filter(img => img.imageType !== "Maintenance"))
     }
   }
 
@@ -231,18 +220,8 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Baseline Image Section */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2">
                     <h4 className="font-semibold">Baseline Image</h4>
-                    {baselineImage && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleReplaceImage("Baseline")}
-                        disabled={uploadingBaseline}
-                      >
-                        Replace
-                      </Button>
-                    )}
                   </div>
                   {baselineImage ? (
                     <div className="relative rounded-md overflow-hidden border">
@@ -268,18 +247,8 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
 
                 {/* Maintenance Image Section */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2">
                     <h4 className="font-semibold">Maintenance Image</h4>
-                    {maintenanceImage && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleReplaceImage("Maintenance")}
-                        disabled={uploadingMaintenance}
-                      >
-                        Replace
-                      </Button>
-                    )}
                   </div>
                   {maintenanceImage ? (
                     <div className="relative rounded-md overflow-hidden border">
