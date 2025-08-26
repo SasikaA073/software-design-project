@@ -1,7 +1,27 @@
 # Transformer Management Web Application by Jewel001
+This full-stack web application streamlines the thermal inspection of power transformers. It's a central hub for managing transformer data, automatically analyzing thermal images for issues, and creating digital maintenance reports.
 
 ## Overview
 This project consists of a **backend** (Spring Boot + Docker) and a **frontend** (Node.js/React). The backend exposes APIs, and the frontend consumes them to provide a user interface.
+
+## Features for Phase 1 
+This initial phase focuses on establishing the foundational data management capabilities of the system.
+
+### Transformer Management (FR1.1):
+
+An interface for managing transformer records.
+Each transformer is defined by a unique ID, physical location, and power capacity.
+
+### Thermal Image Management (FR1.2):
+
+Ability to upload thermal images and associate them with specific transformer records.
+Images are tagged as either Baseline (a reference image under normal conditions) or Maintenance (a new image from a routine inspection).
+Image metadata (upload timestamp, uploader info) is automatically recorded.
+
+### Environmental Tagging (FR1.3):
+
+Baseline images must be categorized by the environmental conditions at the time of capture: Sunny, Cloudy, or Rainy. This is crucial for accurate comparisons in later phases.
+
 
 ---
 
