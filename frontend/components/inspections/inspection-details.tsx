@@ -164,12 +164,21 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Pole No</span>
-              <span className="font-medium">EN-122-A</span>
+              <span className="font-medium">{inspection?.transformer?.poleNo || "-"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Branch</span>
-              <span className="font-medium">Nugegoda</span>
+              <span className="font-medium">{inspection?.transformer?.locationDetails || "-"}</span>
             </div>
+
+            {inspection?.maintenanceDate && (
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Maintenance Time</span>
+              <span className="font-medium">
+                {formatDate(inspection.maintenanceDate)}
+              </span>
+            </div>
+            )}
             <div className="flex justify-between">
               <span className="text-muted-foreground">Inspected By</span>
               <span className="font-medium">{inspection?.inspectedBy || "-"}</span>
@@ -189,6 +198,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
             </div>
           </CardContent>
         </Card>
+
 
         <Card className="lg:col-span-2">
           <CardHeader>

@@ -24,7 +24,10 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
     transformerNo: transformerNo || "",
     dateOfInspection: "",
     time: "",
+    maintenanceDate: "",
+    maintenanceTime: "",
     status: "",
+    inspectedBy: "",
   })
   const [transformers, setTransformers] = useState<TransformerData[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -36,7 +39,6 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
       const res = await api.getTransformers()
       if (res.success) {
         setTransformers(res.data)
-        // Preselect branch from incoming transformerNo if provided
         if (transformerNo) {
           const t = res.data.find((tr) => tr.transformerNo === transformerNo)
           if (t) {
@@ -47,10 +49,8 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
     })()
   }, [open, transformerNo])
 
-  // Branch options derived from transformers
   const branchOptions = useMemo(() => Array.from(new Set(transformers.map((t) => t.region))).sort(), [transformers])
 
-  // Transformers filtered by selected branch
   const transformersByBranch = useMemo(
     () =>
       transformers
@@ -59,7 +59,6 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
     [transformers, formData.branch],
   )
 
-  // Keep transformer in sync with branch
   useEffect(() => {
     if (!formData.branch) return
     if (!transformersByBranch.find((t) => t.transformerNo === formData.transformerNo)) {
@@ -69,7 +68,8 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.transformerNo || !formData.status) return
+    if (!formData.transformerNo || !formData.status || !formData.inspectedBy) return
+
     const transformer = transformers.find((t) => t.transformerNo === formData.transformerNo)
     if (!transformer) return
 
@@ -77,23 +77,33 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
       ? new Date(`${formData.dateOfInspection}T${formData.time || "00:00"}`).toISOString()
       : new Date().toISOString()
 
+    const maintenanceDateIso = formData.maintenanceDate
+      ? new Date(`${formData.maintenanceDate}T${formData.maintenanceTime || "00:00"}`).toISOString()
+      : undefined
+
     const inspectionNo = `INSP-${Date.now()}`
-
     setSubmitting(true)
-    console.log("transformerID", transformer.id)
 
-    
-    const stat = formData.status as "In Progress" | "Pending" | "Completed"
     try {
       await api.addInspection({
         inspectionNo,
         transformerId: transformer.id!,
         inspectedDate: inspectedDateIso,
-        status: stat,
-        inspectedBy: "",
+        maintenanceDate: maintenanceDateIso,
+        status: formData.status as "In Progress" | "Pending" | "Completed",
+        inspectedBy: formData.inspectedBy,
       })
       onOpenChange(false)
-      setFormData({ branch: "", transformerNo: transformerNo || "", dateOfInspection: "", time: "", status: "" })
+      setFormData({
+        branch: "",
+        transformerNo: transformerNo || "",
+        dateOfInspection: "",
+        time: "",
+        maintenanceDate: "",
+        maintenanceTime: "",
+        status: "",
+        inspectedBy: "",
+      })
     } finally {
       setSubmitting(false)
     }
@@ -101,7 +111,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>New Inspection</DialogTitle>
           <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-6 w-6">
@@ -110,6 +120,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Branch */}
           <div className="space-y-2">
             <Label htmlFor="branch">Branch</Label>
             <Select
@@ -129,6 +140,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
             </Select>
           </div>
 
+          {/* Transformer */}
           <div className="space-y-2">
             <Label htmlFor="transformerNo">Transformer No</Label>
             <Select
@@ -148,6 +160,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
             </Select>
           </div>
 
+          {/* Status */}
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
             <Select
@@ -165,6 +178,20 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
             </Select>
           </div>
 
+          {/* Inspected By */}
+          <div className="space-y-2">
+            <Label htmlFor="inspectedBy">Inspected By</Label>
+            <Input
+              id="inspectedBy"
+              type="text"
+              value={formData.inspectedBy}
+              onChange={(e) => setFormData((prev) => ({ ...prev, inspectedBy: e.target.value }))}
+              placeholder="Enter inspector name"
+              required
+            />
+          </div>
+
+          {/* Date of Inspection */}
           <div className="space-y-2">
             <Label htmlFor="dateOfInspection">Date of Inspection</Label>
             <Input
@@ -175,8 +202,9 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
             />
           </div>
 
+          {/* Inspection Time */}
           <div className="space-y-2">
-            <Label htmlFor="time">Time</Label>
+            <Label htmlFor="time">Inspection Time</Label>
             <Input
               id="time"
               type="time"
@@ -185,8 +213,32 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
             />
           </div>
 
+          {/* Maintenance Date */}
+          <div className="space-y-2">
+            <Label htmlFor="maintenanceDate">Maintenance Date (Optional)</Label>
+            <Input
+              id="maintenanceDate"
+              type="date"
+              value={formData.maintenanceDate}
+              onChange={(e) => setFormData((prev) => ({ ...prev, maintenanceDate: e.target.value }))}
+              placeholder="Leave empty if no maintenance scheduled"
+            />
+          </div>
+
+          {/* Maintenance Time */}
+          <div className="space-y-2">
+            <Label htmlFor="maintenanceTime">Maintenance Time</Label>
+            <Input
+              id="maintenanceTime"
+              type="time"
+              value={formData.maintenanceTime}
+              onChange={(e) => setFormData((prev) => ({ ...prev, maintenanceTime: e.target.value }))}
+              disabled={!formData.maintenanceDate}
+            />
+          </div>
+
           <div className="flex gap-2 pt-4">
-            <Button type="submit" className="flex-1" disabled={submitting || !formData.status}>
+            <Button type="submit" className="flex-1" disabled={submitting || !formData.status || !formData.inspectedBy}>
               Confirm
             </Button>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
