@@ -1,16 +1,35 @@
 package com.EN3350.TF_Analyst.Transformer;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/test")
 public class TransformerController {
-    @GetMapping
-    public Transformer getTransformers(){
-        Transformer transformer = new Transformer( "Kotte", "z001", Transformer.TransformerType.BULK, "Near the Junction");
-        System.out.println(transformer);
-        return transformer;
+
+    private final TransformerService transformerService;
+
+    @Autowired
+    public  TransformerController(TransformerService transformerService){
+        this.transformerService = transformerService;
     }
+
+    @GetMapping
+    public List<Transformer> getTransformers(){
+        return transformerService.getTransformers();
+    }
+
+    @GetMapping("{id}")
+    public Transformer getTransformerById(@PathVariable("id") Long id){
+        return transformerService.getTransformerById(id);
+    }
+
+    @PostMapping
+    public void Transformer(@RequestBody Transformer transformer){
+        transformerService.addTransformer(transformer);
+    }
+
+
 }

@@ -33,12 +33,15 @@ public class Transformer {
     private String transformerNo;
     private String region;
     private String poleNo;
+
+    @Enumerated(EnumType.STRING)
     private TransformerType type;
     private String locationDetails;
 
     public String getTransformerNo() {
-        return "AZ - " + (10000 + transformerNo);
+        return "AZ-" + (10000 + id);
     }
+
 
     public Transformer(String region, String poleNo, TransformerType type, String locationDetails) {
         this.region = region;
