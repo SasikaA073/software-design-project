@@ -108,13 +108,25 @@ The frontend should now be accessible at `http://localhost:3000` (or the configu
 ```
 project-root/
 ├── backend/
-│   ├── docker-compose.yml
-│   ├── src/
-│   └── pom.xml
-└── frontend/
-    ├── src/
+│   ├── src/main
+│   ├── target
+│   ├── uploads
+│   └── docker-compose.yml
+│   ├── pom.xml
+├── frontend/
+    ├── app
+    ├── components
+    ├──hooks
+    ├── lib
+    ├── public
+    ├── styles
+    ├── components.json
+    ├── next.config.mjs
+    ├── package-lock.json
     ├── package.json
-    └── ...
+    ├── pnpm-lock.yaml
+    ├── postcss.config.mjs
+    ├── tsconfig.json
 ```
 
 ---
