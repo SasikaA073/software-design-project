@@ -1,13 +1,11 @@
 package com.example.transformermanagement.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "transformers")
-@Data
 public class Transformer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,5 +43,102 @@ public class Transformer {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = OffsetDateTime.now();
+    }
+
+    // Getters and Setters
+    public java.util.UUID getId() {
+        return id;
+    }
+
+    public void setId(java.util.UUID id) {
+        this.id = id;
+    }
+
+    public String getTransformerNo() {
+        return transformerNo;
+    }
+
+    public void setTransformerNo(String transformerNo) {
+        this.transformerNo = transformerNo;
+    }
+
+    public String getPoleNo() {
+        return poleNo;
+    }
+
+    public void setPoleNo(String poleNo) {
+        this.poleNo = poleNo;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getLocationDetails() {
+        return locationDetails;
+    }
+
+    public void setLocationDetails(String locationDetails) {
+        this.locationDetails = locationDetails;
+    }
+
+    public BigDecimal getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(BigDecimal capacity) {
+        this.capacity = capacity;
+    }
+
+    public Integer getNoOfFeeders() {
+        return noOfFeeders;
+    }
+
+    public void setNoOfFeeders(Integer noOfFeeders) {
+        this.noOfFeeders = noOfFeeders;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public OffsetDateTime getLastInspected() {
+        return lastInspected;
+    }
+
+    public void setLastInspected(OffsetDateTime lastInspected) {
+        this.lastInspected = lastInspected;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

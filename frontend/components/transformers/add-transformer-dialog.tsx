@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { X } from "lucide-react"
+
 import { api, TransformerData } from "@/lib/api";
 
 interface AddTransformerDialogProps {
@@ -76,11 +76,8 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader className="flex flex-row items-center justify-between">
+        <DialogHeader>
           <DialogTitle>Add Transformer</DialogTitle>
-          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="h-6 w-6">
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
