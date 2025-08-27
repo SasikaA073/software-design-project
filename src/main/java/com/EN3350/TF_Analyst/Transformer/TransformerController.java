@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransformerController {
     @GetMapping
     public Transformer getTransformers(){
-        Transformer transformer = new Transformer("A-01", "Kotte", "z001", Transformer.TransformerType.BULK, "Near the Junction");
+        Transformer transformer = new Transformer( "Kotte", "z001", Transformer.TransformerType.BULK, "Near the Junction");
         System.out.println(transformer);
         return transformer;
     }
