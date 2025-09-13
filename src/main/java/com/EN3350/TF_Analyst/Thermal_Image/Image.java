@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "images")
+@EntityListeners(ImageEntityListener.class)
 public class Image {
 
     @Id
