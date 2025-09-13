@@ -1,7 +1,11 @@
 package com.EN3350.TF_Analyst.Transformer;
 
+import com.EN3350.TF_Analyst.Inspection.Inspection;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -22,6 +26,7 @@ public class Transformer {
             sequenceName = "tf_seq",
             allocationSize = 1
     )
+    @Column(name = "id")
     private Long id;
 
     public enum TransformerType{
@@ -37,6 +42,14 @@ public class Transformer {
     @Enumerated(EnumType.STRING)
     private TransformerType type;
     private String locationDetails;
+
+    @OneToMany(
+            mappedBy = "transformer",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<Inspection> inspections =  new ArrayList<>();
 
     public String getTransformerNo() {
         return "AZ-" + (10000 + id);
