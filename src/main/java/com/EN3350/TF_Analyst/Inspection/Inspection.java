@@ -2,14 +2,13 @@ package com.EN3350.TF_Analyst.Inspection;
 
 import com.EN3350.TF_Analyst.Thermal_Image.Image;
 import com.EN3350.TF_Analyst.Transformer.Transformer;
+
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
+
 
 @Data
 @NoArgsConstructor

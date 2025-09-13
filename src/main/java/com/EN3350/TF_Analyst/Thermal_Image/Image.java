@@ -35,7 +35,8 @@ public class Image {
         BASELINE,
         INSPECTION
     }
-    @Column(name = "type", nullable = false, columnDefinition = "ENUMERATOR")
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ImageType type;
 
     public enum WeatherCondition {
@@ -43,17 +44,18 @@ public class Image {
         CLOUDY,
         RAINY
     }
-    @Column(name = "weather", nullable = false, columnDefinition = "ENUMERATOR")
+    @Column(name = "weather", nullable = false)
+    @Enumerated(EnumType.STRING)
     private WeatherCondition weatherCondition;
 
 
-    @Column(name = "upload_date",  nullable = false, columnDefinition = "DATE")
-    private LocalDate upload_date;
-    @Column(name = "upload_time",  nullable = false, columnDefinition = "TIME")
-    private LocalTime upload_time;
+    @Column(name = "uploadDate",  nullable = false, columnDefinition = "DATE")
+    private LocalDate uploadDate;
+    @Column(name = "uploadTime",  nullable = false, columnDefinition = "TIME")
+    private LocalTime uploadTime;
 
-    @Column(name = "uploaded_by",  nullable = false, columnDefinition = "TEXT")
-    private String uploaded_by;
+    @Column(name = "uploadedBy",  nullable = false, columnDefinition = "TEXT")
+    private String uploadedBy;
 
     @ManyToOne
     @JoinColumn(
