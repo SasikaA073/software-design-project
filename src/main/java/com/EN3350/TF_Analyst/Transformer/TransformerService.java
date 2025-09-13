@@ -9,7 +9,7 @@ import java.util.Optional;
 @Service
 public class TransformerService {
 
-    TransformerRepository transformerRepository;
+    private final TransformerRepository transformerRepository;
 
     @Autowired
     public TransformerService(TransformerRepository transformerRepository) {
