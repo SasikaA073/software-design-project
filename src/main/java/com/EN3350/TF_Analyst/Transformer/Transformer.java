@@ -1,6 +1,7 @@
 package com.EN3350.TF_Analyst.Transformer;
 
 import com.EN3350.TF_Analyst.Inspection.Inspection;
+import com.EN3350.TF_Analyst.Thermal_Image.Image;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,6 +51,19 @@ public class Transformer {
             orphanRemoval = true
     )
     private List<Inspection> inspections =  new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "transformer",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private List<Image> thermalImages =  new ArrayList<>();
+
+//    private String sunnyImage;
+//    private String cloudyImage;
+//
+
 
     public String getTransformerNo() {
         return "AZ-" + (10000 + id);

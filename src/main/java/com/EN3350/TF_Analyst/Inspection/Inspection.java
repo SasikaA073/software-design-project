@@ -1,5 +1,6 @@
 package com.EN3350.TF_Analyst.Inspection;
 
+import com.EN3350.TF_Analyst.Thermal_Image.Image;
 import com.EN3350.TF_Analyst.Transformer.Transformer;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,6 @@ import java.util.Date;
 public class Inspection {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "ins_seq"
@@ -53,7 +53,12 @@ public class Inspection {
     )
     private Transformer transformer;
 
-
+    @OneToOne(
+            mappedBy = "inspection",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    private Image thermalImage;
 
     public Inspection(String branch, LocalDate inspection_date, LocalTime inspection_time) {
         this.branch = branch;
@@ -61,8 +66,8 @@ public class Inspection {
         this.inspection_time = inspection_time;
     }
 
-    public void setInspectionNo(){
+    public String getInspectionNo(){
         long temp = 1000 + this.id;
-        this.inspectionNo = String.valueOf(temp);
+        return String.valueOf(temp);
     }
 }
