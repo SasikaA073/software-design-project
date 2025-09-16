@@ -59,10 +59,10 @@ public class Inspection {
     )
     private Image thermalImage;
 
-    public Inspection(String branch, LocalDate inspection_date, LocalTime inspection_time) {
+    public Inspection(String branch) {
         this.branch = branch;
-        this.inspection_date = inspection_date;
-        this.inspection_time = inspection_time;
+        this.inspection_date = LocalDate.now();
+        this.inspection_time = LocalTime.now();
     }
 
     public String getInspectionNo(){

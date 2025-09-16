@@ -19,7 +19,7 @@ public class TfAnalystApplication{
         SpringApplication.run(TfAnalystApplication.class, args);
 	}
     @Bean
-    @Order(3)
+    @Order(4)
     @Transactional
     public CommandLineRunner commandLineRunner(InspectionRepository inspectionRepository,
                                                TransformerRepository transformerRepository) {
