@@ -7,4 +7,11 @@ import org.springframework.stereotype.Repository;
 public interface ImageRepository
         extends JpaRepository<Image,Long> {
 
+    boolean existsByInspectionIdAndWeatherCondition(
+            Long ins_id,
+            Image.WeatherCondition weatherCondition);
+    boolean existsByTypeAndTransformerIdAndWeatherCondition(
+            Image.ImageType imageType,
+            Long transformer_id,
+            Image.WeatherCondition weatherCondition);
 }

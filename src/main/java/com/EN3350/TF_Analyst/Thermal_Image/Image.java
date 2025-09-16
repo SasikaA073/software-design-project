@@ -4,6 +4,7 @@ import com.EN3350.TF_Analyst.Inspection.Inspection;
 import com.EN3350.TF_Analyst.Transformer.Transformer;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,6 +13,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "images")
+@Check(constraints = "(type = 'BASELINE' AND inspectionId IS NULL) OR" +
+"(type = 'INSPECTION' AND inspectionId IS NOT NULL)")
 @EntityListeners(ImageEntityListener.class)
 public class Image {
 
@@ -59,7 +62,7 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(
-            name = "transformer_id",
+            name = "transformerId",
             nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
@@ -70,7 +73,7 @@ public class Image {
 
     @OneToOne
     @JoinColumn(
-            name = "ins_id",
+            name = "inspectionId",
 //            nullable = true,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(

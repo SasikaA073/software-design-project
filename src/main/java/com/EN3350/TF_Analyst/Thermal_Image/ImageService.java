@@ -1,10 +1,13 @@
 package com.EN3350.TF_Analyst.Thermal_Image;
 
 import com.EN3350.TF_Analyst.Inspection.Inspection;
+import com.EN3350.TF_Analyst.Transformer.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +71,42 @@ public class ImageService {
 //        imageMetaData.setUpload;
 
         imageRepository.save(imageMetaData);
+    }
+
+    private void verifyUploadRequest(Image imageMetaData){
+        Long transformerId = imageMetaData.getTransformer().getId();
+        Inspection inspection = imageMetaData.getInspection();
+        Image.ImageType imageType = imageMetaData.getType();
+        Image.WeatherCondition weatherCondition = imageMetaData.getWeatherCondition();
+
+        // check for inspection image uploads without inspection specified
+        if (inspection == null &&
+                imageType == Image.ImageType.INSPECTION) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Inspection Id is Required for Inspection Images!");
+        }
+        // check for baseline image uploads with inspection attached
+        if (imageType == Image.ImageType.BASELINE && inspection != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Inspection Id in Baseline Image is Not Allowed!");
+        }
+
+        // check (type + weather + inspection/transformer id) already exists
+        if (imageType == Image.ImageType.BASELINE &&
+                imageRepository.existsByTypeAndTransformerIdAndWeatherCondition(
+                        Image.ImageType.BASELINE,
+                        transformerId,
+                        weatherCondition)){
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                     "A Baseline Image Already Exists for This Context!");
+        }
+        if (imageType == Image.ImageType.INSPECTION &&
+                imageRepository.existsByInspectionIdAndWeatherCondition(
+                        inspection.getId(),
+                        weatherCondition)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "An Inspection Image Already Exists for This Context!");
+        }
     }
 
     public void deleteImageFile(Long id) {
