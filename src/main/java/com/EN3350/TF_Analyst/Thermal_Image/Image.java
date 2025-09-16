@@ -79,4 +79,17 @@ public class Image {
     )
     private Inspection inspection;
 
+    public Image (
+            String path,
+            ImageType type,
+            WeatherCondition weather,
+            String uploadedBy
+    ){
+        this.path = path;
+        this.type = type;
+        this.weatherCondition = weather;
+        this.uploadedBy = uploadedBy;
+        this.uploadDate = LocalDate.now();
+        this.uploadTime = LocalTime.now();
+    }
 }
