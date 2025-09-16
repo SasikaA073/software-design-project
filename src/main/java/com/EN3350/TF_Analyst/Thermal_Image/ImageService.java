@@ -36,41 +36,42 @@ public class ImageService {
 
     public void uploadImage(Image imageMetaData, MultipartFile file) throws IOException {
 
-        String folder = storagePath;
-        System.out.println(folder);
+        verifyUploadRequest(imageMetaData);
 
+        File dir = getFile(imageMetaData);
+
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path destination = Paths.get(dir.getAbsolutePath(), fileName);
+
+        imageMetaData.setPath(destination.toString());
+        imageMetaData.setUploadDate(LocalDate.now());
+        imageMetaData.setUploadTime(LocalTime.now());
+
+        imageRepository.save(imageMetaData);
+        file.transferTo(destination);
+    }
+
+    // returns a File (creates directory if it does not exist) object in
+    // the path constructed with below logic
+    private File getFile(Image imageMetaData) {
+
+        String folder = storagePath;
         String  transformerId = imageMetaData.getTransformer().getTransformerNo();
+        folder += "/transformer/" + transformerId;
 
         Inspection inspection = imageMetaData.getInspection();
-
-
-        folder += "/transformer/" + transformerId;
 
         if (inspection != null) {
             folder += "/inspections/" + inspection.getInspectionNo();
         } else {
             folder += "/baseline";
         }
+
         File dir = new File(folder);
         if (!dir.exists()) {
             boolean mkdirs = dir.mkdirs();
         }
-
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-        System.out.println(fileName);
-        System.out.println(dir.getAbsolutePath());
-//        File destination = new File(dir, fileName);
-        Path destination = Paths.get(dir.getAbsolutePath(), fileName);
-        System.out.println(destination.toString());
-        file.transferTo(destination);
-
-        imageMetaData.setPath(destination.toString());
-        imageMetaData.setUploadDate(LocalDate.now());
-        imageMetaData.setUploadTime(LocalTime.now());
-//        imageMetaData.setUpload;
-
-        imageRepository.save(imageMetaData);
+        return dir;
     }
 
     private void verifyUploadRequest(Image imageMetaData){

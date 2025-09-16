@@ -26,7 +26,7 @@ public class Inspection {
             sequenceName = "ins_seq",
             allocationSize = 1
     )
-    @Getter(AccessLevel.NONE)
+//    @Getter(AccessLevel.NONE)
 //    @SequenceGenerator()
     @Column(name = "id")
     private Long id;

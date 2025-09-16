@@ -17,7 +17,7 @@ import java.util.List;
 public class Transformer {
 
     @Id
-    @Getter(AccessLevel.NONE)
+//    @Getter(AccessLevel.NONE)
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "tf_seq"
