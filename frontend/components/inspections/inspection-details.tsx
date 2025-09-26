@@ -19,6 +19,7 @@ interface InspectionDetailsProps {
 export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsProps) {
   const [inspection, setInspection] = useState<InspectionData | null>(null)
   const [images, setImages] = useState<ThermalImageData[]>([])
+  const [baselineImageUrl, setBaselineImageUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -48,11 +49,14 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           console.log("Thermal Images:", imgsRes.data)
           setImages(imgsRes.data)
         }
-      } catch (e) {
-        if (!isMounted) return
-        setError(e instanceof Error ? e.message : "Failed to load data")
+      } catch (e: any) {
+        if (isMounted) {
+          setError(e.message || "Failed to load data")
+        }
       } finally {
-        if (isMounted) setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
     fetchData()
@@ -60,6 +64,26 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
       isMounted = false
     }
   }, [inspectionId])
+
+  // Fetch baseline image when weather condition changes or inspection is loaded
+  useEffect(() => {
+    async function fetchBaselineImage() {
+      if (inspection?.transformerId) {
+        try {
+          const response = await api.getBaselineImageUrl(inspection.transformerId, weatherCondition)
+          if (response.success && response.data) {
+            setBaselineImageUrl(response.data)
+          } else {
+            setBaselineImageUrl(null)
+          }
+        } catch (error) {
+          console.error("Failed to fetch baseline image:", error)
+          setBaselineImageUrl(null)
+        }
+      }
+    }
+    fetchBaselineImage()
+  }, [inspection?.transformerId, weatherCondition])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -93,11 +117,11 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const hasAnyImages = useMemo(() => images && images.length > 0, [images])
 
   // Upload handlers
-  const handleUploadBaseline = async (file: File) => {
+  const handleUploadBaseline = async (file: File, weatherCondition?: string) => {
     setUploadingBaseline(true)
     setUploadProgress(0)
     try {
-      const res = await api.uploadThermalImage(inspectionId, file, "Baseline")
+      const res = await api.uploadThermalImage(inspectionId, file, "Baseline", weatherCondition)
       if (res.success) {
         const imgsRes = await api.getThermalImages(inspectionId)
         if (imgsRes.success) {
@@ -113,11 +137,11 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
     }
   }
 
-  const handleUploadMaintenance = async (file: File) => {
+  const handleUploadMaintenance = async (file: File, weatherCondition?: string) => {
     setUploadingMaintenance(true)
     setUploadProgress(0)
     try {
-      const res = await api.uploadThermalImage(inspectionId, file, "Maintenance")
+      const res = await api.uploadThermalImage(inspectionId, file, "Maintenance", weatherCondition)
       if (res.success) {
         const imgsRes = await api.getThermalImages(inspectionId)
         if (imgsRes.success) {
@@ -228,34 +252,48 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Baseline Image Section */}
+                {/* Baseline Image Section - Auto-retrieved based on weather condition */}
                 <div>
-                  <div className="mb-2">
-                    <h4 className="font-semibold">Baseline Image</h4>
+                  <div className="mb-2 flex items-center justify-between">
+                    <h4 className="font-semibold">Baseline Image ({weatherCondition})</h4>
+                    <Select value={weatherCondition} onValueChange={(value) => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Sunny">Sunny</SelectItem>
+                        <SelectItem value="Cloudy">Cloudy</SelectItem>
+                        <SelectItem value="Rainy">Rainy</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  {baselineImage ? (
+                  {baselineImageUrl ? (
                     <div className="relative rounded-md overflow-hidden border">
                       <img
-                        src={baselineImage.imageUrl}
-                        alt="Thermal Baseline"
+                        src={baselineImageUrl}
+                        alt={`Thermal Baseline (${weatherCondition})`}
                         className="w-full h-[360px] object-cover"
                       />
                       <div className="px-3 py-2 text-xs text-muted-foreground border-t">
-                        {baselineImage.uploadedAt ? formatDate(baselineImage.uploadedAt) : ""}
+                        Baseline image for {weatherCondition} weather condition
                       </div>
                     </div>
                   ) : (
-                    <ThermalImageUpload
-                      imageType="Baseline"
-                      onCancel={() => setShowUpload(false)}
-                      onProgress={setUploadProgress}
-                      onUpload={handleUploadBaseline}
-                      isUploading={uploadingBaseline}
-                    />
+                    <div className="flex items-center justify-center h-[360px] border rounded-md bg-muted/10">
+                      <div className="text-center space-y-2">
+                        <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">
+                          No baseline image available for {weatherCondition} weather condition
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Upload baseline images when creating the transformer
+                        </p>
+                      </div>
+                    </div>
                   )}
                 </div>
 
-                {/* Maintenance Image Section */}
+                {/* Maintenance Image Section - With weather condition tagging */}
                 <div>
                   <div className="mb-2">
                     <h4 className="font-semibold">Maintenance Image</h4>
@@ -268,6 +306,9 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
                         className="w-full h-[360px] object-cover"
                       />
                       <div className="px-3 py-2 text-xs text-muted-foreground border-t">
+                        {maintenanceImage.weatherCondition && (
+                          <span className="mr-2">Weather: {maintenanceImage.weatherCondition}</span>
+                        )}
                         {maintenanceImage.uploadedAt ? formatDate(maintenanceImage.uploadedAt) : ""}
                       </div>
                     </div>
@@ -278,6 +319,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
                       onProgress={setUploadProgress}
                       onUpload={handleUploadMaintenance}
                       isUploading={uploadingMaintenance}
+                      showWeatherSelector={true}
                     />
                   )}
                 </div>

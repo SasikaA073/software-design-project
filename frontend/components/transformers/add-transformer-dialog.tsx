@@ -25,6 +25,15 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
     type: "",
     locationDetails: "",
   })
+  const [baselineImages, setBaselineImages] = useState<{
+    sunny: File | null;
+    cloudy: File | null;
+    rainy: File | null;
+  }>({
+    sunny: null,
+    cloudy: null,
+    rainy: null,
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -51,12 +60,34 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
         locationDetails: formData.locationDetails,
         status: "Operational", // Default status
       }
+      
+      // First create the transformer
       const res = await api.addTransformer(payload)
       if (!res.success) {
         setError(res.message || "Failed to add transformer.")
         setLoading(false)
         return
       }
+
+      // Upload baseline images if provided
+      const createdTransformer = res.data
+      if (createdTransformer && createdTransformer.id) {
+        const uploadPromises = []
+        
+        if (baselineImages.sunny) {
+          uploadPromises.push(api.uploadBaselineImage(createdTransformer.id, "Sunny", baselineImages.sunny))
+        }
+        if (baselineImages.cloudy) {
+          uploadPromises.push(api.uploadBaselineImage(createdTransformer.id, "Cloudy", baselineImages.cloudy))
+        }
+        if (baselineImages.rainy) {
+          uploadPromises.push(api.uploadBaselineImage(createdTransformer.id, "Rainy", baselineImages.rainy))
+        }
+
+        // Wait for all uploads to complete
+        await Promise.all(uploadPromises)
+      }
+
       onOpenChange(false)
       // Reset form
       setFormData({
@@ -65,6 +96,11 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
         poleNo: "",
         type: "",
         locationDetails: "",
+      })
+      setBaselineImages({
+        sunny: null,
+        cloudy: null,
+        rainy: null,
       })
     } catch (err: any) {
       setError(err.message || "Failed to add transformer.")
@@ -141,6 +177,54 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
               onChange={(e) => setFormData((prev) => ({ ...prev, locationDetails: e.target.value }))}
               placeholder="Enter location details"
             />
+          </div>
+
+          {/* Baseline Images Section */}
+          <div className="space-y-4">
+            <Label>Baseline Images (Optional)</Label>
+            <p className="text-sm text-muted-foreground">Upload baseline thermal images for different weather conditions</p>
+            
+            {/* Sunny Baseline */}
+            <div className="space-y-2">
+              <Label htmlFor="sunny-baseline" className="text-sm">Sunny Weather</Label>
+              <Input
+                id="sunny-baseline"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setBaselineImages(prev => ({ ...prev, sunny: file }));
+                }}
+              />
+            </div>
+
+            {/* Cloudy Baseline */}
+            <div className="space-y-2">
+              <Label htmlFor="cloudy-baseline" className="text-sm">Cloudy Weather</Label>
+              <Input
+                id="cloudy-baseline"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setBaselineImages(prev => ({ ...prev, cloudy: file }));
+                }}
+              />
+            </div>
+
+            {/* Rainy Baseline */}
+            <div className="space-y-2">
+              <Label htmlFor="rainy-baseline" className="text-sm">Rainy Weather</Label>
+              <Input
+                id="rainy-baseline"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  setBaselineImages(prev => ({ ...prev, rainy: file }));
+                }}
+              />
+            </div>
           </div>
 
           <div className="flex gap-2 pt-4">

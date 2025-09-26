@@ -44,6 +44,7 @@ export interface ThermalImageData {
   uploadedAt: string;
   temperatureReading?: number;
   anomalyDetected?: boolean;
+  weatherCondition?: "Sunny" | "Cloudy" | "Rainy";
 }
 
 export interface AlertData {
@@ -115,6 +116,41 @@ class ApiService {
       return { data: null, success: true };
     } catch (error: any) {
       return { data: null, success: false, message: error.message };
+    }
+  }
+
+  async uploadBaselineImage(transformerId: string, weatherCondition: string, file: File): Promise<ApiResponse<TransformerData>> {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("weatherCondition", weatherCondition);
+
+      const response = await fetch(`${API_BASE_URL}/transformers/${transformerId}/baseline-image`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload baseline image");
+      }
+
+      const data = await response.json();
+      return { data, success: true };
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message };
+    }
+  }
+
+  async getBaselineImageUrl(transformerId: string, weatherCondition: string): Promise<ApiResponse<string>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/transformers/${transformerId}/baseline-image?weatherCondition=${weatherCondition}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch baseline image URL");
+      }
+      const url = await response.text();
+      return { data: url, success: true };
+    } catch (error: any) {
+      return { data: "", success: false, message: error.message };
     }
   }
 
@@ -200,13 +236,26 @@ class ApiService {
   async uploadThermalImage(
     inspectionId: string,
     file: File,
-  imageType: "Baseline" | "Maintenance"
+    imageType: "Baseline" | "Maintenance",
+    weatherCondition?: string
   ): Promise<ApiResponse<ThermalImageData>> {
     const formData = new FormData()
     formData.append("file", file)
+    
+    const imageData: any = { 
+      imageType, 
+      anomalyDetected: false, 
+      temperatureReading: 0 
+    };
+    
+    // Add weather condition for maintenance images
+    if (imageType === "Maintenance" && weatherCondition) {
+      imageData.weatherCondition = weatherCondition;
+    }
+    
     formData.append(
       "image",
-      new Blob([JSON.stringify({ imageType, anomalyDetected: false, temperatureReading: 0 })], {
+      new Blob([JSON.stringify(imageData)], {
         type: "application/json",
       })
     )

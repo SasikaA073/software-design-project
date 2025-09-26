@@ -62,7 +62,12 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
   useEffect(() => {
     if (!formData.branch) return
     if (!transformersByBranch.find((t) => t.transformerNo === formData.transformerNo)) {
-      setFormData((prev) => ({ ...prev, transformerNo: transformersByBranch[0]?.transformerNo || "" }))
+      const firstTransformer = transformersByBranch[0]?.transformerNo
+      if (firstTransformer) {
+        setFormData((prev) => ({ ...prev, transformerNo: firstTransformer }))
+      } else {
+        setFormData((prev) => ({ ...prev, transformerNo: "" }))
+      }
     }
   }, [formData.branch, transformersByBranch])
 
@@ -128,7 +133,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
                 <SelectValue placeholder="Select branch" />
               </SelectTrigger>
               <SelectContent>
-                {branchOptions.map((b) => (
+                {branchOptions.filter(b => b && b.trim() !== '').map((b) => (
                   <SelectItem key={b} value={b}>
                     {b}
                   </SelectItem>
@@ -148,7 +153,7 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
                 <SelectValue placeholder={formData.branch ? "Select transformer" : "Select branch first"} />
               </SelectTrigger>
               <SelectContent>
-                {transformersByBranch.map((t) => (
+                {transformersByBranch.filter(t => t.transformerNo && t.transformerNo.trim() !== '').map((t) => (
                   <SelectItem key={t.id} value={t.transformerNo}>
                     {t.transformerNo}
                   </SelectItem>

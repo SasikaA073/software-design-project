@@ -4,20 +4,24 @@ import type React from "react"
 import { useState, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Upload, X, ImageIcon } from "lucide-react"
+import { Label } from "@/components/ui/label"
 
 interface ThermalImageUploadProps {
   onCancel: () => void
   onProgress: (progress: number) => void
-  onUpload?: (file: File) => void
+  onUpload?: (file: File, weatherCondition?: string) => void
   imageType?: string
   isUploading?: boolean
+  showWeatherSelector?: boolean
 }
 
-export function ThermalImageUpload({ onCancel, onProgress, onUpload, imageType, isUploading = false }: ThermalImageUploadProps) {
+export function ThermalImageUpload({ onCancel, onProgress, onUpload, imageType, isUploading = false, showWeatherSelector = false }: ThermalImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [weatherCondition, setWeatherCondition] = useState<string>("Sunny")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -65,7 +69,7 @@ export function ThermalImageUpload({ onCancel, onProgress, onUpload, imageType, 
     setUploadProgress(0)
     if (onUpload) {
       try {
-        await onUpload(file)
+        await onUpload(file, showWeatherSelector ? weatherCondition : undefined)
         setSelectedFile(null)
         setUploadProgress(0)
         onProgress(0)
@@ -162,6 +166,22 @@ export function ThermalImageUpload({ onCancel, onProgress, onUpload, imageType, 
           <Button variant="ghost" size="icon" onClick={handleRemoveFile}>
             <X className="w-4 h-4" />
           </Button>
+        </div>
+      )}
+
+      {showWeatherSelector && (
+        <div className="space-y-2">
+          <Label htmlFor="weather-condition">Weather Condition</Label>
+          <Select value={weatherCondition} onValueChange={setWeatherCondition}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select weather condition" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Sunny">Sunny</SelectItem>
+              <SelectItem value="Cloudy">Cloudy</SelectItem>
+              <SelectItem value="Rainy">Rainy</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       )}
 

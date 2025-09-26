@@ -29,6 +29,11 @@ public class Transformer {
     private String status;
     private OffsetDateTime lastInspected;
 
+    // Baseline images for different weather conditions
+    private String sunnyBaselineImageUrl;
+    private String cloudyBaselineImageUrl;
+    private String rainyBaselineImageUrl;
+
     @Column(updatable = false)
     private OffsetDateTime createdAt;
 
@@ -140,5 +145,29 @@ public class Transformer {
 
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getSunnyBaselineImageUrl() {
+        return sunnyBaselineImageUrl;
+    }
+
+    public void setSunnyBaselineImageUrl(String sunnyBaselineImageUrl) {
+        this.sunnyBaselineImageUrl = sunnyBaselineImageUrl;
+    }
+
+    public String getCloudyBaselineImageUrl() {
+        return cloudyBaselineImageUrl;
+    }
+
+    public void setCloudyBaselineImageUrl(String cloudyBaselineImageUrl) {
+        this.cloudyBaselineImageUrl = cloudyBaselineImageUrl;
+    }
+
+    public String getRainyBaselineImageUrl() {
+        return rainyBaselineImageUrl;
+    }
+
+    public void setRainyBaselineImageUrl(String rainyBaselineImageUrl) {
+        this.rainyBaselineImageUrl = rainyBaselineImageUrl;
     }
 }

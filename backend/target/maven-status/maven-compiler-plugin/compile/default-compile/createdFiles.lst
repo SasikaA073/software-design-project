@@ -11,9 +11,9 @@ com/example/transformermanagement/dto/InspectionRequest.class
 com/example/transformermanagement/TransformerManagementApplication.class
 com/example/transformermanagement/model/Inspection.class
 com/example/transformermanagement/config/WebConfig$1.class
-com/example/transformermanagement/model/Transformer.class
-com/example/transformermanagement/model/Alert.class
 com/example/transformermanagement/service/ThermalImageService.class
+com/example/transformermanagement/model/Alert.class
+com/example/transformermanagement/model/Transformer.class
 com/example/transformermanagement/service/AlertService.class
 com/example/transformermanagement/config/WebConfig.class
 com/example/transformermanagement/service/TransformerService.class
