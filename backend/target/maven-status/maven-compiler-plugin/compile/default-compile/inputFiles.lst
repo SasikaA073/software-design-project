@@ -15,6 +15,7 @@
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/repository/ThermalImageRepository.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/repository/TransformerRepository.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/service/AlertService.java
+/workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/service/AnomalyDetectionService.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/service/InspectionService.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/service/ThermalImageService.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/service/TransformerService.java

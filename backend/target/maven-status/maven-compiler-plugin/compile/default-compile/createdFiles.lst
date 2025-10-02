@@ -1,5 +1,6 @@
 com/example/transformermanagement/controller/TransformerController.class
 com/example/transformermanagement/repository/TransformerRepository.class
+com/example/transformermanagement/service/AnomalyDetectionService.class
 com/example/transformermanagement/controller/InspectionController.class
 com/example/transformermanagement/repository/AlertRepository.class
 com/example/transformermanagement/controller/ThermalImageController.class

@@ -4,6 +4,7 @@ import com.example.transformermanagement.model.Inspection;
 import com.example.transformermanagement.model.ThermalImage;
 import com.example.transformermanagement.repository.InspectionRepository;
 import com.example.transformermanagement.repository.ThermalImageRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class ThermalImageService {
 
     @Autowired
     private InspectionRepository inspectionRepository;
+
+    @Autowired
+    private AnomalyDetectionService anomalyDetectionService;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -52,8 +56,30 @@ public class ThermalImageService {
         Files.write(destination, file.getBytes());
 
         // Public URL served by WebConfig resource handler
-        thermalImage.setImageUrl("/uploads/" + fileName);
+        String imageUrl = "/uploads/" + fileName;
+        thermalImage.setImageUrl(imageUrl);
 
-        return thermalImageRepository.save(thermalImage);
+        // Save the thermal image first
+        ThermalImage savedImage = thermalImageRepository.save(thermalImage);
+
+        // If this is a maintenance image, call anomaly detection API
+        if ("Maintenance".equalsIgnoreCase(thermalImage.getImageType())) {
+            try {
+                System.out.println("\n🔍 Maintenance image detected - triggering anomaly detection...");
+                JsonNode anomalyResponse = anomalyDetectionService.analyzeMaintenanceImageForAnomalies(imageUrl);
+                System.out.println("✅ Anomaly detection completed successfully!");
+                
+                // Log the response (you can later store this in the database if needed)
+                System.out.println("📊 Anomaly Detection Result:");
+                System.out.println(anomalyResponse.toPrettyString());
+                
+            } catch (Exception e) {
+                // Log error but don't fail the upload
+                System.err.println("❌ Failed to run anomaly detection: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        return savedImage;
     }
 }
