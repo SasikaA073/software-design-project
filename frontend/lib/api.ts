@@ -20,6 +20,9 @@ export interface TransformerData {
   locationDetails: string;
   status: "Operational" | "Maintenance" | "Offline";
   lastInspected?: string;
+  sunnyBaselineImageUrl?: string;
+  cloudyBaselineImageUrl?: string;
+  rainyBaselineImageUrl?: string;
 }
 
 export interface InspectionData {
@@ -147,8 +150,12 @@ class ApiService {
       if (!response.ok) {
         throw new Error("Failed to fetch baseline image URL");
       }
-      const url = await response.text();
-      return { data: url, success: true };
+      const relativeUrl = await response.text();
+      // Construct full URL if the response is a relative path
+      const fullUrl = relativeUrl && relativeUrl.startsWith('/') 
+        ? `${API_BASE_URL}${relativeUrl}` 
+        : relativeUrl;
+      return { data: fullUrl, success: true };
     } catch (error: any) {
       return { data: "", success: false, message: error.message };
     }

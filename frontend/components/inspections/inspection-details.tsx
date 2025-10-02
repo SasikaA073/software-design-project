@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ArrowLeft, Upload, ImageIcon, Thermometer } from "lucide-react"
 import { ThermalImageUpload } from "./thermal-image-upload"
 import type { InspectionData, ThermalImageData } from "@/lib/api"
@@ -116,6 +117,13 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   // Check if we have any images
   const hasAnyImages = useMemo(() => images && images.length > 0, [images])
 
+  // Auto-set weather condition based on maintenance image weather condition
+  useEffect(() => {
+    if (maintenanceImage?.weatherCondition && maintenanceImage.weatherCondition !== weatherCondition) {
+      setWeatherCondition(maintenanceImage.weatherCondition as "Sunny" | "Cloudy" | "Rainy")
+    }
+  }, [maintenanceImage?.weatherCondition, weatherCondition])
+
   // Upload handlers
   const handleUploadBaseline = async (file: File, weatherCondition?: string) => {
     setUploadingBaseline(true)
@@ -146,6 +154,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
         const imgsRes = await api.getThermalImages(inspectionId)
         if (imgsRes.success) {
           setImages(imgsRes.data)
+          setShowUpload(false) // Close the dialog after successful upload
         }
       } else {
         setError(res.message || "Failed to upload maintenance image")
@@ -209,7 +218,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
             </div>
             <div className="space-y-2">
               <span className="text-muted-foreground">Weather Condition</span>
-              <Select value={weatherCondition} onValueChange={value => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
+              <Select value={weatherCondition} onValueChange={(value: string) => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -236,94 +245,98 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
               <div className="h-72 flex items-center justify-center text-muted-foreground">Loading...</div>
             ) : error ? (
               <div className="h-72 flex items-center justify-center text-red-600 text-sm">{error}</div>
-            ) : !hasAnyImages && !showUpload ? (
-              <div className="text-center py-12 space-y-4">
-                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
-                  <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Upload baseline and maintenance thermal images</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Upload both images to identify potential issues.</p>
-                  <Button onClick={() => setShowUpload(true)} className="gap-2">
-                    <Upload className="w-4 h-4" />
-                    Upload Thermal Images
-                  </Button>
-                </div>
-              </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Baseline Image Section - Auto-retrieved based on weather condition */}
-                <div>
-                  <div className="mb-2 flex items-center justify-between">
-                    <h4 className="font-semibold">Baseline Image ({weatherCondition})</h4>
-                    <Select value={weatherCondition} onValueChange={(value) => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Sunny">Sunny</SelectItem>
-                        <SelectItem value="Cloudy">Cloudy</SelectItem>
-                        <SelectItem value="Rainy">Rainy</SelectItem>
-                      </SelectContent>
-                    </Select>
+              <>
+                {/* Always show the comparison view */}
+                <div className="mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-medium">Image Comparison Analysis</h3>
+                    <Badge variant="outline" className="text-xs">
+                      Compare baseline vs maintenance
+                    </Badge>
                   </div>
-                  {baselineImageUrl ? (
-                    <div className="relative rounded-md overflow-hidden border">
-                      <img
-                        src={baselineImageUrl}
-                        alt={`Thermal Baseline (${weatherCondition})`}
-                        className="w-full h-[360px] object-cover"
-                      />
-                      <div className="px-3 py-2 text-xs text-muted-foreground border-t">
-                        Baseline image for {weatherCondition} weather condition
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-[360px] border rounded-md bg-muted/10">
-                      <div className="text-center space-y-2">
-                        <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">
-                          No baseline image available for {weatherCondition} weather condition
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Upload baseline images when creating the transformer
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                  <p className="text-sm text-muted-foreground">
+                    Compare the baseline reference image with the current maintenance inspection image to identify thermal anomalies.
+                  </p>
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Baseline Image Section - Auto-retrieved based on weather condition */}
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <h4 className="font-semibold">Baseline Image ({weatherCondition})</h4>
+                      <Select value={weatherCondition} onValueChange={(value: string) => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Sunny">Sunny</SelectItem>
+                          <SelectItem value="Cloudy">Cloudy</SelectItem>
+                          <SelectItem value="Rainy">Rainy</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {baselineImageUrl ? (
+                      <div className="relative rounded-md overflow-hidden border">
+                        <img
+                          src={baselineImageUrl}
+                          alt={`Thermal Baseline (${weatherCondition})`}
+                          className="w-full h-[360px] object-cover"
+                        />
+                        <div className="px-3 py-2 text-xs text-muted-foreground border-t">
+                          Baseline image for {weatherCondition} weather condition
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-[360px] border rounded-md bg-muted/10">
+                        <div className="text-center space-y-2">
+                          <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">
+                            No baseline image available for {weatherCondition} weather condition
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Upload baseline images when creating the transformer
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
-                {/* Maintenance Image Section - With weather condition tagging */}
-                <div>
-                  <div className="mb-2">
-                    <h4 className="font-semibold">Maintenance Image</h4>
-                  </div>
-                  {maintenanceImage ? (
-                    <div className="relative rounded-md overflow-hidden border">
-                      <img
-                        src={maintenanceImage.imageUrl}
-                        alt="Thermal Maintenance"
-                        className="w-full h-[360px] object-cover"
-                      />
-                      <div className="px-3 py-2 text-xs text-muted-foreground border-t">
-                        {maintenanceImage.weatherCondition && (
-                          <span className="mr-2">Weather: {maintenanceImage.weatherCondition}</span>
-                        )}
-                        {maintenanceImage.uploadedAt ? formatDate(maintenanceImage.uploadedAt) : ""}
-                      </div>
+                  {/* Maintenance Image Section - With weather condition tagging */}
+                  <div>
+                    <div className="mb-2">
+                      <h4 className="font-semibold">Maintenance Image</h4>
                     </div>
-                  ) : (
-                    <ThermalImageUpload
-                      imageType="Maintenance"
-                      onCancel={() => setShowUpload(false)}
-                      onProgress={setUploadProgress}
-                      onUpload={handleUploadMaintenance}
-                      isUploading={uploadingMaintenance}
-                      showWeatherSelector={true}
-                    />
-                  )}
+                    {maintenanceImage ? (
+                      <div className="relative rounded-md overflow-hidden border">
+                        <img
+                          src={maintenanceImage.imageUrl}
+                          alt="Thermal Maintenance"
+                          className="w-full h-[360px] object-cover"
+                        />
+                        <div className="px-3 py-2 text-xs text-muted-foreground border-t">
+                          {maintenanceImage.weatherCondition && (
+                            <span className="mr-2">Weather: {maintenanceImage.weatherCondition}</span>
+                          )}
+                          {maintenanceImage.uploadedAt ? formatDate(maintenanceImage.uploadedAt) : ""}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-[360px] border rounded-md bg-muted/10">
+                        <div className="text-center space-y-2">
+                          <ImageIcon className="w-12 h-12 mx-auto text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground mb-4">
+                            No maintenance image uploaded yet
+                          </p>
+                          <Button onClick={() => setShowUpload(true)} className="gap-2">
+                            <Upload className="w-4 h-4" />
+                            Upload Maintenance Image
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </CardContent>
         </Card>
@@ -360,6 +373,23 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           </div>
         </CardContent>
       </Card>
+
+      {/* Upload Maintenance Image Dialog */}
+      <Dialog open={showUpload} onOpenChange={setShowUpload}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Upload Maintenance Thermal Image</DialogTitle>
+          </DialogHeader>
+          <ThermalImageUpload
+            imageType="Maintenance"
+            onCancel={() => setShowUpload(false)}
+            onProgress={setUploadProgress}
+            onUpload={handleUploadMaintenance}
+            isUploading={uploadingMaintenance}
+            showWeatherSelector={true}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

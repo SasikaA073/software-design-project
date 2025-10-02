@@ -15,15 +15,18 @@ public class InspectionService {
     private InspectionRepository inspectionRepository;
 
     public List<Inspection> getAllInspections() {
-        return inspectionRepository.findAll();
+        // Use optimized query with JOIN FETCH to avoid N+1 problem
+        return inspectionRepository.findAllWithTransformer();
     }
 
     public List<Inspection> getInspectionsByTransformerId(UUID transformerId) {
-        return inspectionRepository.findByTransformer_Id(transformerId);
+        // Use optimized query with JOIN FETCH
+        return inspectionRepository.findByTransformerIdWithTransformer(transformerId);
     }
 
     public Optional<Inspection> getInspectionById(java.util.UUID id) {
-        return inspectionRepository.findById(id);
+        // Use optimized query with JOIN FETCH
+        return inspectionRepository.findByIdWithTransformer(id);
     }
 
     public Inspection saveInspection(Inspection inspection) {

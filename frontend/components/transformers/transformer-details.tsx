@@ -4,9 +4,10 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, Eye, Zap, Calendar, User } from "lucide-react"
+import { ArrowLeft, Plus, Eye, Zap, Calendar, User, Image as ImageIcon } from "lucide-react"
 import { AddInspectionDialog } from "@/components/inspections/add-inspection-dialog"
 import { InspectionDetails } from "@/components/inspections/inspection-details"
+import { BaselineImageCard } from "./baseline-image-card"
 import { api } from "@/lib/api";
 import type { TransformerData, InspectionData } from "@/lib/api"
 import { useRouter } from "next/navigation"
@@ -206,6 +207,45 @@ export function TransformerDetails({ transformerId, onBack }: TransformerDetails
           </CardContent>
         </Card>
       </div>
+
+      {/* Baseline Images Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ImageIcon className="w-5 h-5 text-primary" />
+            Baseline Thermal Images
+          </CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Upload baseline thermal images for different weather conditions to compare with maintenance inspections
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {transformer && (
+              <>
+                <BaselineImageCard
+                  transformerId={transformer.id!}
+                  weatherCondition="Sunny"
+                  imageUrl={transformer.sunnyBaselineImageUrl}
+                  onUploadSuccess={fetchData}
+                />
+                <BaselineImageCard
+                  transformerId={transformer.id!}
+                  weatherCondition="Cloudy"
+                  imageUrl={transformer.cloudyBaselineImageUrl}
+                  onUploadSuccess={fetchData}
+                />
+                <BaselineImageCard
+                  transformerId={transformer.id!}
+                  weatherCondition="Rainy"
+                  imageUrl={transformer.rainyBaselineImageUrl}
+                  onUploadSuccess={fetchData}
+                />
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       <AddInspectionDialog
         open={showAddInspection}
