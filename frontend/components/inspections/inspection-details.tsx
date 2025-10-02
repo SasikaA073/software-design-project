@@ -69,18 +69,28 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   // Fetch baseline image when weather condition changes or inspection is loaded
   useEffect(() => {
     async function fetchBaselineImage() {
+      console.log("🔍 Fetching baseline image...")
+      console.log("  - Transformer ID:", inspection?.transformerId)
+      console.log("  - Weather Condition:", weatherCondition)
+      
       if (inspection?.transformerId) {
         try {
           const response = await api.getBaselineImageUrl(inspection.transformerId, weatherCondition)
+          console.log("📸 Baseline image response:", response)
+          
           if (response.success && response.data) {
+            console.log("✅ Baseline image URL set:", response.data)
             setBaselineImageUrl(response.data)
           } else {
+            console.log("❌ No baseline image available")
             setBaselineImageUrl(null)
           }
         } catch (error) {
-          console.error("Failed to fetch baseline image:", error)
+          console.error("❌ Failed to fetch baseline image:", error)
           setBaselineImageUrl(null)
         }
+      } else {
+        console.log("⚠️ No transformer ID available")
       }
     }
     fetchBaselineImage()

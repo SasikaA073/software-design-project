@@ -146,17 +146,32 @@ class ApiService {
 
   async getBaselineImageUrl(transformerId: string, weatherCondition: string): Promise<ApiResponse<string>> {
     try {
-      const response = await fetch(`${API_BASE_URL}/transformers/${transformerId}/baseline-image?weatherCondition=${weatherCondition}`);
+      const url = `${API_BASE_URL}/transformers/${transformerId}/baseline-image?weatherCondition=${weatherCondition}`;
+      console.log("🌐 Fetching baseline image from:", url);
+      
+      const response = await fetch(url);
+      console.log("📡 Response status:", response.status, response.statusText);
+      
       if (!response.ok) {
+        console.log("❌ Response not OK:", response.status);
         throw new Error("Failed to fetch baseline image URL");
       }
+      
       const relativeUrl = await response.text();
-      // Construct full URL if the response is a relative path
-      const fullUrl = relativeUrl && relativeUrl.startsWith('/') 
-        ? `${API_BASE_URL}${relativeUrl}` 
-        : relativeUrl;
+      console.log("📄 Response text:", relativeUrl);
+      
+      // Static files are served from /uploads/ not /api/uploads/
+      // Don't add API_BASE_URL prefix for static file paths
+      const fullUrl = relativeUrl && relativeUrl.startsWith('/uploads/')
+        ? relativeUrl  // Use as-is for static files
+        : relativeUrl && relativeUrl.startsWith('/')
+        ? `${API_BASE_URL}${relativeUrl}`  // Add /api prefix for API paths
+        : relativeUrl;  // Use as-is if absolute URL
+      
+      console.log("🔗 Full URL:", fullUrl);
       return { data: fullUrl, success: true };
     } catch (error: any) {
+      console.error("❌ Error in getBaselineImageUrl:", error);
       return { data: "", success: false, message: error.message };
     }
   }
