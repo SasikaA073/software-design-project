@@ -1,147 +1,941 @@
-# Transformer Management Web Application by Jewel001
-This full-stack web application streamlines the thermal inspection of power transformers. It's a central hub for managing transformer data, automatically analyzing thermal images for issues, and creating digital maintenance reports.
+# 🔌 Oversight - Transformer Management System
 
-## Overview
-This project consists of a **backend** (Spring Boot + Docker) and a **frontend** (Node.js/React). The backend exposes APIs, and the frontend consumes them to provide a user interface.
+<div align="center">
 
-## Features for Phase 1 🎯
-This initial phase focuses on establishing the foundational data management capabilities of the system.
+![Oversight Logo](https://img.shields.io/badge/Oversight-Transformer%20Management-blue?style=for-the-badge)
 
-### Transformer Management (FR1.1):
+**A comprehensive full-stack application for managing power transformer inspections with AI-powered thermal image analysis**
 
-An interface for managing transformer records.
-Each transformer is defined by a unique ID, physical location, and power capacity.
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-brightgreen?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)](https://www.mysql.com/)
 
-### Thermal Image Management (FR1.2):
+[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [API Documentation](#-api-documentation) • [Contributing](#-contributing)
 
-Ability to upload thermal images and associate them with specific transformer records.
-Images are tagged as either Baseline (a reference image under normal conditions) or Maintenance (a new image from a routine inspection).
-Image metadata (upload timestamp, uploader info) is automatically recorded.
-
-### Environmental Tagging (FR1.3):
-
-Baseline images must be categorized by the environmental conditions at the time of capture: Sunny, Cloudy, or Rainy. This is crucial for accurate comparisons in later phases.
-
+</div>
 
 ---
 
-## Prerequisites
-Before running the project, ensure the following software is installed on your machine:
+## 📋 Table of Contents
 
-- **Docker** – [Install Docker](https://docs.docker.com/get-docker/)
-- **Java 17** – [Install Java 17](https://adoptium.net/)
-- **Maven** – [Install Maven](https://maven.apache.org/install.html)
-- **Node.js & npm** – [Install Node.js](https://nodejs.org/)
-
-> **Alternative:** You can use **GitHub Codespaces**, which comes pre-configured with most dependencies.
+- [Overview](#-overview)
+- [Features](#-features)
+- [Technology Stack](#-technology-stack)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Project Structure](#-project-structure)
+- [Running the Application](#-running-the-application)
+- [API Documentation](#-api-documentation)
+- [Key Features Deep Dive](#-key-features-deep-dive)
+- [Database Schema](#-database-schema)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
-## Setup and Running Instructions
+## 🎯 Overview
 
-### 1. Backend (Docker Services)
+Oversight is a modern, full-stack web application designed to streamline the thermal inspection and management of power transformers. The system integrates AI-powered anomaly detection, interactive image annotation, and comprehensive maintenance tracking to help utility companies maintain their transformer infrastructure efficiently.
 
-1. Open a terminal and navigate to the **backend** folder.
-2. Start Docker services:
-   ```bash
-   docker-compose up
-   ```
-   Docker will build and start all necessary containers (databases, APIs, etc.).
+### Key Capabilities
 
-### 2. Backend (Spring Boot Application)
+- **Transformer Fleet Management**: Track and manage multiple transformers across different regions
+- **Intelligent Inspection System**: Schedule and conduct thermal inspections with automated anomaly detection
+- **AI-Powered Analysis**: Automatic detection of thermal anomalies using deep learning models
+- **Interactive Image Annotation**: Edit and refine detection bounding boxes with real-time coordinate tracking
+- **Weather-Based Comparison**: Compare maintenance images against weather-specific baseline images
+- **Complete CRUD Operations**: Full create, read, update, and delete functionality for all entities
+- **Cascade Management**: Automatic cleanup of related data when deleting transformers or inspections
 
-In a new terminal, still inside the **backend** folder:
+---
+
+## ✨ Features
+
+### 🏭 Transformer Management
+
+- **Add New Transformers**: Register transformers with detailed specifications
+  - Unique transformer number and pole number
+  - Region and location details
+  - Type (Distribution/Bulk) and capacity (kVA)
+  - Number of feeders
+  - Status tracking (Operational/Maintenance/Offline)
+- **Update Transformer Details**: Modify transformer information as needed
+- **Delete Transformers**: Remove transformers with automatic deletion of all associated inspections and images
+- **Search and Filter**: Find transformers by number, region, or status
+- **Baseline Image Management**: Upload weather-specific baseline thermal images (Sunny, Cloudy, Rainy)
+
+### 🔍 Inspection Management
+
+- **Create Inspections**: Schedule new inspections for transformers
+  - Inspector assignment
+  - Inspection date and time
+  - Optional maintenance scheduling
+  - Status tracking (Pending/In Progress/Completed)
+- **Edit Inspections**: Update inspection details and status
+- **Delete Inspections**: Remove inspections with automatic deletion of thermal images
+- **Inspection Sorting**: Automatically sorted by creation date (newest first)
+- **View Inspection History**: Complete timeline of all transformer inspections
+
+### 🌡️ Thermal Image Analysis
+
+- **Dual Image Upload System**:
+  - **Baseline Images**: Weather-categorized reference images (Sunny, Cloudy, Rainy)
+  - **Maintenance Images**: Inspection images with automatic AI analysis
+- **AI-Powered Anomaly Detection**:
+  - Automatic detection of thermal anomalies
+  - Integration with Python-based detection service
+  - Real-time analysis during image upload
+- **Multi-Stage Progress Tracking**:
+  - Upload progress (0-40%)
+  - AI analysis progress (40-70%)
+  - Results fetching (70-100%)
+  - Visual feedback with color-coded stages
+
+### 📊 Interactive Image Annotation
+
+- **Canvas-Based Image Viewer**:
+  - High-quality thermal image rendering
+  - Zoom controls (buttons and mouse wheel)
+  - Pan functionality (click and drag)
+  - Reset to original view
+- **Editable Bounding Boxes**:
+  - Select detections by clicking
+  - Move boxes by dragging
+  - Resize using corner/edge handles
+  - Real-time coordinate updates
+- **Color-Coded Detections**:
+  - **Red**: Faulty components
+  - **Orange**: Potentially faulty areas
+  - **Yellow**: Warning zones
+  - **Purple**: Critical issues
+  - **Green**: Normal readings
+- **Detection Metadata Display**:
+  - Anomaly class and confidence score
+  - Severity level (Critical/High/Medium/Low)
+  - Pixel coordinates (center X, Y)
+  - Dimensions (width × height)
+  - Area calculation in pixels²
+  - Real-time updates during editing
+
+### 📈 Detection Summary
+
+- **Individual Detection View**:
+  - Detailed metrics for selected detection
+  - Visual severity indicators
+  - Edit mode with real-time feedback
+- **Grid Overview**:
+  - Compact cards for all detections
+  - Quick confidence scores
+  - Click to view details
+  - Responsive layout (1-4 columns)
+
+### 🔄 Advanced Data Management
+
+- **Cascade Deletion**:
+  - Delete transformer → removes all inspections → removes all thermal images
+  - Delete inspection → removes all associated thermal images
+  - Automatic database cleanup
+- **Proper Error Handling**:
+  - User-friendly error messages
+  - Detailed backend logging
+  - HTTP status code validation
+- **Data Integrity**:
+  - Unique constraint enforcement
+  - Required field validation
+  - Relationship consistency
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Java | 17 | Core programming language |
+| Spring Boot | 3.3.0 | Application framework |
+| Spring Data JPA | 3.3.0 | Database ORM |
+| Hibernate | 6.5.2 | JPA implementation |
+| MySQL | 8.0 | Relational database |
+| Maven | 3.9.x | Build tool and dependency management |
+| Docker | Latest | Database containerization |
+| Jackson | 2.17.1 | JSON serialization |
+
+### Frontend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Next.js | 14.x | React framework |
+| React | 18.x | UI library |
+| TypeScript | 5.x | Type-safe JavaScript |
+| Tailwind CSS | 3.x | Utility-first CSS |
+| shadcn/ui | Latest | Component library |
+| Lucide React | Latest | Icon library |
+
+### External Services
+
+| Service | Purpose |
+|---------|---------|
+| Python AI Service | Thermal anomaly detection (YOLOv8/similar) |
+| Docker Compose | Service orchestration |
+
+---
+
+## 📦 Prerequisites
+
+Before running the project, ensure you have the following installed:
+
+- **Java 17+** – [Download Java](https://adoptium.net/)
+- **Maven 3.9+** – [Install Maven](https://maven.apache.org/install.html)
+- **Node.js 18+** – [Download Node.js](https://nodejs.org/)
+- **Docker & Docker Compose** – [Install Docker](https://docs.docker.com/get-docker/)
+- **MySQL 8.0** (via Docker or local installation)
+
+### Verify Installation
 
 ```bash
+# Check Java version
+java -version
+
+# Check Maven version
+mvn -version
+
+# Check Node.js version
+node -version
+
+# Check Docker version
+docker --version
+docker-compose --version
+```
+
+---
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/transformer-management.git
+cd transformer-management
+```
+
+### 2. Backend Setup
+
+#### Start Database (Docker)
+
+```bash
+cd backend
+docker-compose up -d
+```
+
+This will start:
+- MySQL database on port `3306`
+- phpMyAdmin (optional) on port `8081`
+
+#### Configure Application
+
+The application properties are located in `backend/src/main/resources/application.properties`:
+
+```properties
+# Database Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/transformer_management
+spring.datasource.username=root
+spring.datasource.password=your_password
+
+# JPA Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# File Upload Configuration
+file.upload-dir=./uploads
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+
+# AI Service Configuration
+anomaly.detection.url=http://localhost:5000/detect
+```
+
+#### Install Dependencies & Build
+
+```bash
+mvn clean install
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+```
+
+#### Configure API Endpoint
+
+Update `frontend/lib/api.ts` if needed:
+
+```typescript
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+```
+
+---
+
+## 🏃 Running the Application
+
+### Start Backend Server
+
+```bash
+cd backend
 mvn spring-boot:run
 ```
-When runnning in  a github codespace 
 
+The backend API will be available at `http://localhost:8080`
+
+**For GitHub Codespaces:**
 ```bash
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
+mvn spring-boot:run
 ```
-The backend API should now be running at `http://localhost:8080` (or the configured port).
 
-### 3. Frontend
+### Start Frontend Server
 
-1. Open a terminal and navigate to the **frontend** folder.
-2. Install dependencies:
-   ```bash
-   npm install 
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-   or 
+```bash
+cd frontend
+npm run dev
+```
 
-   ```bash
-   npm install --legacy-peer-dep
-   ```
+The frontend will be available at `http://localhost:3000`
 
-The frontend should now be accessible at `http://localhost:3000` (or the configured port).
+### Start AI Detection Service (Optional)
 
----
+If you have the Python anomaly detection service:
 
-## Stopping the Services
+```bash
+cd anomaly-detection-service
+python app.py
+```
 
-- **To stop Docker services:**
-  ```bash
-  docker-compose down
-  ```
-- **To stop the Spring Boot server:** Press `Ctrl+C` in the terminal where it is running.
-- **To stop the frontend server:** Press `Ctrl+C` in the terminal where it is running.
+Service will run on `http://localhost:5000`
 
 ---
 
-## Troubleshooting
-
-### Docker
-- Make sure **Docker Desktop** is running.
-- If you get permission errors, try running commands with `sudo` (Linux/macOS).
-
-### Maven
-- Ensure `JAVA_HOME` points to Java 17.
-- If `mvn` is not recognized, check that Maven is installed and added to your system `PATH`.
-
-### Node.js / npm
-- If you encounter dependency conflicts, try using `npm install --legacy-peer-deps`.
-- For permission issues on macOS/Linux, consider using a Node version manager like [nvm](https://github.com/nvm-sh/nvm).
-- Clear npm cache if installation fails: `npm cache clean --force`
-- Ensure you're using a compatible Node.js version (check `package.json` for engine requirements).
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-project-root/
+transformer-management/
 ├── backend/
-│   ├── src/main
-│   ├── target
-│   ├── uploads
-│   └── docker-compose.yml
-│   ├── pom.xml
-├── frontend/
-    ├── app
-    ├── components
-    ├──hooks
-    ├── lib
-    ├── public
-    ├── styles
-    ├── components.json
-    ├── next.config.mjs
-    ├── package-lock.json
-    ├── package.json
-    ├── pnpm-lock.yaml
-    ├── postcss.config.mjs
-    ├── tsconfig.json
+│   ├── src/
+│   │   └── main/
+│   │       ├── java/com/example/transformermanagement/
+│   │       │   ├── config/              # Configuration classes
+│   │       │   │   └── WebConfig.java
+│   │       │   ├── controller/          # REST API controllers
+│   │       │   │   ├── TransformerController.java
+│   │       │   │   ├── InspectionController.java
+│   │       │   │   └── ThermalImageController.java
+│   │       │   ├── dto/                 # Data Transfer Objects
+│   │       │   │   └── InspectionRequest.java
+│   │       │   ├── model/               # JPA Entities
+│   │       │   │   ├── Transformer.java
+│   │       │   │   ├── Inspection.java
+│   │       │   │   └── ThermalImage.java
+│   │       │   ├── repository/          # JPA Repositories
+│   │       │   │   ├── TransformerRepository.java
+│   │       │   │   ├── InspectionRepository.java
+│   │       │   │   └── ThermalImageRepository.java
+│   │       │   ├── service/             # Business logic
+│   │       │   │   ├── TransformerService.java
+│   │       │   │   ├── InspectionService.java
+│   │       │   │   ├── ThermalImageService.java
+│   │       │   │   └── AnomalyDetectionService.java
+│   │       │   └── TransformerManagementApplication.java
+│   │       └── resources/
+│   │           └── application.properties
+│   ├── uploads/                         # Uploaded thermal images
+│   ├── docker-compose.yml               # Database configuration
+│   └── pom.xml                          # Maven dependencies
+│
+└── frontend/
+    ├── app/                             # Next.js pages
+    │   ├── page.tsx                     # Landing page
+    │   ├── transformers/
+    │   │   └── page.tsx                 # Transformers page
+    │   ├── inspections/
+    │   │   └── page.tsx                 # Inspections page
+    │   ├── layout.tsx                   # Root layout
+    │   └── globals.css                  # Global styles
+    ├── components/
+    │   ├── layout/                      # Layout components
+    │   │   ├── sidebar.tsx
+    │   │   └── header.tsx
+    │   ├── transformers/                # Transformer components
+    │   │   ├── transformer-list.tsx
+    │   │   ├── transformer-details.tsx
+    │   │   ├── add-transformer-dialog.tsx
+    │   │   ├── edit-transformer-dialog.tsx
+    │   │   └── baseline-image-card.tsx
+    │   ├── inspections/                 # Inspection components
+    │   │   ├── inspection-list.tsx
+    │   │   ├── inspection-details.tsx
+    │   │   ├── add-inspection-dialog.tsx
+    │   │   ├── edit-inspection-dialog.tsx
+    │   │   ├── thermal-image-upload.tsx
+    │   │   └── thermal-image-canvas.tsx
+    │   ├── ui/                          # UI components (shadcn/ui)
+    │   │   ├── button.tsx
+    │   │   ├── card.tsx
+    │   │   ├── dialog.tsx
+    │   │   ├── input.tsx
+    │   │   ├── alert-dialog.tsx
+    │   │   ├── confirm-dialog.tsx
+    │   │   └── ... (other UI components)
+    │   └── transformer-dashboard.tsx    # Main dashboard
+    ├── lib/
+    │   └── api.ts                       # API client & types
+    ├── public/                          # Static assets
+    ├── package.json                     # NPM dependencies
+    ├── tsconfig.json                    # TypeScript configuration
+    ├── tailwind.config.ts               # Tailwind CSS configuration
+    └── next.config.mjs                  # Next.js configuration
 ```
 
 ---
 
-## License
+## 📡 API Documentation
 
-This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
-Use Node.js v18+ for best compatibility.
+### Base URL
+
+```
+http://localhost:8080/api
+```
+
+### Transformers API
+
+#### Get All Transformers
+```http
+GET /transformers
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "transformerNo": "AZ-1234",
+    "poleNo": "EN-125-B",
+    "region": "colombo",
+    "type": "Distribution",
+    "capacity": 100.0,
+    "noOfFeeders": 4,
+    "status": "Operational",
+    "locationDetails": "Pitakotte",
+    "sunnyBaselineImageUrl": "/uploads/...",
+    "cloudyBaselineImageUrl": "/uploads/...",
+    "rainyBaselineImageUrl": "/uploads/...",
+    "createdAt": "2025-10-03T10:00:00Z",
+    "updatedAt": "2025-10-03T10:00:00Z"
+  }
+]
+```
+
+#### Get Transformer by ID
+```http
+GET /transformers/{id}
+```
+
+#### Create Transformer
+```http
+POST /transformers
+Content-Type: application/json
+
+{
+  "transformerNo": "AZ-1234",
+  "poleNo": "EN-125-B",
+  "region": "colombo",
+  "type": "Distribution",
+  "capacity": 100.0,
+  "noOfFeeders": 4,
+  "locationDetails": "Pitakotte",
+  "status": "Operational"
+}
+```
+
+#### Update Transformer
+```http
+PUT /transformers/{id}
+Content-Type: application/json
+
+{
+  "status": "Maintenance",
+  "capacity": 150.0
+}
+```
+
+#### Delete Transformer
+```http
+DELETE /transformers/{id}
+```
+
+**Response:** 200 OK (deletes all associated inspections and images)
+
+#### Upload Baseline Image
+```http
+POST /transformers/{id}/baseline-image
+Content-Type: multipart/form-data
+
+weatherCondition: Sunny | Cloudy | Rainy
+file: [image file]
+```
+
+#### Get Baseline Image URL
+```http
+GET /transformers/{id}/baseline-image?weatherCondition=Sunny
+```
+
+**Response:**
+```
+/uploads/filename.jpg
+```
+
+---
+
+### Inspections API
+
+#### Get All Inspections
+```http
+GET /inspections
+```
+
+**Optional Query Parameter:**
+```http
+GET /inspections?transformerId=uuid
+```
+
+**Response:** (sorted by createdAt DESC)
+```json
+[
+  {
+    "id": "uuid",
+    "inspectionNo": "INSP-1234567890",
+    "transformer": { ... },
+    "inspectedDate": "2025-10-03T10:00:00Z",
+    "maintenanceDate": "2025-10-10T10:00:00Z",
+    "status": "In Progress",
+    "inspectedBy": "John Doe",
+    "weatherCondition": "Sunny",
+    "createdAt": "2025-10-03T09:00:00Z",
+    "updatedAt": "2025-10-03T09:00:00Z",
+    "transformerId": "uuid",
+    "transformerNo": "AZ-1234"
+  }
+]
+```
+
+#### Get Inspection by ID
+```http
+GET /inspections/{id}
+```
+
+#### Create Inspection
+```http
+POST /inspections
+Content-Type: application/json
+
+{
+  "inspectionNo": "INSP-1234567890",
+  "transformerId": "uuid",
+  "inspectedDate": "2025-10-03T10:00:00Z",
+  "maintenanceDate": "2025-10-10T10:00:00Z",
+  "status": "In Progress",
+  "inspectedBy": "John Doe",
+  "weatherCondition": "Sunny"
+}
+```
+
+#### Update Inspection
+```http
+PUT /inspections/{id}
+Content-Type: application/json
+
+{
+  "status": "Completed",
+  "inspectedBy": "Jane Smith",
+  "inspectedDate": "2025-10-03T11:00:00Z"
+}
+```
+
+**Note:** Only provided fields will be updated; others remain unchanged.
+
+#### Delete Inspection
+```http
+DELETE /inspections/{id}
+```
+
+**Response:** 200 OK (deletes all associated thermal images)
+
+---
+
+### Thermal Images API
+
+#### Get Images for Inspection
+```http
+GET /thermal-images?inspectionId=uuid
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "uuid",
+    "inspection": { ... },
+    "imageUrl": "/uploads/filename.jpg",
+    "imageType": "Baseline | Maintenance",
+    "weatherCondition": "Sunny",
+    "anomalyDetected": true,
+    "detectionData": "[{...}]",
+    "uploadedAt": "2025-10-03T10:00:00Z"
+  }
+]
+```
+
+#### Upload Thermal Image
+```http
+POST /thermal-images/upload
+Content-Type: multipart/form-data
+
+inspectionId: uuid
+file: [image file]
+imageType: Baseline | Maintenance
+weatherCondition: Sunny | Cloudy | Rainy (optional)
+```
+
+**Response:**
+```json
+{
+  "id": "uuid",
+  "imageUrl": "/uploads/filename.jpg",
+  "detectionData": "[{detection_id, class, confidence, x, y, width, height}]",
+  "anomalyDetected": true
+}
+```
+
+#### Update Detection Data
+```http
+PUT /thermal-images/{id}/detections
+Content-Type: application/json
+
+[
+  {
+    "detection_id": "string",
+    "class": "faulty",
+    "confidence": 0.95,
+    "x": 150,
+    "y": 200,
+    "width": 50,
+    "height": 60
+  }
+]
+```
+
+**Response:** Updated ThermalImage object
+
+---
+
+## 🎨 Key Features Deep Dive
+
+### 1. Interactive Bounding Box Editor
+
+The thermal image canvas provides a professional annotation interface:
+
+**Features:**
+- **Selection**: Click any bounding box to select it
+- **Movement**: Drag the box to reposition
+- **Resizing**: Grab corners or edges to resize
+- **Real-time Coordinates**: Watch X, Y, width, height update as you edit
+- **Color Coding**: Each anomaly class has a unique color
+- **Zoom & Pan**: Navigate large images easily
+
+**Controls:**
+- Zoom In/Out buttons
+- Mouse wheel zoom
+- Click and drag to pan
+- Reset view button
+- Edit/Save mode toggle
+
+### 2. Multi-Stage Progress Bar
+
+Visual feedback during image analysis:
+
+1. **Upload Stage** (0-40%): Green progress bar
+2. **AI Analysis** (40-70%): Blue progress with "AI analyzing..." message
+3. **Fetching Results** (70-100%): Final stage
+4. **Complete**: Green checkmark with success message
+
+### 3. Detection Metadata Panel
+
+Comprehensive anomaly information:
+
+**Summary View:**
+- Grid of all detections
+- Quick stats for each anomaly
+- Click to view details
+
+**Detail View:**
+- Anomaly class with color indicator
+- Confidence score and severity
+- Exact pixel coordinates
+- Size dimensions and area
+- Real-time updates in edit mode
+
+### 4. Cascade Delete System
+
+Maintains database integrity:
+
+```
+Delete Transformer
+  └─ Deletes all Inspections
+      └─ Deletes all Thermal Images
+```
+
+All operations are atomic - either everything succeeds or nothing changes.
+
+### 5. Weather-Based Baseline Comparison
+
+Smart image comparison:
+- Stores 3 baseline images per transformer (Sunny, Cloudy, Rainy)
+- Automatically selects matching weather baseline
+- Side-by-side comparison view
+- Highlights differences effectively
+
+---
+
+## 🗄️ Database Schema
+
+### Transformers Table
+
+```sql
+CREATE TABLE transformers (
+    id                          UUID PRIMARY KEY,
+    transformer_no              VARCHAR(255) UNIQUE NOT NULL,
+    pole_no                     VARCHAR(255) NOT NULL,
+    region                      VARCHAR(255) NOT NULL,
+    type                        VARCHAR(255) NOT NULL,
+    location_details            TEXT,
+    capacity                    DECIMAL(10,2),
+    no_of_feeders               INT,
+    status                      VARCHAR(50),
+    last_inspected              TIMESTAMP,
+    sunny_baseline_image_url    VARCHAR(500),
+    cloudy_baseline_image_url   VARCHAR(500),
+    rainy_baseline_image_url    VARCHAR(500),
+    created_at                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+### Inspections Table
+
+```sql
+CREATE TABLE inspections (
+    id                  UUID PRIMARY KEY,
+    inspection_no       VARCHAR(255) UNIQUE NOT NULL,
+    transformer_id      UUID NOT NULL,
+    inspected_date      TIMESTAMP NOT NULL,
+    maintenance_date    TIMESTAMP,
+    status              VARCHAR(50),
+    inspected_by        VARCHAR(255),
+    weather_condition   VARCHAR(50),
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (transformer_id) REFERENCES transformers(id) ON DELETE CASCADE
+);
+```
+
+### Thermal Images Table
+
+```sql
+CREATE TABLE thermal_images (
+    id                  UUID PRIMARY KEY,
+    inspection_id       UUID NOT NULL,
+    image_url           VARCHAR(500) NOT NULL,
+    image_type          VARCHAR(50) NOT NULL,
+    weather_condition   VARCHAR(50),
+    temperature_reading DECIMAL(5,2),
+    anomaly_detected    BOOLEAN,
+    detection_data      TEXT,
+    uploaded_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (inspection_id) REFERENCES inspections(id) ON DELETE CASCADE
+);
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Backend Issues
+
+#### Port 8080 Already in Use
+
+```bash
+# Kill process on port 8080
+lsof -ti:8080 | xargs kill -9
+
+# Or use a different port
+mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
+```
+
+#### Database Connection Failed
+
+1. Ensure Docker is running: `docker ps`
+2. Check MySQL is up: `docker-compose ps`
+3. Verify credentials in `application.properties`
+4. Test connection: `mysql -h localhost -u root -p`
+
+#### Maven Build Fails
+
+```bash
+# Clean and rebuild
+mvn clean install -U
+
+# Skip tests if needed
+mvn clean install -DskipTests
+```
+
+#### Hibernate/JPA Errors
+
+- Check entity relationships
+- Verify `@JsonIgnore` on collections
+- Ensure `fetch = FetchType.LAZY` on collections
+- Review cascade settings
+
+### Frontend Issues
+
+#### NPM Install Fails
+
+```bash
+# Use legacy peer deps
+npm install --legacy-peer-deps
+
+# Clear cache
+npm cache clean --force
+npm install
+```
+
+#### Build Errors
+
+```bash
+# Delete node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
+
+#### API Connection Issues
+
+1. Verify backend is running: `curl http://localhost:8080/api/transformers`
+2. Check CORS configuration in `WebConfig.java`
+3. Verify API_BASE_URL in `frontend/lib/api.ts`
+
+### Common Errors
+
+#### "Failed to upload thermal image"
+
+- Check file size (max 10MB)
+- Verify AI service is running
+- Check backend logs for serialization errors
+- Ensure inspection exists
+
+#### "Failed to delete inspection"
+
+- Check for database constraints
+- Verify cascade delete is configured
+- Review backend console for errors
+
+#### Hydration Mismatch (React)
+
+- Clear browser cache
+- Disable browser extensions (Grammarly, etc.)
+- Check for SSR/CSR differences
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Test thoroughly
+5. Commit: `git commit -m 'Add amazing feature'`
+6. Push: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+### Code Style
+
+**Backend (Java):**
+- Follow Google Java Style Guide
+- Use meaningful variable names
+- Add JavaDoc for public methods
+- Keep methods small and focused
+
+**Frontend (TypeScript/React):**
+- Use TypeScript strict mode
+- Follow React best practices
+- Use functional components with hooks
+- Keep components small and reusable
+- Use Tailwind CSS for styling
+
+### Commit Messages
+
+Follow conventional commits:
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation changes
+- `style:` Code style changes
+- `refactor:` Code refactoring
+- `test:` Test updates
+- `chore:` Build/config changes
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) file for details.
+
+---
+
+## 👥 Authors
+
+- **Your Name** - *Initial work* - [GitHub Profile](https://github.com/yourusername)
+
+---
+
+## 🙏 Acknowledgments
+
+- Spring Boot team for the excellent framework
+- Next.js team for the React framework
+- shadcn for the beautiful UI components
+- OpenAI for development assistance
+- All contributors who helped improve this project
+
+---
+
+## 📞 Support
+
+For issues and questions:
+- 📧 Email: support@example.com
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/transformer-management/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/transformer-management/discussions)
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you find it helpful!**
+
+Made with ❤️ by the Oversight Team
+
+</div>
