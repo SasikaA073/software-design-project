@@ -55,8 +55,8 @@ export function AddTransformerDialog({ open, onOpenChange }: AddTransformerDialo
         poleNo: formData.poleNo,
         region: formData.region,
         type,
-        capacity: Math.random()* 10000, // Default, you can add this to the form if needed
-        noOfFeeders: Math.floor(Math.random() * 10), // Default, you can add this to the form if needed
+        capacity: 100, // Default capacity in kVA
+        noOfFeeders: 4, // Default number of feeders
         locationDetails: formData.locationDetails,
         status: "Operational", // Default status
       }

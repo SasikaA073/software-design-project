@@ -6,6 +6,7 @@ import com.example.transformermanagement.service.InspectionService;
 import com.example.transformermanagement.service.TransformerService;
 import com.example.transformermanagement.dto.InspectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,21 +53,45 @@ public class InspectionController {
     @PutMapping("/{id}")
     public Inspection updateInspection(@PathVariable java.util.UUID id, @RequestBody InspectionRequest request) {
         Inspection inspection = inspectionService.getInspectionById(id).orElseThrow();
-        if (request.transformerId() != null) {
-            Transformer transformer = transformerService.getTransformerById(request.transformerId()).orElseThrow();
-            inspection.setTransformer(transformer);
+        
+        // Only update the fields that are provided and not null
+        if (request.inspectionNo() != null) {
+            inspection.setInspectionNo(request.inspectionNo());
         }
-        inspection.setInspectionNo(request.inspectionNo());
-        inspection.setInspectedDate(request.inspectedDate());
-        inspection.setMaintenanceDate(request.maintenanceDate());
-        inspection.setStatus(request.status());
-        inspection.setInspectedBy(request.inspectedBy());
-        inspection.setWeatherCondition(request.weatherCondition());
+        if (request.inspectedDate() != null) {
+            inspection.setInspectedDate(request.inspectedDate());
+        }
+        if (request.maintenanceDate() != null) {
+            inspection.setMaintenanceDate(request.maintenanceDate());
+        }
+        if (request.status() != null) {
+            inspection.setStatus(request.status());
+        }
+        if (request.inspectedBy() != null) {
+            inspection.setInspectedBy(request.inspectedBy());
+        }
+        if (request.weatherCondition() != null) {
+            inspection.setWeatherCondition(request.weatherCondition());
+        }
+        
+        // Don't change transformer relationship during update
+        // if (request.transformerId() != null) {
+        //     Transformer transformer = transformerService.getTransformerById(request.transformerId()).orElseThrow();
+        //     inspection.setTransformer(transformer);
+        // }
+        
         return inspectionService.saveInspection(inspection);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteInspection(@PathVariable java.util.UUID id) {
-        inspectionService.deleteInspection(id);
+    public ResponseEntity<Void> deleteInspection(@PathVariable java.util.UUID id) {
+        try {
+            inspectionService.deleteInspection(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.err.println("Failed to delete inspection: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Filter, Eye, MapPin, Zap } from "lucide-react"
+import { Plus, Filter, Eye, MapPin, Zap, Pencil, Trash2 } from "lucide-react"
 import { AddTransformerDialog } from "./add-transformer-dialog"
+import { EditTransformerDialog } from "./edit-transformer-dialog"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { Transformer } from "@/components/transformer-dashboard"
 import { api } from "@/lib/api"
+import type { TransformerData } from "@/lib/api"
 
 interface TransformerListProps {
   onViewTransformer: (id: string) => void
@@ -16,10 +19,14 @@ interface TransformerListProps {
 
 export function TransformerList({ onViewTransformer }: TransformerListProps) {
   const [showAddDialog, setShowAddDialog] = useState(false)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [selectedTransformer, setSelectedTransformer] = useState<TransformerData | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [Transformers, setTransformers] = useState<Transformer[]>([])
   const [loading, setLoading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Fetch transformers from Supabase
@@ -44,12 +51,42 @@ export function TransformerList({ onViewTransformer }: TransformerListProps) {
     fetchTransformers()
   }, [])
 
-  // Refetch when dialog closes (after add)
+  // Refetch when dialog closes (after add/edit)
   useEffect(() => {
-    if (!showAddDialog) {
+    if (!showAddDialog && !showEditDialog) {
       fetchTransformers()
     }
-  }, [showAddDialog])
+  }, [showAddDialog, showEditDialog])
+
+  const handleEdit = (transformer: Transformer) => {
+    setSelectedTransformer(transformer as TransformerData)
+    setShowEditDialog(true)
+  }
+
+  const handleDeleteClick = (transformer: Transformer) => {
+    setSelectedTransformer(transformer as TransformerData)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedTransformer?.id) return
+    
+    setDeleting(true)
+    try {
+      const res = await api.deleteTransformer(selectedTransformer.id)
+      if (res.success) {
+        await fetchTransformers()
+        setShowDeleteDialog(false)
+        setSelectedTransformer(null)
+      } else {
+        setError(res.message || "Failed to delete transformer.")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to delete transformer.")
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   const filteredTransformers = Transformers.filter((transformer) => {
     const matchesSearch =
@@ -133,15 +170,35 @@ export function TransformerList({ onViewTransformer }: TransformerListProps) {
                     </div>
                   </div>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onViewTransformer(transformer.id)}
-                  className="gap-2"
-                >
-                  <Eye className="w-4 h-4" />
-                  View
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onViewTransformer(transformer.id)}
+                    className="gap-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleEdit(transformer)}
+                    className="gap-2"
+                  >
+                    <Pencil className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteClick(transformer)}
+                    className="gap-2 text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
@@ -149,6 +206,27 @@ export function TransformerList({ onViewTransformer }: TransformerListProps) {
       </Card>
 
       <AddTransformerDialog open={showAddDialog} onOpenChange={setShowAddDialog} />
+      
+      {selectedTransformer && (
+        <>
+          <EditTransformerDialog 
+            open={showEditDialog} 
+            onOpenChange={setShowEditDialog}
+            transformer={selectedTransformer}
+            onSuccess={fetchTransformers}
+          />
+          
+          <ConfirmDialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
+            title="Delete Transformer"
+            description={`Are you sure you want to delete transformer "${selectedTransformer.transformerNo}"? This action cannot be undone and will also delete all associated inspections and thermal images.`}
+            onConfirm={handleDeleteConfirm}
+            confirmText={deleting ? "Deleting..." : "Delete"}
+            variant="destructive"
+          />
+        </>
+      )}
     </div>
   )
 }

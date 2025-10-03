@@ -7,9 +7,12 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ArrowLeft, Upload, ImageIcon, Thermometer } from "lucide-react"
+import { ArrowLeft, Upload, ImageIcon, Thermometer, Pencil, Trash2 } from "lucide-react"
 import { ThermalImageUpload } from "./thermal-image-upload"
-import type { InspectionData, ThermalImageData } from "@/lib/api"
+import { ThermalImageCanvas, DetectionMetadata } from "./thermal-image-canvas"
+import { EditInspectionDialog } from "./edit-inspection-dialog"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
+import type { InspectionData, ThermalImageData, Detection } from "@/lib/api"
 import { api } from "@/lib/api"
 
 interface InspectionDetailsProps {
@@ -24,11 +27,18 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
   const [weatherCondition, setWeatherCondition] = useState<"Sunny" | "Cloudy" | "Rainy">("Sunny")
   const [uploadProgress, setUploadProgress] = useState(0)
   const [showUpload, setShowUpload] = useState(false)
   const [uploadingBaseline, setUploadingBaseline] = useState(false)
   const [uploadingMaintenance, setUploadingMaintenance] = useState(false)
+  const [aiAnalysisComplete, setAiAnalysisComplete] = useState(false)
+  const [selectedDetectionIndex, setSelectedDetectionIndex] = useState<number | null>(null)
+  const [isEditMode, setIsEditMode] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -124,6 +134,17 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const baselineImage = useMemo(() => images.find(img => img.imageType === "Baseline"), [images])
   const maintenanceImage = useMemo(() => images.find(img => img.imageType === "Maintenance"), [images])
 
+  // Parse detection data from maintenance image
+  const detections = useMemo(() => {
+    if (!maintenanceImage?.detectionData) return []
+    try {
+      return JSON.parse(maintenanceImage.detectionData) as Detection[]
+    } catch (e) {
+      console.error("Failed to parse detection data:", e)
+      return []
+    }
+  }, [maintenanceImage?.detectionData])
+
   // Check if we have any images
   const hasAnyImages = useMemo(() => images && images.length > 0, [images])
 
@@ -158,13 +179,44 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const handleUploadMaintenance = async (file: File, weatherCondition?: string) => {
     setUploadingMaintenance(true)
     setUploadProgress(0)
+    setAiAnalysisComplete(false)
+    
     try {
+      // Stage 1: Upload progress (0-40%)
+      setUploadProgress(10)
+      await new Promise(resolve => setTimeout(resolve, 300))
+      setUploadProgress(20)
+      await new Promise(resolve => setTimeout(resolve, 300))
+      setUploadProgress(30)
+      
       const res = await api.uploadThermalImage(inspectionId, file, "Maintenance", weatherCondition)
+      
       if (res.success) {
+        setUploadProgress(40)
+        
+        // Stage 2: AI Analysis simulation (40-70%)
+        setUploadProgress(50)
+        await new Promise(resolve => setTimeout(resolve, 500))
+        setUploadProgress(60)
+        await new Promise(resolve => setTimeout(resolve, 500))
+        setUploadProgress(70)
+        
+        // Stage 3: Fetching results (70-100%)
         const imgsRes = await api.getThermalImages(inspectionId)
+        setUploadProgress(80)
+        
         if (imgsRes.success) {
           setImages(imgsRes.data)
-          setShowUpload(false) // Close the dialog after successful upload
+          setUploadProgress(90)
+          await new Promise(resolve => setTimeout(resolve, 300))
+          setUploadProgress(100)
+          setAiAnalysisComplete(true)
+          
+          // Reset after 2 seconds
+          setTimeout(() => {
+            setUploadProgress(0)
+            setShowUpload(false)
+          }, 2000)
         }
       } else {
         setError(res.message || "Failed to upload maintenance image")
@@ -176,18 +228,81 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
     }
   }
 
+  // Handler for detection changes
+  const handleDetectionsChange = async (updatedDetections: Detection[]) => {
+    if (!maintenanceImage?.id) return
+
+    try {
+      const res = await api.updateDetectionData(maintenanceImage.id, updatedDetections)
+      if (res.success) {
+        // Refresh images to get updated data
+        const imgsRes = await api.getThermalImages(inspectionId)
+        if (imgsRes.success) {
+          setImages(imgsRes.data)
+        }
+      } else {
+        setError(res.message || "Failed to save detection data")
+      }
+    } catch (e: any) {
+      setError(e.message || "Failed to save detection data")
+    }
+  }
+
+  const fetchInspectionData = async () => {
+    const inspRes = await api.getInspection(inspectionId)
+    if (inspRes.success) {
+      setInspection(inspRes.data)
+    }
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!inspection?.id) return
+    
+    setDeleting(true)
+    try {
+      const res = await api.deleteInspection(inspection.id)
+      if (res.success) {
+        onBack() // Go back to list after deleting
+      } else {
+        setError(res.message || "Failed to delete inspection.")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to delete inspection.")
+    } finally {
+      setDeleting(false)
+      setShowDeleteDialog(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">{inspection?.inspectionNo || "Inspection"}</h1>
-          <p className="text-muted-foreground">
-            {inspection?.transformerNo || ""}
-            {inspection?.inspectedDate ? ` - ${formatDate(inspection.inspectedDate)}` : ""}
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{inspection?.inspectionNo || "Inspection"}</h1>
+            <p className="text-muted-foreground">
+              {inspection?.transformerNo || ""}
+              {inspection?.inspectedDate ? ` - ${formatDate(inspection.inspectedDate)}` : ""}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setShowEditDialog(true)} className="gap-2">
+            <Pencil className="w-4 h-4" />
+            Edit Inspection
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowDeleteDialog(true)} 
+            className="gap-2 text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </Button>
         </div>
       </div>
 
@@ -274,7 +389,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
                   <div>
                     <div className="mb-2 flex items-center justify-between">
                       <h4 className="font-semibold">Baseline Image ({weatherCondition})</h4>
-                      <Select value={weatherCondition} onValueChange={(value: string) => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
+                      {/* <Select value={weatherCondition} onValueChange={(value: string) => setWeatherCondition(value as "Sunny" | "Cloudy" | "Rainy")}>
                         <SelectTrigger className="w-32">
                           <SelectValue />
                         </SelectTrigger>
@@ -283,7 +398,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
                           <SelectItem value="Cloudy">Cloudy</SelectItem>
                           <SelectItem value="Rainy">Rainy</SelectItem>
                         </SelectContent>
-                      </Select>
+                      </Select> */}
                     </div>
                     {baselineImageUrl ? (
                       <div className="relative rounded-md overflow-hidden border">
@@ -311,19 +426,20 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
                     )}
                   </div>
 
-                  {/* Maintenance Image Section - With weather condition tagging */}
+                  {/* Maintenance Image Section - With weather condition tagging and bounding boxes */}
                   <div>
                     <div className="mb-2">
                       <h4 className="font-semibold">Maintenance Image</h4>
                     </div>
                     {maintenanceImage ? (
-                      <div className="relative rounded-md overflow-hidden border">
-                        <img
-                          src={maintenanceImage.imageUrl}
+                      <div>
+                        <ThermalImageCanvas
+                          imageUrl={maintenanceImage.imageUrl}
+                          detections={detections}
                           alt="Thermal Maintenance"
-                          className="w-full h-[360px] object-cover"
+                          onDetectionsChange={handleDetectionsChange}
                         />
-                        <div className="px-3 py-2 text-xs text-muted-foreground border-t">
+                        <div className="px-3 py-2 text-xs text-muted-foreground border border-t-0 rounded-b-md">
                           {maintenanceImage.weatherCondition && (
                             <span className="mr-2">Weather: {maintenanceImage.weatherCondition}</span>
                           )}
@@ -352,34 +468,145 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
         </Card>
       </div>
 
+      {/* Detection Metadata Section - Above Progress */}
+      {maintenanceImage && detections.length > 0 && (
+        <DetectionMetadata
+          detections={detections}
+          selectedBoxIndex={selectedDetectionIndex}
+          editMode={isEditMode}
+          onSelectDetection={setSelectedDetectionIndex}
+        />
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Progress</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
+            {/* Overall Progress Bar */}
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Thermal Image Upload</span>
+              <span className="text-sm font-medium">
+                {uploadProgress === 0 && !maintenanceImage && "Waiting for Upload"}
+                {uploadProgress > 0 && uploadProgress < 40 && "Uploading Image..."}
+                {uploadProgress >= 40 && uploadProgress < 70 && "Running AI Analysis..."}
+                {uploadProgress >= 70 && uploadProgress < 100 && "Processing Results..."}
+                {uploadProgress === 100 && "Complete!"}
+                {uploadProgress === 0 && maintenanceImage && "Inspection Ready"}
+              </span>
               <span className="text-sm text-muted-foreground">
-                {uploadProgress > 0 ? `${uploadProgress}%` : "Pending"}
+                {uploadProgress > 0 ? `${uploadProgress}%` : maintenanceImage ? "100%" : "0%"}
               </span>
             </div>
-            <Progress value={uploadProgress} className="h-2" />
+            <Progress 
+              value={uploadProgress > 0 ? uploadProgress : maintenanceImage ? 100 : 0} 
+              className="h-2" 
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            {/* Progress Steps */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+              {/* Step 1: Image Upload */}
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${uploadProgress > 0 ? "bg-primary" : "bg-muted"}`} />
-                <span className="text-sm">Thermal Image Upload</span>
+                <div className={`w-3 h-3 rounded-full transition-colors ${
+                  uploadProgress >= 40 || maintenanceImage 
+                    ? "bg-green-500" 
+                    : uploadProgress > 0 
+                    ? "bg-blue-500 animate-pulse" 
+                    : "bg-muted"
+                }`} />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Image Upload</span>
+                  <span className="text-xs text-muted-foreground">
+                    {uploadProgress >= 40 || maintenanceImage ? "Complete" : uploadProgress > 0 ? "In Progress" : "Pending"}
+                  </span>
+                </div>
               </div>
+
+              {/* Step 2: AI Analysis */}
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${uploadProgress >= 100 ? "bg-primary" : "bg-muted"}`} />
-                <span className="text-sm">AI Analysis</span>
+                <div className={`w-3 h-3 rounded-full transition-colors ${
+                  uploadProgress >= 70 || (maintenanceImage && detections.length > 0)
+                    ? "bg-green-500" 
+                    : uploadProgress >= 40 
+                    ? "bg-blue-500 animate-pulse" 
+                    : "bg-muted"
+                }`} />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">AI Analysis</span>
+                  <span className="text-xs text-muted-foreground">
+                    {uploadProgress >= 70 || (maintenanceImage && detections.length > 0)
+                      ? "Complete" 
+                      : uploadProgress >= 40 
+                      ? "Analyzing..." 
+                      : "Pending"}
+                  </span>
+                </div>
               </div>
+
+              {/* Step 3: Detection Results */}
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full bg-muted`} />
-                <span className="text-sm">Thermal Image Review</span>
+                <div className={`w-3 h-3 rounded-full transition-colors ${
+                  uploadProgress === 100 || (maintenanceImage && detections.length > 0)
+                    ? "bg-green-500" 
+                    : uploadProgress >= 70 
+                    ? "bg-blue-500 animate-pulse" 
+                    : "bg-muted"
+                }`} />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Detection Results</span>
+                  <span className="text-xs text-muted-foreground">
+                    {maintenanceImage && detections.length > 0 
+                      ? `${detections.length} detected` 
+                      : uploadProgress >= 70 
+                      ? "Processing..." 
+                      : "Pending"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Step 4: Review */}
+              <div className="flex items-center gap-3">
+                <div className={`w-3 h-3 rounded-full transition-colors ${
+                  maintenanceImage && detections.length > 0
+                    ? "bg-green-500" 
+                    : "bg-muted"
+                }`} />
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">Ready for Review</span>
+                  <span className="text-xs text-muted-foreground">
+                    {maintenanceImage && detections.length > 0 ? "Available" : "Waiting"}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Summary Stats */}
+            {maintenanceImage && (
+              <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div>
+                    <p className="text-2xl font-bold text-primary">{maintenanceImage ? "✓" : "—"}</p>
+                    <p className="text-xs text-muted-foreground">Image Uploaded</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-primary">{detections.length}</p>
+                    <p className="text-xs text-muted-foreground">Anomalies Found</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-primary">
+                      {detections.filter(d => d.class === "faulty").length}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Faulty</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-orange-500">
+                      {detections.filter(d => d.class === "potentially_faulty").length}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Potential</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -400,6 +627,27 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           />
         </DialogContent>
       </Dialog>
+
+      {inspection && (
+        <>
+          <EditInspectionDialog 
+            open={showEditDialog} 
+            onOpenChange={setShowEditDialog}
+            inspection={inspection}
+            onSuccess={fetchInspectionData}
+          />
+          
+          <ConfirmDialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
+            title="Delete Inspection"
+            description={`Are you sure you want to delete inspection "${inspection.inspectionNo}"? This action cannot be undone and will also delete all ${images.length} associated thermal image(s).`}
+            onConfirm={handleDeleteConfirm}
+            confirmText={deleting ? "Deleting..." : "Delete"}
+            variant="destructive"
+          />
+        </>
+      )}
     </div>
   )
 }

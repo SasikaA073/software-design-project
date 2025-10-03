@@ -1,0 +1,678 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/opt/homebrew/Cellar/maven/3.9.11/libexec/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< com.example:transformer-management >-----------------
+[INFO] Building transformer-management 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.0:run (default-cli) > test-compile @ transformer-management >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ transformer-management ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ transformer-management ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 21 source files with javac [debug parameters release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ transformer-management ---
+[INFO] skip non existing resourceDirectory /Users/sasika/my_projects/software-design-project/backend/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ transformer-management ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.3.0:run (default-cli) < test-compile @ transformer-management <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.0:run (default-cli) @ transformer-management ---
+[INFO] Attaching agents: []
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2025-10-03T15:23:42.083+05:30  INFO 3245 --- [           main] c.e.t.TransformerManagementApplication   : Starting TransformerManagementApplication using Java 24.0.2 with PID 3245 (/Users/sasika/my_projects/software-design-project/backend/target/classes started by sasika in /Users/sasika/my_projects/software-design-project/backend)
+2025-10-03T15:23:42.084+05:30  INFO 3245 --- [           main] c.e.t.TransformerManagementApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-10-03T15:23:42.415+05:30  INFO 3245 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-03T15:23:42.450+05:30  INFO 3245 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 30 ms. Found 4 JPA repository interfaces.
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/Users/sasika/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.24/tomcat-embed-core-10.1.24.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2025-10-03T15:23:42.762+05:30  INFO 3245 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-03T15:23:42.770+05:30  INFO 3245 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-03T15:23:42.770+05:30  INFO 3245 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-10-03T15:23:42.802+05:30  INFO 3245 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-10-03T15:23:42.803+05:30  INFO 3245 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 694 ms
+2025-10-03T15:23:42.914+05:30  INFO 3245 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-03T15:23:42.942+05:30  INFO 3245 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2025-10-03T15:23:42.960+05:30  INFO 3245 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-03T15:23:43.135+05:30  INFO 3245 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-03T15:23:43.156+05:30  INFO 3245 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-03T15:23:43.416+05:30  INFO 3245 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@60a01cb
+2025-10-03T15:23:43.417+05:30  INFO 3245 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-03T15:23:43.978+05:30  INFO 3245 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: alter table thermal_images modify column detection_data TEXT
+2025-10-03T15:23:44.061+05:30  INFO 3245 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-03T15:23:44.222+05:30  INFO 3245 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-03T15:23:44.595+05:30  WARN 3245 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-03T15:23:44.796+05:30  INFO 3245 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-10-03T15:23:44.802+05:30  INFO 3245 --- [           main] c.e.t.TransformerManagementApplication   : Started TransformerManagementApplication in 2.916 seconds (process running for 3.11)
+2025-10-03T15:26:50.442+05:30  INFO 3245 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-03T15:26:50.444+05:30  INFO 3245 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-10-03T15:26:50.447+05:30  INFO 3245 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 left join inspections i1_0 on i1_0.id=ti1_0.inspection_id left join transformers t1_0 on t1_0.id=i1_0.transformer_id where ti1_0.id=?
+Hibernate: update thermal_images set anomaly_detected=?,detection_data=?,image_type=?,image_url=?,inspection_id=?,temperature_reading=?,weather_condition=? where id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: 3efce49d-591d-4a9e-ada9-7c612ac72ceb
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1235
+  - Sunny baseline: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 left join inspections i1_0 on i1_0.id=ti1_0.inspection_id left join transformers t1_0 on t1_0.id=i1_0.transformer_id where ti1_0.id=?
+Hibernate: update thermal_images set anomaly_detected=?,detection_data=?,image_type=?,image_url=?,inspection_id=?,temperature_reading=?,weather_condition=? where id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 left join inspections i1_0 on i1_0.id=ti1_0.inspection_id left join transformers t1_0 on t1_0.id=i1_0.transformer_id where ti1_0.id=?
+Hibernate: update thermal_images set anomaly_detected=?,detection_data=?,image_type=?,image_url=?,inspection_id=?,temperature_reading=?,weather_condition=? where id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: 3efce49d-591d-4a9e-ada9-7c612ac72ceb
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1235
+  - Sunny baseline: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 left join inspections i1_0 on i1_0.id=ti1_0.inspection_id left join transformers t1_0 on t1_0.id=i1_0.transformer_id where ti1_0.id=?
+Hibernate: update thermal_images set anomaly_detected=?,detection_data=?,image_type=?,image_url=?,inspection_id=?,temperature_reading=?,weather_condition=? where id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 left join inspections i1_0 on i1_0.id=ti1_0.inspection_id left join transformers t1_0 on t1_0.id=i1_0.transformer_id where ti1_0.id=?
+Hibernate: update thermal_images set anomaly_detected=?,detection_data=?,image_type=?,image_url=?,inspection_id=?,temperature_reading=?,weather_condition=? where id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: 3efce49d-591d-4a9e-ada9-7c612ac72ceb
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1235
+  - Sunny baseline: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Hibernate: delete from transformers where id=?
+2025-10-03T15:43:58.898+05:30  WARN 3245 --- [nio-8080-exec-2] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 1451, SQLState: 23000
+2025-10-03T15:43:58.899+05:30 ERROR 3245 --- [nio-8080-exec-2] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`inspections`, CONSTRAINT `FKdd9p95vu842eqnl7na60jbupr` FOREIGN KEY (`transformer_id`) REFERENCES `transformers` (`id`))
+2025-10-03T15:43:58.920+05:30 ERROR 3245 --- [nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.DataIntegrityViolationException: could not execute statement [Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`inspections`, CONSTRAINT `FKdd9p95vu842eqnl7na60jbupr` FOREIGN KEY (`transformer_id`) REFERENCES `transformers` (`id`))] [delete from transformers where id=?]; SQL [delete from transformers where id=?]; constraint [null]] with root cause
+
+java.sql.SQLIntegrityConstraintViolationException: Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`inspections`, CONSTRAINT `FKdd9p95vu842eqnl7na60jbupr` FOREIGN KEY (`transformer_id`) REFERENCES `transformers` (`id`))
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:118) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1054) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1003) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1312) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:988) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.performNonBatchedMutation(AbstractMutationExecutor.java:134) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:55) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.persister.entity.mutation.AbstractDeleteCoordinator.doStaticDelete(AbstractDeleteCoordinator.java:279) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.persister.entity.mutation.AbstractDeleteCoordinator.delete(AbstractDeleteCoordinator.java:87) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.action.internal.EntityDeleteAction.execute(EntityDeleteAction.java:131) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:632) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:499) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:371) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:41) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562) ~[spring-orm-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:676) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:426) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165) ~[spring-data-jpa-3.3.0.jar:3.3.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.1.8.jar:6.1.8]
+	at jdk.proxy2/jdk.proxy2.$Proxy127.deleteById(Unknown Source) ~[na:na]
+	at com.example.transformermanagement.service.TransformerService.deleteTransformer(TransformerService.java:39) ~[classes/:na]
+	at com.example.transformermanagement.controller.TransformerController.deleteTransformer(TransformerController.java:49) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:936) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:596) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: delete from inspections where id=?
+2025-10-03T15:44:13.287+05:30  WARN 3245 --- [nio-8080-exec-8] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 1451, SQLState: 23000
+2025-10-03T15:44:13.287+05:30 ERROR 3245 --- [nio-8080-exec-8] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`thermal_images`, CONSTRAINT `FK5w6vpcnvpiar8kculwo4nvuqp` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`))
+2025-10-03T15:44:13.293+05:30 ERROR 3245 --- [nio-8080-exec-8] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.DataIntegrityViolationException: could not execute statement [Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`thermal_images`, CONSTRAINT `FK5w6vpcnvpiar8kculwo4nvuqp` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`))] [delete from inspections where id=?]; SQL [delete from inspections where id=?]; constraint [null]] with root cause
+
+java.sql.SQLIntegrityConstraintViolationException: Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`thermal_images`, CONSTRAINT `FK5w6vpcnvpiar8kculwo4nvuqp` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`))
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:118) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1054) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1003) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1312) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:988) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.performNonBatchedMutation(AbstractMutationExecutor.java:134) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:55) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.persister.entity.mutation.AbstractDeleteCoordinator.doStaticDelete(AbstractDeleteCoordinator.java:279) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.persister.entity.mutation.AbstractDeleteCoordinator.delete(AbstractDeleteCoordinator.java:87) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.action.internal.EntityDeleteAction.execute(EntityDeleteAction.java:131) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:632) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:499) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:371) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:41) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562) ~[spring-orm-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:676) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:426) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165) ~[spring-data-jpa-3.3.0.jar:3.3.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.1.8.jar:6.1.8]
+	at jdk.proxy2/jdk.proxy2.$Proxy126.deleteById(Unknown Source) ~[na:na]
+	at com.example.transformermanagement.service.InspectionService.deleteInspection(InspectionService.java:37) ~[classes/:na]
+	at com.example.transformermanagement.controller.InspectionController.deleteInspection(InspectionController.java:70) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:936) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:596) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Cloudy
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: null
+=== END ===
+
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Cloudy
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: null
+=== END ===
+
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Rainy
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+Returning image URL: null
+=== END ===
+
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: 3efce49d-591d-4a9e-ada9-7c612ac72ceb
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1235
+  - Sunny baseline: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/7aa44577-7ef7-40df-ab33-eeb4f9acd0b6_3efce49d-591d-4a9e-ada9-7c612ac72ceb_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: select ti1_0.id,ti1_0.anomaly_detected,ti1_0.detection_data,ti1_0.image_type,ti1_0.image_url,ti1_0.inspection_id,ti1_0.temperature_reading,ti1_0.uploaded_at,ti1_0.weather_condition from thermal_images ti1_0 where ti1_0.inspection_id=?
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+
+=== GET BASELINE IMAGE URL ===
+Transformer ID: ea82e5ac-d0e9-4094-bf59-3d31f8e8812a
+Weather Condition: Sunny
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0 where t1_0.id=?
+Transformer found: AZ-1234
+  - Sunny baseline: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+  - Cloudy baseline: null
+  - Rainy baseline: null
+Returning image URL: /uploads/0090ca0b-af06-4afa-a597-2cf137b6e7c6_ea82e5ac-d0e9-4094-bf59-3d31f8e8812a_baseline_sunny.jpg
+=== END ===
+
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at from transformers t1_0
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id
+Hibernate: select i1_0.id,i1_0.created_at,i1_0.inspected_by,i1_0.inspected_date,i1_0.inspection_no,i1_0.maintenance_date,i1_0.status,t1_0.id,t1_0.capacity,t1_0.cloudy_baseline_image_url,t1_0.created_at,t1_0.last_inspected,t1_0.location_details,t1_0.no_of_feeders,t1_0.pole_no,t1_0.rainy_baseline_image_url,t1_0.region,t1_0.status,t1_0.sunny_baseline_image_url,t1_0.transformer_no,t1_0.type,t1_0.updated_at,i1_0.updated_at,i1_0.weather_condition from inspections i1_0 left join transformers t1_0 on t1_0.id=i1_0.transformer_id where i1_0.id=?
+Hibernate: delete from inspections where id=?
+2025-10-03T15:51:57.358+05:30  WARN 3245 --- [nio-8080-exec-2] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 1451, SQLState: 23000
+2025-10-03T15:51:57.358+05:30 ERROR 3245 --- [nio-8080-exec-2] o.h.engine.jdbc.spi.SqlExceptionHelper   : Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`thermal_images`, CONSTRAINT `FK5w6vpcnvpiar8kculwo4nvuqp` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`))
+2025-10-03T15:51:57.368+05:30 ERROR 3245 --- [nio-8080-exec-2] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.dao.DataIntegrityViolationException: could not execute statement [Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`thermal_images`, CONSTRAINT `FK5w6vpcnvpiar8kculwo4nvuqp` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`))] [delete from inspections where id=?]; SQL [delete from inspections where id=?]; constraint [null]] with root cause
+
+java.sql.SQLIntegrityConstraintViolationException: Cannot delete or update a parent row: a foreign key constraint fails (`transformer_db`.`thermal_images`, CONSTRAINT `FK5w6vpcnvpiar8kculwo4nvuqp` FOREIGN KEY (`inspection_id`) REFERENCES `inspections` (`id`))
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:118) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:912) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1054) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1003) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1312) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:988) ~[mysql-connector-j-8.3.0.jar:8.3.0]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61) ~[HikariCP-5.1.0.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java) ~[HikariCP-5.1.0.jar:na]
+	at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.performNonBatchedMutation(AbstractMutationExecutor.java:134) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:55) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.persister.entity.mutation.AbstractDeleteCoordinator.doStaticDelete(AbstractDeleteCoordinator.java:279) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.persister.entity.mutation.AbstractDeleteCoordinator.delete(AbstractDeleteCoordinator.java:87) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.action.internal.EntityDeleteAction.execute(EntityDeleteAction.java:131) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:632) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.spi.ActionQueue.executeActions(ActionQueue.java:499) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.internal.AbstractFlushingEventListener.performExecutions(AbstractFlushingEventListener.java:371) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.internal.DefaultFlushEventListener.onFlush(DefaultFlushEventListener.java:41) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.doFlush(SessionImpl.java:1425) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.managedFlush(SessionImpl.java:487) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.flushBeforeTransactionCompletion(SessionImpl.java:2324) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.internal.SessionImpl.beforeTransactionCompletion(SessionImpl.java:1981) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl.beforeTransactionCompletion(JdbcCoordinatorImpl.java:439) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl.beforeCompletionCallback(JdbcResourceLocalTransactionCoordinatorImpl.java:169) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorImpl$TransactionDriverControlImpl.commit(JdbcResourceLocalTransactionCoordinatorImpl.java:267) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:101) ~[hibernate-core-6.5.2.Final.jar:6.5.2.Final]
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:562) ~[spring-orm-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:795) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:758) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:676) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:426) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165) ~[spring-data-jpa-3.3.0.jar:3.3.0]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.8.jar:6.1.8]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223) ~[spring-aop-6.1.8.jar:6.1.8]
+	at jdk.proxy2/jdk.proxy2.$Proxy126.deleteById(Unknown Source) ~[na:na]
+	at com.example.transformermanagement.service.InspectionService.deleteInspection(InspectionService.java:37) ~[classes/:na]
+	at com.example.transformermanagement.controller.InspectionController.deleteInspection(InspectionController.java:70) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:926) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:831) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:936) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:596) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.1.8.jar:6.1.8]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.24.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.1.8.jar:6.1.8]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:389) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:896) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.24.jar:10.1.24]
+	at java.base/java.lang.Thread.run(Thread.java:1447) ~[na:na]
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  30:44 min
+[INFO] Finished at: 2025-10-03T15:54:24+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.0:run (default-cli) on project transformer-management: Process terminated with exit code: 137 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

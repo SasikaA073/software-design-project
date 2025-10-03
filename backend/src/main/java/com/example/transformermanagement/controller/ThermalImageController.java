@@ -40,4 +40,14 @@ public class ThermalImageController {
         }
         return thermalImageService.saveThermalImage(inspectionId, thermalImage, file);
     }
+
+    @PutMapping("/{id}/detections")
+    public ResponseEntity<ThermalImage> updateDetections(@PathVariable UUID id,
+                                                         @RequestBody String detectionsJson) {
+        ThermalImage updated = thermalImageService.updateDetectionData(id, detectionsJson);
+        if (updated != null) {
+            return ResponseEntity.ok(updated);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.transformermanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -33,6 +34,10 @@ public class Transformer {
     private String sunnyBaselineImageUrl;
     private String cloudyBaselineImageUrl;
     private String rainyBaselineImageUrl;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "transformer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private java.util.List<Inspection> inspections = new java.util.ArrayList<>();
 
     @Column(updatable = false)
     private OffsetDateTime createdAt;
