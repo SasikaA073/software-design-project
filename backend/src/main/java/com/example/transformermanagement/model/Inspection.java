@@ -122,4 +122,14 @@ public class Inspection {
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    // Helper method to get transformer ID for JSON serialization
+    public java.util.UUID getTransformerId() {
+        return transformer != null ? transformer.getId() : null;
+    }
+
+    // Helper method to get transformer number for JSON serialization
+    public String getTransformerNo() {
+        return transformer != null ? transformer.getTransformerNo() : null;
+    }
 }

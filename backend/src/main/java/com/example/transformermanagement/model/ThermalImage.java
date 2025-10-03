@@ -20,6 +20,7 @@ public class ThermalImage {
 
     @Column(nullable = false)
     private String imageType; // Baseline or Maintenance
+    private String weatherCondition; // Sunny, Cloudy, Rainy (for maintenance images)
     private BigDecimal temperatureReading;
     private Boolean anomalyDetected;
 
@@ -62,6 +63,14 @@ public class ThermalImage {
 
     public void setImageType(String imageType) {
         this.imageType = imageType;
+    }
+
+    public String getWeatherCondition() {
+        return weatherCondition;
+    }
+
+    public void setWeatherCondition(String weatherCondition) {
+        this.weatherCondition = weatherCondition;
     }
 
     public BigDecimal getTemperatureReading() {

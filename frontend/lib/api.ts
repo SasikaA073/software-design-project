@@ -20,6 +20,9 @@ export interface TransformerData {
   locationDetails: string;
   status: "Operational" | "Maintenance" | "Offline";
   lastInspected?: string;
+  sunnyBaselineImageUrl?: string;
+  cloudyBaselineImageUrl?: string;
+  rainyBaselineImageUrl?: string;
 }
 
 export interface InspectionData {
@@ -44,6 +47,7 @@ export interface ThermalImageData {
   uploadedAt: string;
   temperatureReading?: number;
   anomalyDetected?: boolean;
+  weatherCondition?: "Sunny" | "Cloudy" | "Rainy";
 }
 
 export interface AlertData {
@@ -115,6 +119,60 @@ class ApiService {
       return { data: null, success: true };
     } catch (error: any) {
       return { data: null, success: false, message: error.message };
+    }
+  }
+
+  async uploadBaselineImage(transformerId: string, weatherCondition: string, file: File): Promise<ApiResponse<TransformerData>> {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("weatherCondition", weatherCondition);
+
+      const response = await fetch(`${API_BASE_URL}/transformers/${transformerId}/baseline-image`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload baseline image");
+      }
+
+      const data = await response.json();
+      return { data, success: true };
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message };
+    }
+  }
+
+  async getBaselineImageUrl(transformerId: string, weatherCondition: string): Promise<ApiResponse<string>> {
+    try {
+      const url = `${API_BASE_URL}/transformers/${transformerId}/baseline-image?weatherCondition=${weatherCondition}`;
+      console.log("🌐 Fetching baseline image from:", url);
+      
+      const response = await fetch(url);
+      console.log("📡 Response status:", response.status, response.statusText);
+      
+      if (!response.ok) {
+        console.log("❌ Response not OK:", response.status);
+        throw new Error("Failed to fetch baseline image URL");
+      }
+      
+      const relativeUrl = await response.text();
+      console.log("📄 Response text:", relativeUrl);
+      
+      // Static files are served from /uploads/ not /api/uploads/
+      // Don't add API_BASE_URL prefix for static file paths
+      const fullUrl = relativeUrl && relativeUrl.startsWith('/uploads/')
+        ? relativeUrl  // Use as-is for static files
+        : relativeUrl && relativeUrl.startsWith('/')
+        ? `${API_BASE_URL}${relativeUrl}`  // Add /api prefix for API paths
+        : relativeUrl;  // Use as-is if absolute URL
+      
+      console.log("🔗 Full URL:", fullUrl);
+      return { data: fullUrl, success: true };
+    } catch (error: any) {
+      console.error("❌ Error in getBaselineImageUrl:", error);
+      return { data: "", success: false, message: error.message };
     }
   }
 
@@ -200,13 +258,26 @@ class ApiService {
   async uploadThermalImage(
     inspectionId: string,
     file: File,
-  imageType: "Baseline" | "Maintenance"
+    imageType: "Baseline" | "Maintenance",
+    weatherCondition?: string
   ): Promise<ApiResponse<ThermalImageData>> {
     const formData = new FormData()
     formData.append("file", file)
+    
+    const imageData: any = { 
+      imageType, 
+      anomalyDetected: false, 
+      temperatureReading: 0 
+    };
+    
+    // Add weather condition for maintenance images
+    if (imageType === "Maintenance" && weatherCondition) {
+      imageData.weatherCondition = weatherCondition;
+    }
+    
     formData.append(
       "image",
-      new Blob([JSON.stringify({ imageType, anomalyDetected: false, temperatureReading: 0 })], {
+      new Blob([JSON.stringify(imageData)], {
         type: "application/json",
       })
     )

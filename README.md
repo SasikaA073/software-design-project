@@ -55,7 +55,12 @@ In a new terminal, still inside the **backend** folder:
 ```bash
 mvn spring-boot:run
 ```
+When runnning in  a github codespace 
 
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
 The backend API should now be running at `http://localhost:8080` (or the configured port).
 
 ### 3. Frontend
@@ -68,6 +73,11 @@ The backend API should now be running at `http://localhost:8080` (or the configu
 3. Start the development server:
    ```bash
    npm run dev
+   ```
+   or 
+
+   ```bash
+   npm install --legacy-peer-dep
    ```
 
 The frontend should now be accessible at `http://localhost:3000` (or the configured port).
