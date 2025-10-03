@@ -15,12 +15,13 @@ public interface InspectionRepository extends JpaRepository<Inspection, java.uti
     List<Inspection> findByTransformer_Id(UUID transformerId);
     
     // Optimized queries with JOIN FETCH to avoid N+1 problem
-    @Query("SELECT i FROM Inspection i LEFT JOIN FETCH i.transformer")
+    // Sorted by createdAt in descending order (newest first)
+    @Query("SELECT i FROM Inspection i LEFT JOIN FETCH i.transformer ORDER BY i.createdAt DESC")
     List<Inspection> findAllWithTransformer();
     
     @Query("SELECT i FROM Inspection i LEFT JOIN FETCH i.transformer WHERE i.id = :id")
     Optional<Inspection> findByIdWithTransformer(@Param("id") UUID id);
     
-    @Query("SELECT i FROM Inspection i LEFT JOIN FETCH i.transformer WHERE i.transformer.id = :transformerId")
+    @Query("SELECT i FROM Inspection i LEFT JOIN FETCH i.transformer WHERE i.transformer.id = :transformerId ORDER BY i.createdAt DESC")
     List<Inspection> findByTransformerIdWithTransformer(@Param("transformerId") UUID transformerId);
 }

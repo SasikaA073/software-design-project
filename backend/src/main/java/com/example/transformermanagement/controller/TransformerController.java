@@ -3,6 +3,7 @@ package com.example.transformermanagement.controller;
 import com.example.transformermanagement.model.Transformer;
 import com.example.transformermanagement.service.TransformerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,8 +46,15 @@ public class TransformerController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTransformer(@PathVariable java.util.UUID id) {
-        transformerService.deleteTransformer(id);
+    public ResponseEntity<Void> deleteTransformer(@PathVariable java.util.UUID id) {
+        try {
+            transformerService.deleteTransformer(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.err.println("Failed to delete transformer: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PostMapping("/{id}/baseline-image")

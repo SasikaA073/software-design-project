@@ -39,6 +39,16 @@ export interface InspectionData {
   imageUrl?: string;
 }
 
+export interface Detection {
+  detection_id: string;
+  class: string;
+  confidence: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface ThermalImageData {
   id?: string;
   inspectionId: string;
@@ -48,6 +58,7 @@ export interface ThermalImageData {
   temperatureReading?: number;
   anomalyDetected?: boolean;
   weatherCondition?: "Sunny" | "Cloudy" | "Rainy";
+  detectionData?: string; // JSON string of Detection[]
 }
 
 export interface AlertData {
@@ -328,6 +339,23 @@ class ApiService {
       return { data, success: true }
     } catch (error: any) {
       return { data: [], success: false, message: error.message }
+    }
+  }
+
+  async updateDetectionData(thermalImageId: string, detections: Detection[]): Promise<ApiResponse<ThermalImageData>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/thermal-images/${thermalImageId}/detections`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(detections),
+      })
+      if (!response.ok) {
+        throw new Error("Failed to update detection data")
+      }
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
     }
   }
 

@@ -1,5 +1,6 @@
 package com.example.transformermanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -13,9 +14,13 @@ public class Inspection {
     @Column(unique = true, nullable = false)
     private String inspectionNo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "transformer_id")
     private Transformer transformer;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "inspection", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private java.util.List<ThermalImage> thermalImages = new java.util.ArrayList<>();
 
     @Column(nullable = false)
     private OffsetDateTime inspectedDate;

@@ -139,6 +139,11 @@ public class ThermalImageService {
                         
                         System.out.println("\n------------------------------------------");
                         System.out.println("Total detections processed: " + detectionsArray.size());
+                        
+                        // Store detection data as JSON string in the database
+                        savedImage.setDetectionData(detectionsArray.toString());
+                        savedImage = thermalImageRepository.save(savedImage);
+                        System.out.println("✅ Detection data saved to database");
                     } else {
                         System.out.println("⚠️ predictions.predictions is not an array");
                     }
@@ -156,5 +161,14 @@ public class ThermalImageService {
         }
 
         return savedImage;
+    }
+
+    public ThermalImage updateDetectionData(UUID thermalImageId, String detectionsJson) {
+        return thermalImageRepository.findById(thermalImageId)
+            .map(thermalImage -> {
+                thermalImage.setDetectionData(detectionsJson);
+                return thermalImageRepository.save(thermalImage);
+            })
+            .orElse(null);
     }
 }

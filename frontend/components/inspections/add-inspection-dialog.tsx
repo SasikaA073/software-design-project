@@ -86,7 +86,8 @@ export function AddInspectionDialog({ open, onOpenChange, transformerNo }: AddIn
       ? new Date(`${formData.maintenanceDate}T${formData.maintenanceTime || "00:00"}`).toISOString()
       : undefined
 
-    const inspectionNo = `INSP-${Date.now()}`
+    // Generate inspection number using timestamp and random component
+    const inspectionNo = `INSP-${new Date().getTime()}-${Math.floor(Math.random() * 10000)}`
     setSubmitting(true)
 
     try {

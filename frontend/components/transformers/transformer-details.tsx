@@ -4,8 +4,10 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, Eye, Zap, Calendar, User, Image as ImageIcon } from "lucide-react"
+import { ArrowLeft, Plus, Eye, Zap, Calendar, User, Image as ImageIcon, Pencil, Trash2 } from "lucide-react"
 import { AddInspectionDialog } from "@/components/inspections/add-inspection-dialog"
+import { EditTransformerDialog } from "./edit-transformer-dialog"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { InspectionDetails } from "@/components/inspections/inspection-details"
 import { BaselineImageCard } from "./baseline-image-card"
 import { api } from "@/lib/api";
@@ -20,9 +22,12 @@ interface TransformerDetailsProps {
 
 export function TransformerDetails({ transformerId, onBack }: TransformerDetailsProps) {
   const [showAddInspection, setShowAddInspection] = useState(false)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [transformer, setTransformer] = useState<TransformerData | null>(null)
   const [inspections, setInspections] = useState<InspectionData[]>([])
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [selectedInspectionId, setSelectedInspectionId] = useState<string | null>(null)
   const router = useRouter()
@@ -92,22 +97,58 @@ export function TransformerDetails({ transformerId, onBack }: TransformerDetails
   //   )
   // }
 
-  // Refresh inspections when dialog closes after adding
+  // Refresh when dialogs close
   useEffect(() => {
-    if (!showAddInspection) {
+    if (!showAddInspection && !showEditDialog) {
       fetchData();
     }
-  }, [showAddInspection])
+  }, [showAddInspection, showEditDialog])
+
+  const handleDeleteConfirm = async () => {
+    if (!transformer?.id) return
+    
+    setDeleting(true)
+    try {
+      const res = await api.deleteTransformer(transformer.id)
+      if (res.success) {
+        onBack() // Go back to list after deleting
+      } else {
+        setError(res.message || "Failed to delete transformer.")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to delete transformer.")
+    } finally {
+      setDeleting(false)
+      setShowDeleteDialog(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onBack}>
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">{transformer?.transformerNo || "Transformer"}</h1>
-          <p className="text-muted-foreground">{transformer?.locationDetails || ""}</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{transformer?.transformerNo || "Transformer"}</h1>
+            <p className="text-muted-foreground">{transformer?.locationDetails || ""}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setShowEditDialog(true)} className="gap-2">
+            <Pencil className="w-4 h-4" />
+            Edit Transformer
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowDeleteDialog(true)} 
+            className="gap-2 text-destructive hover:text-destructive border-destructive/30 hover:bg-destructive/10"
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </Button>
         </div>
       </div>
 
@@ -252,6 +293,27 @@ export function TransformerDetails({ transformerId, onBack }: TransformerDetails
         onOpenChange={setShowAddInspection}
         transformerNo={transformer?.transformerNo}
       />
+      
+      {transformer && (
+        <>
+          <EditTransformerDialog 
+            open={showEditDialog} 
+            onOpenChange={setShowEditDialog}
+            transformer={transformer}
+            onSuccess={fetchData}
+          />
+          
+          <ConfirmDialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
+            title="Delete Transformer"
+            description={`Are you sure you want to delete transformer "${transformer.transformerNo}"? This action cannot be undone and will also delete all ${inspections.length} associated inspection(s) and thermal images.`}
+            onConfirm={handleDeleteConfirm}
+            confirmText={deleting ? "Deleting..." : "Delete"}
+            variant="destructive"
+          />
+        </>
+      )}
     </div>
   )
 }

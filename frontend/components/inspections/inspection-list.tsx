@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Filter, Eye, Calendar, User } from "lucide-react"
+import { Plus, Filter, Eye, Calendar, User, Pencil, Trash2 } from "lucide-react"
 import { AddInspectionDialog } from "./add-inspection-dialog"
+import { EditInspectionDialog } from "./edit-inspection-dialog"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { api } from "@/lib/api"
 import type { InspectionData } from "@/lib/api"
 
@@ -17,31 +19,73 @@ interface InspectionListProps {
 
 export function InspectionList({ onViewInspection }: InspectionListProps) {
   const [showAddDialog, setShowAddDialog] = useState(false)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [selectedInspection, setSelectedInspection] = useState<InspectionData | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [inspections, setInspections] = useState<InspectionData[]>([])
   const [loading, setLoading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchInspections = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await api.getInspections()
-        if (res.success) {
-          setInspections(res.data)
-        } else {
-          setError(res.message || "Failed to fetch inspections.")
-        }
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch inspections.")
-      } finally {
-        setLoading(false)
+  const fetchInspections = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await api.getInspections()
+      if (res.success) {
+        setInspections(res.data)
+      } else {
+        setError(res.message || "Failed to fetch inspections.")
       }
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch inspections.")
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchInspections()
   }, [])
+
+  // Refetch when dialogs close
+  useEffect(() => {
+    if (!showAddDialog && !showEditDialog) {
+      fetchInspections()
+    }
+  }, [showAddDialog, showEditDialog])
+
+  const handleEdit = (inspection: InspectionData) => {
+    setSelectedInspection(inspection)
+    setShowEditDialog(true)
+  }
+
+  const handleDeleteClick = (inspection: InspectionData) => {
+    setSelectedInspection(inspection)
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedInspection?.id) return
+    
+    setDeleting(true)
+    try {
+      const res = await api.deleteInspection(selectedInspection.id)
+      if (res.success) {
+        await fetchInspections()
+        setShowDeleteDialog(false)
+        setSelectedInspection(null)
+      } else {
+        setError(res.message || "Failed to delete inspection.")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to delete inspection.")
+    } finally {
+      setDeleting(false)
+    }
+  }
 
 
 
@@ -150,10 +194,25 @@ export function InspectionList({ onViewInspection }: InspectionListProps) {
                       {inspection.maintenanceDate && <span>Maintenance: {formatDate(inspection.maintenanceDate)}</span>}
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => onViewInspection(inspection.id!)} className="gap-2">
-                    <Eye className="w-4 h-4" />
-                    View
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => onViewInspection(inspection.id!)} className="gap-2">
+                      <Eye className="w-4 h-4" />
+                      View
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(inspection)} className="gap-2">
+                      <Pencil className="w-4 h-4" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => handleDeleteClick(inspection)} 
+                      className="gap-2 text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
               ))
             )}
@@ -162,6 +221,27 @@ export function InspectionList({ onViewInspection }: InspectionListProps) {
       </Card>
 
       <AddInspectionDialog open={showAddDialog} onOpenChange={setShowAddDialog} />
+      
+      {selectedInspection && (
+        <>
+          <EditInspectionDialog 
+            open={showEditDialog} 
+            onOpenChange={setShowEditDialog}
+            inspection={selectedInspection}
+            onSuccess={fetchInspections}
+          />
+          
+          <ConfirmDialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
+            title="Delete Inspection"
+            description={`Are you sure you want to delete inspection "${selectedInspection.inspectionNo}"? This action cannot be undone and will also delete all associated thermal images.`}
+            onConfirm={handleDeleteConfirm}
+            confirmText={deleting ? "Deleting..." : "Delete"}
+            variant="destructive"
+          />
+        </>
+      )}
     </div>
   )
 }

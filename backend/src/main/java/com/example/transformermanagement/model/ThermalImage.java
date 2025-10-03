@@ -11,7 +11,7 @@ public class ThermalImage {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private java.util.UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "inspection_id")
     private Inspection inspection;
 
@@ -23,6 +23,9 @@ public class ThermalImage {
     private String weatherCondition; // Sunny, Cloudy, Rainy (for maintenance images)
     private BigDecimal temperatureReading;
     private Boolean anomalyDetected;
+
+    @Column(columnDefinition = "TEXT")
+    private String detectionData; // JSON string containing bounding box detections
 
     @Column(updatable = false)
     private OffsetDateTime uploadedAt;
@@ -95,5 +98,13 @@ public class ThermalImage {
 
     public void setUploadedAt(OffsetDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
+    }
+
+    public String getDetectionData() {
+        return detectionData;
+    }
+
+    public void setDetectionData(String detectionData) {
+        this.detectionData = detectionData;
     }
 }
