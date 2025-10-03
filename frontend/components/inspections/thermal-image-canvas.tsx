@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { ZoomIn, ZoomOut, RotateCcw, Edit3, Save, X } from "lucide-react"
+import { ZoomIn, ZoomOut, RotateCcw, Edit3, Save, X, Trash2 } from "lucide-react"
 import type { Detection } from "@/lib/api"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 
 // Import Button separately for DetectionMetadata to avoid issues
 
@@ -60,6 +61,10 @@ export function ThermalImageCanvas({
   const [isResizingBox, setIsResizingBox] = useState(false)
   const [resizeHandle, setResizeHandle] = useState<ResizeHandle>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  
+  // Delete confirmation state
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [detectionToDelete, setDetectionToDelete] = useState<number | null>(null)
 
   // Update detections when prop changes
   useEffect(() => {
@@ -486,6 +491,28 @@ export function ThermalImageCanvas({
     setSelectedBoxIndex(null)
   }
 
+  const handleDeleteClick = () => {
+    if (selectedBoxIndex !== null) {
+      setDetectionToDelete(selectedBoxIndex)
+      setShowDeleteDialog(true)
+    }
+  }
+
+  const handleDeleteConfirm = () => {
+    if (detectionToDelete !== null) {
+      const newDetections = detections.filter((_, index) => index !== detectionToDelete)
+      setDetections(newDetections)
+      
+      if (onDetectionsChange) {
+        onDetectionsChange(newDetections)
+      }
+      
+      setSelectedBoxIndex(null)
+      setDetectionToDelete(null)
+      setShowDeleteDialog(false)
+    }
+  }
+
   // Cursor style
   const getCursorStyle = () => {
     if (editMode) {
@@ -557,6 +584,17 @@ export function ThermalImageCanvas({
             </>
           ) : (
             <>
+              {selectedBoxIndex !== null && (
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-9 h-9 p-0 border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600" 
+                  onClick={handleDeleteClick} 
+                  title="Delete Selected Detection"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
               <Button size="sm" variant="default" className="w-9 h-9 p-0" onClick={handleSave} title="Save Changes">
                 <Save className="w-4 h-4" />
               </Button>
@@ -581,6 +619,22 @@ export function ThermalImageCanvas({
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Delete Detection"
+        description={
+          detectionToDelete !== null && detections[detectionToDelete]
+            ? `Are you sure you want to delete this ${detections[detectionToDelete].class} detection? This action cannot be undone.`
+            : "Are you sure you want to delete this detection?"
+        }
+        onConfirm={handleDeleteConfirm}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   )
 }
