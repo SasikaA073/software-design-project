@@ -907,31 +907,6 @@ This project is licensed under the **MIT License**. See [LICENSE](LICENSE) file 
 
 ---
 
-## 👥 Authors
-
-- **Your Name** - *Initial work* - [GitHub Profile](https://github.com/yourusername)
-
----
-
-## 🙏 Acknowledgments
-
-- Spring Boot team for the excellent framework
-- Next.js team for the React framework
-- shadcn for the beautiful UI components
-- OpenAI for development assistance
-- All contributors who helped improve this project
-
----
-
-## 📞 Support
-
-For issues and questions:
-- 📧 Email: support@example.com
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/transformer-management/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/transformer-management/discussions)
-
----
-
 <div align="center">
 
 **⭐ Star this repo if you find it helpful!**
