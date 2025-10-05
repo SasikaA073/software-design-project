@@ -80,6 +80,11 @@ Oversight is a modern, full-stack web application designed to streamline the the
 
 ### 🌡️ Thermal Image Analysis
 
+- **Training Model and Hosting**:
+  - Created the dataset using the images provided and manually annotated them using the Roboflow Platform
+  - Trained Yolov11 model in roboflow and deployed it
+  - Hosted it by creating a workflow in the Roboflow and connected it using a serverless API
+    
 - **Dual Image Upload System**:
   - **Baseline Images**: Weather-categorized reference images (Sunny, Cloudy, Rainy)
   - **Maintenance Images**: Inspection images with automatic AI analysis
