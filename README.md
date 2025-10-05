@@ -21,6 +21,7 @@
 
 - [Overview](#-overview)
 - [Features](#-features)
+- [Limitations](#-Limitations)
 - [Technology Stack](#-technology-stack)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
