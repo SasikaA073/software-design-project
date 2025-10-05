@@ -113,8 +113,6 @@ Oversight is a modern, full-stack web application designed to streamline the the
 - **Color-Coded Detections**:
   - **Red**: Faulty components
   - **Orange**: Potentially faulty areas
-  - **Yellow**: Warning zones
-  - **Purple**: Critical issues
   - **Green**: Normal readings
 - **Detection Metadata Display**:
   - Anomaly class and confidence score
@@ -183,7 +181,7 @@ Oversight is a modern, full-stack web application designed to streamline the the
 
 | Service | Purpose |
 |---------|---------|
-| Python AI Service | Thermal anomaly detection (YOLOv8/similar) |
+| Python AI Service | Thermal anomaly detection (YOLOv11/similar) |
 | Docker Compose | Service orchestration |
 
 ---
@@ -197,23 +195,6 @@ Before running the project, ensure you have the following installed:
 - **Node.js 18+** – [Download Node.js](https://nodejs.org/)
 - **Docker & Docker Compose** – [Install Docker](https://docs.docker.com/get-docker/)
 - **MySQL 8.0** (via Docker or local installation)
-
-### Verify Installation
-
-```bash
-# Check Java version
-java -version
-
-# Check Maven version
-mvn -version
-
-# Check Node.js version
-node -version
-
-# Check Docker version
-docker --version
-docker-compose --version
-```
 
 ---
 
@@ -239,29 +220,6 @@ This will start:
 - MySQL database on port `3306`
 - phpMyAdmin (optional) on port `8081`
 
-#### Configure Application
-
-The application properties are located in `backend/src/main/resources/application.properties`:
-
-```properties
-# Database Configuration
-spring.datasource.url=jdbc:mysql://localhost:3306/transformer_management
-spring.datasource.username=root
-spring.datasource.password=your_password
-
-# JPA Configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-
-# File Upload Configuration
-file.upload-dir=./uploads
-spring.servlet.multipart.max-file-size=10MB
-spring.servlet.multipart.max-request-size=10MB
-
-# AI Service Configuration
-anomaly.detection.url=http://localhost:5000/detect
-```
-
 #### Install Dependencies & Build
 
 ```bash
@@ -274,15 +232,6 @@ mvn clean install
 cd frontend
 npm install
 ```
-
-#### Configure API Endpoint
-
-Update `frontend/lib/api.ts` if needed:
-
-```typescript
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
-```
-
 ---
 
 ## 🏃 Running the Application
@@ -311,17 +260,6 @@ npm run dev
 ```
 
 The frontend will be available at `http://localhost:3000`
-
-### Start AI Detection Service (Optional)
-
-If you have the Python anomaly detection service:
-
-```bash
-cd anomaly-detection-service
-python app.py
-```
-
-Service will run on `http://localhost:5000`
 
 ---
 
@@ -773,95 +711,6 @@ CREATE TABLE thermal_images (
     FOREIGN KEY (inspection_id) REFERENCES inspections(id) ON DELETE CASCADE
 );
 ```
-
----
-
-## 🐛 Troubleshooting
-
-### Backend Issues
-
-#### Port 8080 Already in Use
-
-```bash
-# Kill process on port 8080
-lsof -ti:8080 | xargs kill -9
-
-# Or use a different port
-mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
-```
-
-#### Database Connection Failed
-
-1. Ensure Docker is running: `docker ps`
-2. Check MySQL is up: `docker-compose ps`
-3. Verify credentials in `application.properties`
-4. Test connection: `mysql -h localhost -u root -p`
-
-#### Maven Build Fails
-
-```bash
-# Clean and rebuild
-mvn clean install -U
-
-# Skip tests if needed
-mvn clean install -DskipTests
-```
-
-#### Hibernate/JPA Errors
-
-- Check entity relationships
-- Verify `@JsonIgnore` on collections
-- Ensure `fetch = FetchType.LAZY` on collections
-- Review cascade settings
-
-### Frontend Issues
-
-#### NPM Install Fails
-
-```bash
-# Use legacy peer deps
-npm install --legacy-peer-deps
-
-# Clear cache
-npm cache clean --force
-npm install
-```
-
-#### Build Errors
-
-```bash
-# Delete node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
-```
-
-#### API Connection Issues
-
-1. Verify backend is running: `curl http://localhost:8080/api/transformers`
-2. Check CORS configuration in `WebConfig.java`
-3. Verify API_BASE_URL in `frontend/lib/api.ts`
-
-### Common Errors
-
-#### "Failed to upload thermal image"
-
-- Check file size (max 10MB)
-- Verify AI service is running
-- Check backend logs for serialization errors
-- Ensure inspection exists
-
-#### "Failed to delete inspection"
-
-- Check for database constraints
-- Verify cascade delete is configured
-- Review backend console for errors
-
-#### Hydration Mismatch (React)
-
-- Clear browser cache
-- Disable browser extensions (Grammarly, etc.)
-- Check for SSR/CSR differences
-
 ---
 ## Limitations
 
