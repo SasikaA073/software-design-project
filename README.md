@@ -863,6 +863,9 @@ npm install
 - Check for SSR/CSR differences
 
 ---
+### Limitations
+
+- Currently we have implemented a fixed threshold mechanism , adaptive threshold will be implemented in the next phase.
 
 ## 🤝 Contributing
 
