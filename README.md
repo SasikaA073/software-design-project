@@ -295,7 +295,6 @@ transformer-management/
 │   │       │   └── TransformerManagementApplication.java
 │   │       └── resources/
 │   │           └── application.properties
-│   ├── uploads/                         # Uploaded thermal images
 │   ├── docker-compose.yml               # Database configuration
 │   └── pom.xml                          # Maven dependencies
 │
