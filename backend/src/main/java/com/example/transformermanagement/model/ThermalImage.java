@@ -1,5 +1,6 @@
 package com.example.transformermanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -25,7 +26,11 @@ public class ThermalImage {
     private Boolean anomalyDetected;
 
     @Column(columnDefinition = "TEXT")
-    private String detectionData; // JSON string containing bounding box detections
+    private String detectionData; // JSON string containing bounding box detections (legacy/backup)
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "thermalImage", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private java.util.List<Annotation> annotations = new java.util.ArrayList<>();
 
     @Column(updatable = false)
     private OffsetDateTime uploadedAt;
@@ -106,5 +111,13 @@ public class ThermalImage {
 
     public void setDetectionData(String detectionData) {
         this.detectionData = detectionData;
+    }
+
+    public java.util.List<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(java.util.List<Annotation> annotations) {
+        this.annotations = annotations;
     }
 }

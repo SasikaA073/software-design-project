@@ -47,6 +47,13 @@ export interface Detection {
   y: number;
   width: number;
   height: number;
+  // FR3.1: Annotation metadata
+  annotationType?: "ai_detected" | "user_added" | "user_edited" | "user_deleted";
+  comments?: string;
+  createdAt?: string;  // ISO timestamp
+  createdBy?: string;  // User ID
+  modifiedAt?: string; // ISO timestamp
+  modifiedBy?: string; // User ID
 }
 
 export interface ThermalImageData {
@@ -359,7 +366,84 @@ class ApiService {
     }
   }
 
+  // Annotation API methods (FR3.1)
+  async getAnnotations(thermalImageId: string, includeDeleted: boolean = false): Promise<ApiResponse<Detection[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/annotations/thermal-image/${thermalImageId}?includeDeleted=${includeDeleted}`)
+      if (!response.ok) throw new Error("Failed to fetch annotations")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
 
+  async createAnnotation(thermalImageId: string, annotation: Detection, userId: string = "system"): Promise<ApiResponse<Detection>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/annotations/thermal-image/${thermalImageId}`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "X-User-Id": userId
+        },
+        body: JSON.stringify(annotation),
+      })
+      if (!response.ok) throw new Error("Failed to create annotation")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async updateAnnotation(annotationId: string, annotation: Detection, userId: string = "system"): Promise<ApiResponse<Detection>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/annotations/${annotationId}`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          "X-User-Id": userId
+        },
+        body: JSON.stringify(annotation),
+      })
+      if (!response.ok) throw new Error("Failed to update annotation")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async deleteAnnotation(annotationId: string, hardDelete: boolean = false, userId: string = "system"): Promise<ApiResponse<void>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/annotations/${annotationId}?hardDelete=${hardDelete}`, {
+        method: "DELETE",
+        headers: { "X-User-Id": userId }
+      })
+      if (!response.ok) throw new Error("Failed to delete annotation")
+      return { data: undefined as any, success: true }
+    } catch (error: any) {
+      return { data: undefined as any, success: false, message: error.message }
+    }
+  }
+
+  async syncAnnotations(thermalImageId: string, annotations: Detection[], userId: string = "system"): Promise<ApiResponse<Detection[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/annotations/thermal-image/${thermalImageId}/sync`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "X-User-Id": userId
+        },
+        body: JSON.stringify(annotations),
+      })
+      if (!response.ok) throw new Error("Failed to sync annotations")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
 
   // Alert API methods
   async getAlerts(transformerId?: string): Promise<ApiResponse<AlertData[]>> {

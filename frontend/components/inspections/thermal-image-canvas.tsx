@@ -88,10 +88,15 @@ export function ThermalImageCanvas({
   const [newBoxData, setNewBoxData] = useState<{ x: number; y: number; width: number; height: number } | null>(null)
   const [newBoxClass, setNewBoxClass] = useState<string>("faulty")
   const [newBoxConfidence, setNewBoxConfidence] = useState<string>("0.95")
+  const [newBoxComments, setNewBoxComments] = useState<string>("")
+  
+  // Track original detections for edit detection
+  const [originalDetections, setOriginalDetections] = useState<Detection[]>(initialDetections)
 
   // Update detections when prop changes
   useEffect(() => {
     setDetections(initialDetections)
+    setOriginalDetections(initialDetections)
   }, [initialDetections])
 
   // Update highlighted box index when prop changes
@@ -607,11 +612,38 @@ export function ThermalImageCanvas({
   }
 
   const handleSave = () => {
+    // Mark edited detections
+    const updatedDetections: Detection[] = detections.map((detection, index) => {
+      const original = originalDetections[index]
+      
+      // Check if detection was edited (compare coordinates, size, class)
+      if (original && (
+        detection.x !== original.x ||
+        detection.y !== original.y ||
+        detection.width !== original.width ||
+        detection.height !== original.height ||
+        detection.class !== original.class ||
+        detection.confidence !== original.confidence
+      )) {
+        // Mark as edited if it wasn't already user-added
+        const annotationType: Detection["annotationType"] = detection.annotationType === "user_added" ? "user_added" : "user_edited"
+        return {
+          ...detection,
+          annotationType,
+          modifiedAt: new Date().toISOString(),
+          modifiedBy: "system", // Replace with actual user ID when authentication is implemented
+        } as Detection
+      }
+      
+      return detection
+    })
+    
     if (onDetectionsChange) {
-      onDetectionsChange(detections)
+      onDetectionsChange(updatedDetections)
     }
     setEditMode(false)
     setSelectedBoxIndex(null)
+    setOriginalDetections(updatedDetections)
   }
 
   const handleCancel = () => {
@@ -661,6 +693,7 @@ export function ThermalImageCanvas({
         return
       }
 
+      const now = new Date().toISOString()
       const newDetection: Detection = {
         detection_id: `manual_${Date.now()}`,
         class: newBoxClass,
@@ -669,10 +702,18 @@ export function ThermalImageCanvas({
         y: newBoxData.y,
         width: newBoxData.width,
         height: newBoxData.height,
+        // FR3.1: Add annotation metadata
+        annotationType: "user_added",
+        comments: newBoxComments.trim() || undefined,
+        createdAt: now,
+        createdBy: "system", // Replace with actual user ID when authentication is implemented
+        modifiedAt: now,
+        modifiedBy: "system",
       }
 
       const newDetections = [...detections, newDetection]
       setDetections(newDetections)
+      setOriginalDetections(newDetections)
 
       if (onDetectionsChange) {
         onDetectionsChange(newDetections)
@@ -681,6 +722,7 @@ export function ThermalImageCanvas({
       // Reset drawing state
       setShowNewBoxDialog(false)
       setNewBoxData(null)
+      setNewBoxComments("")
       setDrawStart(null)
       setDrawEnd(null)
       setIsDrawingNewBox(false)
@@ -878,6 +920,19 @@ export function ThermalImageCanvas({
                 placeholder="0.95"
               />
             </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="comments" className="text-right">
+                Comments
+              </Label>
+              <textarea
+                id="comments"
+                value={newBoxComments}
+                onChange={(e) => setNewBoxComments(e.target.value)}
+                className="col-span-3 min-h-[80px] px-3 py-2 rounded-md border border-input bg-background text-sm"
+                placeholder="Optional notes about this detection..."
+              />
+            </div>
           </div>
           
           <DialogFooter>
@@ -1006,6 +1061,47 @@ export function DetectionMetadata({
           </div>
         </div>
         
+        {/* Annotation Metadata (FR3.1) */}
+        {(detection.annotationType || detection.comments || detection.createdAt) && (
+          <div className="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+            <p className="text-xs font-semibold text-blue-900 dark:text-blue-100 mb-2">Annotation Information</p>
+            <div className="space-y-1 text-xs">
+              {detection.annotationType && (
+                <div className="flex gap-2">
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Type:</span>
+                  <span className="text-blue-900 dark:text-blue-100 capitalize">
+                    {detection.annotationType.replace('_', ' ')}
+                  </span>
+                </div>
+              )}
+              {detection.createdAt && (
+                <div className="flex gap-2">
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Created:</span>
+                  <span className="text-blue-900 dark:text-blue-100">
+                    {new Date(detection.createdAt).toLocaleString()}
+                    {detection.createdBy && ` by ${detection.createdBy}`}
+                  </span>
+                </div>
+              )}
+              {detection.modifiedAt && detection.modifiedAt !== detection.createdAt && (
+                <div className="flex gap-2">
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Modified:</span>
+                  <span className="text-blue-900 dark:text-blue-100">
+                    {new Date(detection.modifiedAt).toLocaleString()}
+                    {detection.modifiedBy && ` by ${detection.modifiedBy}`}
+                  </span>
+                </div>
+              )}
+              {detection.comments && (
+                <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-800">
+                  <span className="text-blue-700 dark:text-blue-300 font-medium">Comments:</span>
+                  <p className="mt-1 text-blue-900 dark:text-blue-100 whitespace-pre-wrap">{detection.comments}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
         <div className="mt-3 text-xs text-muted-foreground">
           ⚠️ Values update in real-time as you edit the bounding box
         </div>
@@ -1053,6 +1149,20 @@ export function DetectionMetadata({
               </span>
             </div>
             
+            {/* Annotation Type Badge (FR3.1) */}
+            {detection.annotationType && (
+              <div className="mb-2">
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                  detection.annotationType === 'ai_detected' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
+                  detection.annotationType === 'user_added' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                  detection.annotationType === 'user_edited' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                  'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
+                }`}>
+                  {detection.annotationType.replace('_', ' ')}
+                </span>
+              </div>
+            )}
+            
             <div className="space-y-1 text-xs text-muted-foreground">
               <div className="flex justify-between">
                 <span>Position:</span>
@@ -1066,6 +1176,12 @@ export function DetectionMetadata({
                 <span>Area:</span>
                 <span className="font-mono">{Math.round(detection.width * detection.height).toLocaleString()}px²</span>
               </div>
+              {detection.comments && (
+                <div className="pt-2 border-t mt-2">
+                  <span className="font-medium">Note:</span>
+                  <p className="mt-1 text-xs line-clamp-2">{detection.comments}</p>
+                </div>
+              )}
             </div>
           </div>
           )
