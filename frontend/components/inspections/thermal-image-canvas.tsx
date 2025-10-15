@@ -2,9 +2,20 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
-import { ZoomIn, ZoomOut, RotateCcw, Edit3, Save, X, Trash2 } from "lucide-react"
+import { ZoomIn, ZoomOut, RotateCcw, Edit3, Save, X, Trash2, Plus } from "lucide-react"
 import type { Detection } from "@/lib/api"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 
 // Import Button separately for DetectionMetadata to avoid issues
 
@@ -14,6 +25,8 @@ interface ThermalImageCanvasProps {
   alt?: string
   className?: string
   onDetectionsChange?: (detections: Detection[]) => void
+  highlightedBoxIndex?: number | null
+  onHighlightDetection?: (index: number | null) => void
 }
 
 // Color mapping for different classes
@@ -21,8 +34,6 @@ const CLASS_COLORS: Record<string, string> = {
   faulty: "#ff0000", // Red
   potentially_faulty: "#ff9800", // Orange
   normal: "#00ff00", // Green
-  warning: "#ffeb3b", // Yellow
-  critical: "#f44336", // Bright Red
   default: "#00bcd4", // Cyan
 }
 
@@ -38,6 +49,8 @@ export function ThermalImageCanvas({
   alt = "Thermal Image",
   className = "",
   onDetectionsChange,
+  highlightedBoxIndex: externalHighlightedBoxIndex = null,
+  onHighlightDetection,
 }: ThermalImageCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -49,6 +62,7 @@ export function ThermalImageCanvas({
   const [editMode, setEditMode] = useState(false)
   const [selectedBoxIndex, setSelectedBoxIndex] = useState<number | null>(null)
   const [hoveredBoxIndex, setHoveredBoxIndex] = useState<number | null>(null)
+  const [highlightedBoxIndex, setHighlightedBoxIndex] = useState<number | null>(null)
 
   // Transform state
   const [scale, setScale] = useState(1)
@@ -65,11 +79,25 @@ export function ThermalImageCanvas({
   // Delete confirmation state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [detectionToDelete, setDetectionToDelete] = useState<number | null>(null)
+  
+  // Drawing new box state
+  const [isDrawingNewBox, setIsDrawingNewBox] = useState(false)
+  const [drawStart, setDrawStart] = useState<{ x: number; y: number } | null>(null)
+  const [drawEnd, setDrawEnd] = useState<{ x: number; y: number } | null>(null)
+  const [showNewBoxDialog, setShowNewBoxDialog] = useState(false)
+  const [newBoxData, setNewBoxData] = useState<{ x: number; y: number; width: number; height: number } | null>(null)
+  const [newBoxClass, setNewBoxClass] = useState<string>("faulty")
+  const [newBoxConfidence, setNewBoxConfidence] = useState<string>("0.95")
 
   // Update detections when prop changes
   useEffect(() => {
     setDetections(initialDetections)
   }, [initialDetections])
+
+  // Update highlighted box index when prop changes
+  useEffect(() => {
+    setHighlightedBoxIndex(externalHighlightedBoxIndex)
+  }, [externalHighlightedBoxIndex])
 
   // Load image
   useEffect(() => {
@@ -130,6 +158,23 @@ export function ThermalImageCanvas({
       return { x, y }
     },
     [scale, offset]
+  )
+
+  // Convert canvas coordinates to image pixel coordinates
+  const canvasToImageCoords = useCallback(
+    (canvasX: number, canvasY: number): { x: number; y: number } | null => {
+      const dims = getDrawDimensions()
+      if (!dims) return null
+
+      const { drawX, drawY, scaleX, scaleY } = dims
+
+      // Convert from canvas coordinates to image pixel coordinates
+      const imageX = (canvasX - drawX) / scaleX
+      const imageY = (canvasY - drawY) / scaleY
+
+      return { x: imageX, y: imageY }
+    },
+    [getDrawDimensions],
   )
 
   const getBoxScreenCoords = useCallback(
@@ -237,16 +282,23 @@ export function ThermalImageCanvas({
 
         const isSelected = editMode && selectedBoxIndex === index
         const isHovered = editMode && hoveredBoxIndex === index
+        const isHighlighted = !editMode && highlightedBoxIndex === index
         const color = getColorForClass(detection.class)
 
         // Draw bounding box
         ctx.strokeStyle = color
-        ctx.lineWidth = (isSelected ? 4 : isHovered ? 3.5 : 3) / scale
+        ctx.lineWidth = (isSelected ? 4 : isHovered || isHighlighted ? 3.5 : 3) / scale
         ctx.strokeRect(boxX, boxY, boxWidth, boxHeight)
 
         // Draw selection highlight
         if (isSelected || isHovered) {
           ctx.fillStyle = color + "20" // 20 = ~12% opacity
+          ctx.fillRect(boxX, boxY, boxWidth, boxHeight)
+        }
+
+        // Draw white overlay for highlighted box (from detection summary)
+        if (isHighlighted) {
+          ctx.fillStyle = "rgba(85, 79, 79, 0.5)" // White with 30% opacity
           ctx.fillRect(boxX, boxY, boxWidth, boxHeight)
         }
 
@@ -287,13 +339,54 @@ export function ThermalImageCanvas({
       })
     }
 
+    // Draw new box being created
+    if (isDrawingNewBox && drawStart && drawEnd) {
+      const dims = getDrawDimensions()
+      if (dims) {
+        const { drawX, drawY, scaleX, scaleY } = dims
+        
+        const x1 = Math.min(drawStart.x, drawEnd.x)
+        const y1 = Math.min(drawStart.y, drawEnd.y)
+        const x2 = Math.max(drawStart.x, drawEnd.x)
+        const y2 = Math.max(drawStart.y, drawEnd.y)
+        
+        const screenX = drawX + x1 * scaleX
+        const screenY = drawY + y1 * scaleY
+        const screenWidth = (x2 - x1) * scaleX
+        const screenHeight = (y2 - y1) * scaleY
+        
+        // Draw dotted box
+        ctx.strokeStyle = "#00bcd4"
+        ctx.lineWidth = 2 / scale
+        ctx.setLineDash([5 / scale, 5 / scale])
+        ctx.strokeRect(screenX, screenY, screenWidth, screenHeight)
+        
+        // Semi-transparent fill
+        ctx.fillStyle = "#00bcd420"
+        ctx.fillRect(screenX, screenY, screenWidth, screenHeight)
+        
+        // Reset line dash
+        ctx.setLineDash([])
+      }
+    }
+
     // Restore context state
     ctx.restore()
-  }, [image, imageLoaded, scale, offset, detections, editMode, selectedBoxIndex, hoveredBoxIndex, getDrawDimensions])
+  }, [image, imageLoaded, scale, offset, detections, editMode, selectedBoxIndex, hoveredBoxIndex, highlightedBoxIndex, getDrawDimensions, isDrawingNewBox, drawStart, drawEnd])
 
   // Mouse event handlers
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const { x, y } = screenToCanvas(e.clientX, e.clientY)
+
+    // Drawing new box mode
+    if (isDrawingNewBox) {
+      const coords = canvasToImageCoords(x, y)
+      if (coords) {
+        setDrawStart(coords)
+        setDrawEnd(coords)
+      }
+      return
+    }
 
     if (editMode && detections.length > 0) {
       // Check if clicking on a box or handle
@@ -340,6 +433,15 @@ export function ThermalImageCanvas({
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const { x, y } = screenToCanvas(e.clientX, e.clientY)
+
+    // Drawing new box mode
+    if (isDrawingNewBox && drawStart) {
+      const coords = canvasToImageCoords(x, y)
+      if (coords) {
+        setDrawEnd(coords)
+      }
+      return
+    }
 
     if (editMode) {
       // Update hover state
@@ -433,6 +535,33 @@ export function ThermalImageCanvas({
   }
 
   const handleMouseUp = () => {
+    // Finish drawing new box
+    if (isDrawingNewBox && drawStart && drawEnd) {
+      const x1 = Math.min(drawStart.x, drawEnd.x)
+      const y1 = Math.min(drawStart.y, drawEnd.y)
+      const x2 = Math.max(drawStart.x, drawEnd.x)
+      const y2 = Math.max(drawStart.y, drawEnd.y)
+      
+      const width = x2 - x1
+      const height = y2 - y1
+      
+      // Only create box if it has minimum size (at least 10x10 pixels)
+      if (width > 10 && height > 10) {
+        setNewBoxData({
+          x: x1 + width / 2, // Center X
+          y: y1 + height / 2, // Center Y
+          width,
+          height,
+        })
+        setShowNewBoxDialog(true)
+      } else {
+        // Box too small, reset
+        setDrawStart(null)
+        setDrawEnd(null)
+      }
+      return
+    }
+
     setIsPanning(false)
     setIsDraggingBox(false)
     setIsResizingBox(false)
@@ -513,8 +642,56 @@ export function ThermalImageCanvas({
     }
   }
 
+  const handleStartDrawing = () => {
+    setIsDrawingNewBox(true)
+    setSelectedBoxIndex(null)
+  }
+
+  const handleCancelDrawing = () => {
+    setIsDrawingNewBox(false)
+    setDrawStart(null)
+    setDrawEnd(null)
+  }
+
+  const handleConfirmNewBox = () => {
+    if (newBoxData) {
+      const confidence = parseFloat(newBoxConfidence)
+      if (isNaN(confidence) || confidence < 0 || confidence > 1) {
+        alert("Confidence must be a number between 0 and 1")
+        return
+      }
+
+      const newDetection: Detection = {
+        detection_id: `manual_${Date.now()}`,
+        class: newBoxClass,
+        confidence: confidence,
+        x: newBoxData.x,
+        y: newBoxData.y,
+        width: newBoxData.width,
+        height: newBoxData.height,
+      }
+
+      const newDetections = [...detections, newDetection]
+      setDetections(newDetections)
+
+      if (onDetectionsChange) {
+        onDetectionsChange(newDetections)
+      }
+
+      // Reset drawing state
+      setShowNewBoxDialog(false)
+      setNewBoxData(null)
+      setDrawStart(null)
+      setDrawEnd(null)
+      setIsDrawingNewBox(false)
+      setNewBoxClass("faulty")
+      setNewBoxConfidence("0.95")
+    }
+  }
+
   // Cursor style
   const getCursorStyle = () => {
+    if (isDrawingNewBox) return "cursor-crosshair"
     if (editMode) {
       if (isDraggingBox) return "cursor-grabbing"
       if (isResizingBox) {
@@ -582,8 +759,23 @@ export function ThermalImageCanvas({
                 </Button>
               )}
             </>
+          ) : isDrawingNewBox ? (
+            <>
+              <Button size="sm" variant="destructive" className="w-9 h-9 p-0" onClick={handleCancelDrawing} title="Cancel Drawing">
+                <X className="w-4 h-4" />
+              </Button>
+            </>
           ) : (
             <>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="w-9 h-9 p-0 border-green-500 text-green-500 hover:bg-green-50 hover:text-green-600" 
+                onClick={handleStartDrawing} 
+                title="Draw New Box"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
               {selectedBoxIndex !== null && (
                 <Button 
                   size="sm" 
@@ -606,9 +798,16 @@ export function ThermalImageCanvas({
         </div>
 
         {/* Edit mode indicator */}
-        {editMode && (
+        {editMode && !isDrawingNewBox && (
           <div className="absolute top-2 left-2 bg-blue-500/90 text-white px-3 py-1 rounded-full text-xs font-medium">
             Edit Mode: {selectedBoxIndex !== null ? "Move or resize box" : "Click a box to select"}
+          </div>
+        )}
+        
+        {/* Drawing mode indicator */}
+        {isDrawingNewBox && (
+          <div className="absolute top-2 left-2 bg-green-500/90 text-white px-3 py-1 rounded-full text-xs font-medium">
+            Drawing Mode: Click and drag to draw a new bounding box
           </div>
         )}
 
@@ -635,6 +834,69 @@ export function ThermalImageCanvas({
         cancelText="Cancel"
         variant="destructive"
       />
+
+      {/* New Box Dialog */}
+      <Dialog open={showNewBoxDialog} onOpenChange={setShowNewBoxDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Detection</DialogTitle>
+            <DialogDescription>
+              Configure the properties for the new detection bounding box.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="class" className="text-right">
+                Class
+              </Label>
+              <Select value={newBoxClass} onValueChange={setNewBoxClass}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select class" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="faulty">Faulty</SelectItem>
+                  <SelectItem value="potentially_faulty">Potentially Faulty</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="confidence" className="text-right">
+                Confidence
+              </Label>
+              <Input
+                id="confidence"
+                type="number"
+                min="0"
+                max="1"
+                step="0.01"
+                value={newBoxConfidence}
+                onChange={(e) => setNewBoxConfidence(e.target.value)}
+                className="col-span-3"
+                placeholder="0.95"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowNewBoxDialog(false)
+                setNewBoxData(null)
+                setDrawStart(null)
+                setDrawEnd(null)
+                setIsDrawingNewBox(false)
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmNewBox}>Add Detection</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
@@ -644,12 +906,16 @@ export function DetectionMetadata({
   detections, 
   selectedBoxIndex, 
   editMode,
-  onSelectDetection 
+  onSelectDetection,
+  highlightedBoxIndex,
+  onHighlightDetection
 }: {
   detections: Detection[]
   selectedBoxIndex: number | null
   editMode: boolean
   onSelectDetection?: (index: number | null) => void
+  highlightedBoxIndex?: number | null
+  onHighlightDetection?: (index: number | null) => void
 }) {
   const getSeverityLevel = (confidence: number): string => {
     if (confidence >= 0.8) return "Critical"
@@ -670,8 +936,6 @@ export function DetectionMetadata({
       faulty: "#ff0000",
       potentially_faulty: "#ff9800",
       normal: "#00ff00",
-      warning: "#ffeb3b",
-      critical: "#f44336",
       default: "#00bcd4",
     }
     return colors[className.toLowerCase()] || colors.default
@@ -685,13 +949,14 @@ export function DetectionMetadata({
     )
   }
 
-  if (selectedBoxIndex !== null && detections[selectedBoxIndex]) {
+  // Only show selected detection details in edit mode
+  if (editMode && selectedBoxIndex !== null && detections[selectedBoxIndex]) {
     // Show selected detection details
     const detection = detections[selectedBoxIndex]
     return (
       <div className="p-4 border rounded-md bg-card">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-sm">Selected Detection Details</h3>
+          <h3 className="font-semibold text-sm">Selected Detection Details (Edit Mode)</h3>
           {onSelectDetection && (
             <Button size="sm" variant="ghost" onClick={() => onSelectDetection(null)}>
               View All
@@ -742,7 +1007,7 @@ export function DetectionMetadata({
         </div>
         
         <div className="mt-3 text-xs text-muted-foreground">
-          {editMode ? "⚠️ Values update in real-time as you edit the bounding box" : "💡 Click Edit to modify this detection"}
+          ⚠️ Values update in real-time as you edit the bounding box
         </div>
       </div>
     )
@@ -756,11 +1021,22 @@ export function DetectionMetadata({
       </h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        {detections.map((detection, index) => (
+        {detections.map((detection, index) => {
+          const isHighlighted = highlightedBoxIndex === index
+          return (
           <div
             key={detection.detection_id}
-            className="p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md hover:border-primary/50"
-            onClick={() => onSelectDetection && onSelectDetection(index)}
+            className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-md ${
+              isHighlighted 
+                ? 'border-primary shadow-lg bg-primary/5' 
+                : 'hover:border-primary/50'
+            }`}
+            onClick={() => {
+              if (onHighlightDetection) {
+                // Toggle highlight: if already highlighted, unhighlight it
+                onHighlightDetection(isHighlighted ? null : index)
+              }
+            }}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -792,7 +1068,8 @@ export function DetectionMetadata({
               </div>
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

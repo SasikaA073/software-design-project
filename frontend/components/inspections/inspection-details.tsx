@@ -38,6 +38,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const [uploadingMaintenance, setUploadingMaintenance] = useState(false)
   const [aiAnalysisComplete, setAiAnalysisComplete] = useState(false)
   const [selectedDetectionIndex, setSelectedDetectionIndex] = useState<number | null>(null)
+  const [highlightedBoxIndex, setHighlightedBoxIndex] = useState<number | null>(null)
   const [isEditMode, setIsEditMode] = useState(false)
 
   useEffect(() => {
@@ -438,6 +439,8 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
                           detections={detections}
                           alt="Thermal Maintenance"
                           onDetectionsChange={handleDetectionsChange}
+                          highlightedBoxIndex={highlightedBoxIndex}
+                          onHighlightDetection={setHighlightedBoxIndex}
                         />
                         <div className="px-3 py-2 text-xs text-muted-foreground border border-t-0 rounded-b-md">
                           {maintenanceImage.weatherCondition && (
@@ -475,6 +478,8 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           selectedBoxIndex={selectedDetectionIndex}
           editMode={isEditMode}
           onSelectDetection={setSelectedDetectionIndex}
+          highlightedBoxIndex={highlightedBoxIndex}
+          onHighlightDetection={setHighlightedBoxIndex}
         />
       )}
 
