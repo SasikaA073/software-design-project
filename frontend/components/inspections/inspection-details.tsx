@@ -7,10 +7,11 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ArrowLeft, Upload, ImageIcon, Thermometer, Pencil, Trash2 } from "lucide-react"
+import { ArrowLeft, Upload, ImageIcon, Thermometer, Pencil, Trash2, Brain } from "lucide-react"
 import { ThermalImageUpload } from "./thermal-image-upload"
 import { ThermalImageCanvas, DetectionMetadata } from "./thermal-image-canvas"
 import { EditInspectionDialog } from "./edit-inspection-dialog"
+import { ModelRetrainingDialog } from "./model-retraining-dialog"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { InspectionData, ThermalImageData, Detection } from "@/lib/api"
 import { api } from "@/lib/api"
@@ -40,6 +41,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const [selectedDetectionIndex, setSelectedDetectionIndex] = useState<number | null>(null)
   const [highlightedBoxIndex, setHighlightedBoxIndex] = useState<number | null>(null)
   const [isEditMode, setIsEditMode] = useState(false)
+  const [showRetrainingDialog, setShowRetrainingDialog] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -135,16 +137,74 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
   const baselineImage = useMemo(() => images.find(img => img.imageType === "Baseline"), [images])
   const maintenanceImage = useMemo(() => images.find(img => img.imageType === "Maintenance"), [images])
 
-  // Parse detection data from maintenance image
-  const detections = useMemo(() => {
-    if (!maintenanceImage?.detectionData) return []
-    try {
-      return JSON.parse(maintenanceImage.detectionData) as Detection[]
-    } catch (e) {
-      console.error("Failed to parse detection data:", e)
-      return []
+  // Load annotations from backend (FR3.2)
+  const [detections, setDetections] = useState<Detection[]>([])
+  const [loadingAnnotations, setLoadingAnnotations] = useState(false)
+
+  // Load annotations when maintenance image changes
+  useEffect(() => {
+    const loadAnnotations = async () => {
+      if (!maintenanceImage?.id) {
+        setDetections([])
+        return
+      }
+
+      setLoadingAnnotations(true)
+      try {
+        // Try to load from new Annotation API first (FR3.2)
+        const annotationRes = await api.getAnnotations(maintenanceImage.id, false)
+        if (annotationRes.success && annotationRes.data.length > 0) {
+          // Convert Annotation entities to Detection format
+          const loadedDetections = annotationRes.data.map((annotation: any) => ({
+            detection_id: annotation.detectionId || annotation.detection_id,
+            class: annotation.detectionClass || annotation.class,
+            confidence: annotation.confidence,
+            x: annotation.x,
+            y: annotation.y,
+            width: annotation.width,
+            height: annotation.height,
+            annotationType: annotation.annotationType,
+            comments: annotation.comments,
+            createdAt: annotation.createdAt,
+            createdBy: annotation.createdBy,
+            modifiedAt: annotation.modifiedAt,
+            modifiedBy: annotation.modifiedBy,
+          }))
+          setDetections(loadedDetections)
+          console.log("✅ Loaded annotations from Annotation API (FR3.2)")
+        } else {
+          // Fallback to legacy JSON string for backward compatibility
+          if (maintenanceImage.detectionData) {
+            try {
+              const parsed = JSON.parse(maintenanceImage.detectionData) as Detection[]
+              setDetections(parsed)
+              console.log("⚠️ Loaded from legacy detectionData JSON (fallback)")
+            } catch (e) {
+              console.error("Failed to parse detection data:", e)
+              setDetections([])
+            }
+          } else {
+            setDetections([])
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load annotations:", error)
+        // Fallback to legacy JSON string
+        if (maintenanceImage.detectionData) {
+          try {
+            const parsed = JSON.parse(maintenanceImage.detectionData) as Detection[]
+            setDetections(parsed)
+          } catch (e) {
+            setDetections([])
+          }
+        }
+      } finally {
+        setLoadingAnnotations(false)
+      }
     }
-  }, [maintenanceImage?.detectionData])
+
+    loadAnnotations()
+  }, [maintenanceImage?.id, maintenanceImage?.detectionData])
 
   // Check if we have any images
   const hasAnyImages = useMemo(() => images && images.length > 0, [images])
@@ -229,23 +289,54 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
     }
   }
 
-  // Handler for detection changes
+  // Handler for detection changes (FR3.2: Metadata and Annotation Persistence)
   const handleDetectionsChange = async (updatedDetections: Detection[]) => {
     if (!maintenanceImage?.id) return
 
     try {
-      const res = await api.updateDetectionData(maintenanceImage.id, updatedDetections)
-      if (res.success) {
-        // Refresh images to get updated data
+      // Save to new Annotation API with full metadata (FR3.2)
+      const userId = "system" // Replace with actual user ID when authentication is implemented
+      const annotationRes = await api.syncAnnotations(maintenanceImage.id, updatedDetections, userId)
+      
+      if (annotationRes.success) {
+        console.log("✅ Annotations saved with metadata (FR3.2)")
+        
+        // Also update legacy detectionData for backward compatibility
+        const legacyRes = await api.updateDetectionData(maintenanceImage.id, updatedDetections)
+        
+        // Reload annotations to get updated metadata from backend
+        const reloadRes = await api.getAnnotations(maintenanceImage.id, false)
+        if (reloadRes.success) {
+          // Convert and update local state
+          const loadedDetections = reloadRes.data.map((annotation: any) => ({
+            detection_id: annotation.detectionId || annotation.detection_id,
+            class: annotation.detectionClass || annotation.class,
+            confidence: annotation.confidence,
+            x: annotation.x,
+            y: annotation.y,
+            width: annotation.width,
+            height: annotation.height,
+            annotationType: annotation.annotationType,
+            comments: annotation.comments,
+            createdAt: annotation.createdAt,
+            createdBy: annotation.createdBy,
+            modifiedAt: annotation.modifiedAt,
+            modifiedBy: annotation.modifiedBy,
+          }))
+          setDetections(loadedDetections)
+        }
+        
+        // Refresh images
         const imgsRes = await api.getThermalImages(inspectionId)
         if (imgsRes.success) {
           setImages(imgsRes.data)
         }
       } else {
-        setError(res.message || "Failed to save detection data")
+        setError(annotationRes.message || "Failed to save annotations")
       }
     } catch (e: any) {
-      setError(e.message || "Failed to save detection data")
+      console.error("Failed to save annotations:", e)
+      setError(e.message || "Failed to save annotations")
     }
   }
 
@@ -473,14 +564,30 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
 
       {/* Detection Metadata Section - Above Progress */}
       {maintenanceImage && detections.length > 0 && (
-        <DetectionMetadata
-          detections={detections}
-          selectedBoxIndex={selectedDetectionIndex}
-          editMode={isEditMode}
-          onSelectDetection={setSelectedDetectionIndex}
-          highlightedBoxIndex={highlightedBoxIndex}
-          onHighlightDetection={setHighlightedBoxIndex}
-        />
+        <div className="space-y-4">
+          <DetectionMetadata
+            detections={detections}
+            selectedBoxIndex={selectedDetectionIndex}
+            editMode={isEditMode}
+            onSelectDetection={setSelectedDetectionIndex}
+            highlightedBoxIndex={highlightedBoxIndex}
+            onHighlightDetection={setHighlightedBoxIndex}
+          />
+          
+          {/* Model Retraining Button */}
+          {detections.some(d => d.annotationType === "user_added" || d.annotationType === "user_edited") && (
+            <div className="flex justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowRetrainingDialog(true)}
+                className="gap-2"
+              >
+                <Brain className="w-4 h-4" />
+                Upload to Roboflow for Retraining
+              </Button>
+            </div>
+          )}
+        </div>
       )}
 
       <Card>
@@ -650,6 +757,13 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
             onConfirm={handleDeleteConfirm}
             confirmText={deleting ? "Deleting..." : "Delete"}
             variant="destructive"
+          />
+          
+          <ModelRetrainingDialog
+            open={showRetrainingDialog}
+            onOpenChange={setShowRetrainingDialog}
+            thermalImageId={maintenanceImage?.id}
+            mode="single"
           />
         </>
       )}

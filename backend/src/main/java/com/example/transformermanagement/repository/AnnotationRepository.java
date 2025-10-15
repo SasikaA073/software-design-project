@@ -17,5 +17,8 @@ public interface AnnotationRepository extends JpaRepository<Annotation, UUID> {
     
     @Query("SELECT a FROM Annotation a WHERE a.thermalImage.id = :thermalImageId ORDER BY a.createdAt DESC")
     List<Annotation> findByThermalImageId(@Param("thermalImageId") UUID thermalImageId);
+    
+    @Query("SELECT a FROM Annotation a WHERE a.isDeleted = false AND (a.annotationType = 'user_added' OR a.annotationType = 'user_edited') ORDER BY a.createdAt DESC")
+    List<Annotation> findUserCorrectedAnnotations();
 }
 

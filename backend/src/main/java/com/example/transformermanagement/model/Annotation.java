@@ -14,6 +14,10 @@ public class Annotation {
     @JoinColumn(name = "thermal_image_id", nullable = false)
     private ThermalImage thermalImage;
 
+    // FR3.2: Store transformer ID for easier querying
+    @Column(name = "transformer_id")
+    private java.util.UUID transformerId;
+
     @Column(nullable = false)
     private String detectionId; // Links to detection_id in the detection data
 
@@ -197,6 +201,14 @@ public class Annotation {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public java.util.UUID getTransformerId() {
+        return transformerId;
+    }
+
+    public void setTransformerId(java.util.UUID transformerId) {
+        this.transformerId = transformerId;
     }
 }
 

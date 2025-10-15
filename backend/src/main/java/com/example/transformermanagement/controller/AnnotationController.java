@@ -1,5 +1,6 @@
 package com.example.transformermanagement.controller;
 
+import com.example.transformermanagement.dto.DetectionDTO;
 import com.example.transformermanagement.model.Annotation;
 import com.example.transformermanagement.service.AnnotationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,22 @@ public class AnnotationController {
     }
 
     @PostMapping("/thermal-image/{thermalImageId}/sync")
-    public ResponseEntity<List<Annotation>> syncAnnotations(
+    public ResponseEntity<List<DetectionDTO>> syncAnnotations(
             @PathVariable UUID thermalImageId,
-            @RequestBody List<Annotation> annotations,
+            @RequestBody List<DetectionDTO> detectionDTOs,
             @RequestHeader(value = "X-User-Id", defaultValue = "system") String userId) {
-        List<Annotation> synced = annotationService.syncAnnotations(thermalImageId, annotations, userId);
-        return ResponseEntity.ok(synced);
+        try {
+            List<Annotation> synced = annotationService.syncAnnotationsFromDTO(thermalImageId, detectionDTOs, userId);
+            
+            // Convert back to DTOs for response
+            List<DetectionDTO> responseDTOs = annotationService.convertAnnotationsToDTO(synced);
+            
+            return ResponseEntity.ok(responseDTOs);
+        } catch (Exception e) {
+            System.err.println("Failed to sync annotations: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
 

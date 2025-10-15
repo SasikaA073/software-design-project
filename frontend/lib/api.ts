@@ -461,6 +461,73 @@ class ApiService {
       return { data: [], success: false, message: error.message };
     }
   }
+
+  // Roboflow Dataset API methods (Model Retraining)
+  async uploadToRoboflow(thermalImageId: string, split: string = "train"): Promise<ApiResponse<any>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/roboflow/upload/${thermalImageId}?split=${split}`, {
+        method: "POST",
+      })
+      if (!response.ok) throw new Error("Failed to upload to Roboflow")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async batchUploadToRoboflow(thermalImageIds: string[], split: string = "train"): Promise<ApiResponse<any>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/roboflow/upload/batch?split=${split}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(thermalImageIds),
+      })
+      if (!response.ok) throw new Error("Failed to batch upload to Roboflow")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async uploadUserCorrectionsToRoboflow(split: string = "train"): Promise<ApiResponse<any>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/roboflow/upload/user-corrections?split=${split}`, {
+        method: "POST",
+      })
+      if (!response.ok) throw new Error("Failed to upload user corrections to Roboflow")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async exportYOLO(thermalImageId: string): Promise<ApiResponse<any>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/roboflow/export/yolo/${thermalImageId}`)
+      if (!response.ok) throw new Error("Failed to export YOLO format")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async triggerModelTraining(version?: string): Promise<ApiResponse<any>> {
+    try {
+      const url = version 
+        ? `${API_BASE_URL}/roboflow/train?version=${version}`
+        : `${API_BASE_URL}/roboflow/train`
+      const response = await fetch(url, { method: "POST" })
+      if (!response.ok) throw new Error("Failed to trigger model training")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
 }
 
 export const api = new ApiService()

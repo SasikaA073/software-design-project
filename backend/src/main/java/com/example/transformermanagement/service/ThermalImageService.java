@@ -150,12 +150,21 @@ public class ThermalImageService {
                         savedImage = thermalImageRepository.save(savedImage);
                         System.out.println("✅ Detection data saved to database");
                         
-                        // Create Annotation entities for each AI detection (FR3.1)
+                        // Create Annotation entities for each AI detection (FR3.1 & FR3.2)
                         System.out.println("\n📝 Creating Annotation entities for AI detections...");
+                        
+                        // Get transformer ID for FR3.2
+                        java.util.UUID transformerId = null;
+                        if (savedImage.getInspection() != null && savedImage.getInspection().getTransformer() != null) {
+                            transformerId = savedImage.getInspection().getTransformer().getId();
+                            System.out.println("  Transformer ID: " + transformerId);
+                        }
+                        
                         for (JsonNode detection : detectionsArray) {
                             try {
                                 Annotation annotation = new Annotation();
                                 annotation.setThermalImage(savedImage);
+                                annotation.setTransformerId(transformerId); // FR3.2
                                 annotation.setDetectionId(detection.has("detection_id") ? detection.get("detection_id").asText() : "ai_" + System.currentTimeMillis());
                                 annotation.setAnnotationType("ai_detected");
                                 annotation.setDetectionClass(detection.has("class") ? detection.get("class").asText() : "unknown");
