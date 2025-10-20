@@ -228,10 +228,10 @@ mvn clean install
 
 ### 3. Frontend Setup
 
-```bash
+   ```bash
 cd frontend
 npm install
-```
+   ```
 ---
 
 ## 🏃 Running the Application
@@ -254,10 +254,10 @@ mvn spring-boot:run
 
 ### Start Frontend Server
 
-```bash
+   ```bash
 cd frontend
-npm run dev
-```
+   npm run dev
+   ```
 
 The frontend will be available at `http://localhost:3000`
 
