@@ -128,7 +128,7 @@ public class RoboflowDatasetController {
 
     /**
      * Trigger model training on Roboflow
-     * 
+     *
      * POST /api/roboflow/train?version=2
      */
     @PostMapping("/train")
@@ -136,7 +136,7 @@ public class RoboflowDatasetController {
             @RequestParam(required = false) String version) {
         
         try {
-            JsonNode response = roboflowDatasetService.triggerModelTraining(version);
+            JsonNode response = roboflowDatasetService.triggerModelTraining();
             
             Map<String, Object> result = new HashMap<>();
             result.put("success", true);

@@ -542,36 +542,58 @@ public class RoboflowDatasetService {
      */
 
 
-    public JsonNode triggerModelTraining(String datasetVersion) throws IOException, InterruptedException {
-        // Resolve config with fallback to existing defaults
-        String apiKey = (roboflowApiKey != null && !roboflowApiKey.isBlank()) ? roboflowApiKey : DEFAULT_ROBOFLOW_API_KEY;
-        String workspace = (roboflowWorkspace != null && !roboflowWorkspace.isBlank()) ? roboflowWorkspace : "";
-        // Use roboflow.project if set; otherwise fall back to dataset slug
-        String project = (roboflowProject != null && !roboflowProject.isBlank())
-                ? roboflowProject
-                : ((roboflowDataset != null && !roboflowDataset.isBlank()) ? roboflowDataset : DEFAULT_DATASET_NAME);
+//    public JsonNode triggerModelTraining(String datasetVersion) throws IOException, InterruptedException {
+//        // Resolve config with fallback to existing defaults
+//        String apiKey = (roboflowApiKey != null && !roboflowApiKey.isBlank()) ? roboflowApiKey : DEFAULT_ROBOFLOW_API_KEY;
+//        String workspace = (roboflowWorkspace != null && !roboflowWorkspace.isBlank()) ? roboflowWorkspace : "";
+//        // Use roboflow.project if set; otherwise fall back to dataset slug
+//        String project = (roboflowProject != null && !roboflowProject.isBlank())
+//                ? roboflowProject
+//                : ((roboflowDataset != null && !roboflowDataset.isBlank()) ? roboflowDataset : DEFAULT_DATASET_NAME);
+//
+//        if (workspace.isBlank()) {
+//            throw new IllegalStateException("roboflow.workspace is not configured");
+//        }
+//        if (project.isBlank()) {
+//            throw new IllegalStateException("roboflow.project (or roboflow.dataset) is not configured");
+//        }
+//
+//        String trainUrl = String.format(
+//            "https://api.roboflow.com/%s/%s/train?api_key=%s",
+//            workspace, project, apiKey
+//        );
+//
+//        logger.info("Triggering model training at: {}", trainUrl);
+//
+//        ObjectNode requestBody = objectMapper.createObjectNode();
+//        if (datasetVersion != null) {
+//            requestBody.put("version", datasetVersion);
+//        }
+//
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(trainUrl))
+//                .header("Content-Type", "application/json")
+//                .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+//                .build();
+//
+//        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+//
+//        logger.info("Training trigger response: {} - {}", response.statusCode(), response.body());
+//
+//        return objectMapper.readTree(response.body());
+//    }
 
-        if (workspace.isBlank()) {
-            throw new IllegalStateException("roboflow.workspace is not configured");
-        }
-        if (project.isBlank()) {
-            throw new IllegalStateException("roboflow.project (or roboflow.dataset) is not configured");
-        }
+    public JsonNode triggerModelTraining() throws IOException, InterruptedException {
+        // Use the Python microservice URL (adjust host/port if running in Docker Compose)
+        String trainerServiceUrl = "http://localhost:8000/train";
 
-        String trainUrl = String.format(
-            "https://api.roboflow.com/%s/%s/train?api_key=%s",
-            workspace, project, apiKey
-        );
+        logger.info("Triggering model training via Python microservice at: {}", trainerServiceUrl);
 
-        logger.info("Triggering model training at: {}", trainUrl);
-
+        // Empty JSON body (our Python microservice does not require any input for now)
         ObjectNode requestBody = objectMapper.createObjectNode();
-        if (datasetVersion != null) {
-            requestBody.put("version", datasetVersion);
-        }
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(trainUrl))
+                .uri(URI.create(trainerServiceUrl))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
                 .build();
@@ -580,8 +602,10 @@ public class RoboflowDatasetService {
 
         logger.info("Training trigger response: {} - {}", response.statusCode(), response.body());
 
+        // Returns JSON containing at least: job_id and status
         return objectMapper.readTree(response.body());
     }
+
 
 // ...existing code...
 }
