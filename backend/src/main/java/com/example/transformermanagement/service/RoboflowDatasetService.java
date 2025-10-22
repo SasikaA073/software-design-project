@@ -14,8 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URL;
+import java.net.HttpURLConnection;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -27,7 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 /**
  * Service for uploading annotated images to Roboflow for model retraining
  */
@@ -36,11 +43,11 @@ public class RoboflowDatasetService {
 
     private static final Logger logger = LoggerFactory.getLogger(RoboflowDatasetService.class);
     
-    // Roboflow Upload API configuration
-    private static final String ROBOFLOW_UPLOAD_URL = "https://api.roboflow.com/dataset/{workspace}/{project}/upload";
-    private static final String ROBOFLOW_API_KEY = "xLuuGmq6EfcX0kVtqEnA";
-    private static final String WORKSPACE_ID = "isiriw"; // Extract from your workflow URL
-    private static final String PROJECT_ID = "detect-count-and-visualize"; // Your project ID
+    // Roboflow Upload API configuration (defaults; prefer overriding via properties)
+    private static final String ROBOFLOW_UPLOAD_URL = "https://api.roboflow.com/dataset/{dataset}/upload";
+    private static final String DEFAULT_ROBOFLOW_API_KEY = "xLuuGmq6EfcX0kVtqEnA"; // Consider moving to properties
+    private static final String DEFAULT_DATASET_NAME = "transformer-thermal-images-bpkdr"; // Dataset slug from Roboflow URL
+    
     
     @Autowired
     private ThermalImageRepository thermalImageRepository;
@@ -50,6 +57,29 @@ public class RoboflowDatasetService {
     
     @Value("${file.upload-dir}")
     private String uploadDir;
+    
+    // Prefer configuration over constants; fall back to defaults if unset
+    @Value("${roboflow.apiKey:}")
+    private String roboflowApiKey;
+    
+    @Value("${roboflow.dataset:}")
+    private String roboflowDataset;
+
+        // Add these two lines
+    @Value("${roboflow.workspace:}")
+    private String roboflowWorkspace;
+
+    @Value("${roboflow.project:}")
+    private String roboflowProject;
+    
+    // Optional properties (manual overrides) for annotate endpoint
+    // Note: annotate path segment is the dataset image item ID (e.g., "abc123"), NOT a version
+    @Value("${roboflow.annotatePath:}")
+    private String roboflowAnnotatePath;
+
+    // Toggle automatic annotate after image upload (separate endpoint)
+    @Value("${roboflow.autoAnnotate:true}")
+    private boolean roboflowAutoAnnotate;
     
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
@@ -86,27 +116,85 @@ public class RoboflowDatasetService {
         // Read image file
         String fileName = thermalImage.getImageUrl().substring(thermalImage.getImageUrl().lastIndexOf('/') + 1);
         Path imagePath = Paths.get(uploadDir, fileName);
+        logger.debug("Resolved uploadDir={}, fileName={}, imagePath={}", uploadDir, fileName, imagePath);
         
         if (!Files.exists(imagePath)) {
             throw new RuntimeException("Image file not found: " + imagePath);
         }
-        
-        // Convert image to base64
+
+        // Always upload the image using image-only endpoint
+        JsonNode uploadResponse = uploadImage(thermalImageId, split);
+        boolean duplicate = uploadResponse.path("duplicate").asBoolean(false);
+        logger.info("Upload completed. duplicate={} id={}", duplicate, uploadResponse.path("id").asText(null));
+        JsonNode annotateResp = null;
+        // Optionally annotate the image immediately so labels are applied/updated
+        if (roboflowAutoAnnotate) {
+            // Prefer the item ID returned by upload response; fallback to property if absent
+            String imageItemId = uploadResponse.path("id").asText(null);
+            if (imageItemId == null || imageItemId.isBlank()) {
+                imageItemId = (roboflowAnnotatePath != null && !roboflowAnnotatePath.isBlank()) ? roboflowAnnotatePath : null;
+            }
+
+            logger.info("Auto-annotate enabled. file={} using imageItemId={}", fileName, (imageItemId != null ? imageItemId : "<unset>"));
+
+            if (imageItemId == null) {
+                logger.warn("No image item ID available for annotation (upload response did not include 'id' and no 'roboflow.annotatePath' set). Skipping annotation.");
+            } else {
+                int attempts = 0;
+                int maxAttempts = 3;
+                long backoffMs = 1000;
+
+                Exception lastError = null;
+                while (attempts < maxAttempts) {
+                    try {
+                        attempts++;
+                        annotateResp = uploadAnnotation(thermalImageId, imageItemId);
+                        logger.info("Annotate success on attempt {}: status={}, response={}", attempts, annotateResp.path("status").asText(""), annotateResp.toString());
+                        break; // success
+                    } catch (Exception e) {
+                        lastError = e;
+                        logger.warn("Annotate attempt {}/{} failed: {}", attempts, maxAttempts, e.getMessage(), e);
+                        if (attempts < maxAttempts) {
+                            Thread.sleep(backoffMs);
+                            backoffMs *= 2; // exponential backoff
+                        } else {
+                            logger.error("Annotate failed after {} attempts. Proceeding without blocking upload.");
+                        }
+                    }
+                }
+            }
+        }
+
+        return uploadResponse;
+    }
+
+    /**
+     * Public method: upload only the image bytes to Roboflow for a given thermal image ID.
+     * Mirrors the Roboflow docs example (application/x-www-form-urlencoded with base64 body).
+     */
+    public JsonNode uploadImage(UUID thermalImageId, String split) throws IOException {
+        ThermalImage thermalImage = thermalImageRepository.findById(thermalImageId)
+            .orElseThrow(() -> new RuntimeException("Thermal image not found: " + thermalImageId));
+
+        String fileName = thermalImage.getImageUrl().substring(thermalImage.getImageUrl().lastIndexOf('/') + 1);
+        Path imagePath = Paths.get(uploadDir, fileName);
+        logger.debug("[uploadImage] Resolved uploadDir={}, fileName={}, imagePath={}", uploadDir, fileName, imagePath);
+        if (!Files.exists(imagePath)) {
+            throw new IOException("Image file not found: " + imagePath);
+        }
         byte[] imageBytes = Files.readAllBytes(imagePath);
         String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-        
-        // Get image dimensions (you might want to use ImageIO to get actual dimensions)
-        // For now, we'll use the bounding box data to infer dimensions
-        double maxX = annotations.stream().mapToDouble(a -> a.getX() + a.getWidth()).max().orElse(1024.0);
-        double maxY = annotations.stream().mapToDouble(a -> a.getY() + a.getHeight()).max().orElse(768.0);
-        int imageWidth = (int) Math.ceil(maxX);
-        int imageHeight = (int) Math.ceil(maxY);
-        
-        // Build Roboflow annotation format
-        ObjectNode roboflowAnnotation = buildRoboflowAnnotation(annotations, imageWidth, imageHeight, fileName);
-        
-        // Upload to Roboflow
-        return uploadToRoboflow(base64Image, roboflowAnnotation, fileName, split);
+        logger.debug("[uploadImage] Image bytes={}, base64 length={}", imageBytes.length, base64Image.length());
+
+        return uploadImageToRoboflow(base64Image, fileName, split);
+    }
+
+    /**
+     * Public method: upload only annotations for a given thermal image ID (YOLO txt),
+     * using Roboflow annotate API and the dataset image item ID as path segment.
+     */
+    public JsonNode uploadAnnotation(UUID thermalImageId, String imageItemId) throws IOException {
+        return annotateImageInRoboflow(thermalImageId, imageItemId);
     }
 
     /**
@@ -169,48 +257,182 @@ public class RoboflowDatasetService {
     /**
      * Upload image and annotations to Roboflow dataset
      */
-    private JsonNode uploadToRoboflow(String base64Image, ObjectNode annotation, String fileName, String split) 
-            throws IOException, InterruptedException {
-        
-        // Build upload URL
+    private JsonNode uploadImageToRoboflow(String base64Image, String fileName, String split)
+        throws IOException {
+        // Resolve config with fallback
+        String apiKey = (roboflowApiKey != null && !roboflowApiKey.isBlank()) ? roboflowApiKey : DEFAULT_ROBOFLOW_API_KEY;
+        String dataset = (roboflowDataset != null && !roboflowDataset.isBlank()) ? roboflowDataset : DEFAULT_DATASET_NAME;
+
+        // Encode params
+        String encodedName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        String encodedSplit = URLEncoder.encode((split != null ? split : "train"), StandardCharsets.UTF_8);
+
+    // Build upload URL per Roboflow docs; image-only upload
         String uploadUrl = ROBOFLOW_UPLOAD_URL
-            .replace("{workspace}", WORKSPACE_ID)
-            .replace("{project}", PROJECT_ID)
-            + "?api_key=" + ROBOFLOW_API_KEY
-            + "&name=" + fileName
-            + "&split=" + (split != null ? split : "train");
-        
-        logger.info("Uploading to Roboflow: {}", uploadUrl);
-        
-        // Build request body
-        ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("image", base64Image);
-        requestBody.set("annotation", annotation);
-        
-        String jsonBody = objectMapper.writeValueAsString(requestBody);
-        
-        // Make HTTP request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(uploadUrl))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
-                .build();
-        
-        logger.info("Sending upload request to Roboflow...");
-        
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
-        logger.info("Roboflow response status: {}", response.statusCode());
-        logger.info("Roboflow response body: {}", response.body());
-        
-        if (response.statusCode() != 200 && response.statusCode() != 201) {
-            logger.error("Roboflow upload failed with status: {}", response.statusCode());
-            throw new IOException("Failed to upload to Roboflow. Status: " + response.statusCode());
+                .replace("{dataset}", dataset)
+                + "?api_key=" + apiKey
+                + "&name=" + encodedName
+        + "&split=" + encodedSplit;
+
+    String uploadUrlSafe = uploadUrl.replace(apiKey, "****");
+    String maskedKey = apiKey.length() > 8 ? apiKey.substring(0, 4) + "***" + apiKey.substring(apiKey.length() - 4) : "****";
+    logger.info("Uploading image to Roboflow. dataset={}, name={}, split={}, url={}",
+        dataset, fileName, (split != null ? split : "train"), uploadUrlSafe);
+    logger.debug("API key (masked)={}", maskedKey);
+
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(uploadUrl);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length", Integer.toString(base64Image.getBytes(StandardCharsets.US_ASCII).length));
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+
+            // Send base64 image as body
+            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+                wr.write(base64Image.getBytes(StandardCharsets.US_ASCII));
+                wr.flush();
+            }
+
+            int status = connection.getResponseCode();
+            InputStream is = (status >= 200 && status < 300) ? connection.getInputStream() : connection.getErrorStream();
+            StringBuilder responseBody = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBody.append(line);
+                }
+            }
+
+            logger.info("Roboflow upload status: {}", status);
+            logger.info("Roboflow upload body: {}", responseBody);
+
+            if (status != 200 && status != 201) {
+                throw new IOException("Failed to upload to Roboflow. Status: " + status + ", body: " + responseBody);
+            }
+
+            return objectMapper.readTree(responseBody.toString());
+        } catch (IOException e) {
+            logger.error("Error uploading to Roboflow: {}", e.getMessage());
+            throw e;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
-        
-        return objectMapper.readTree(response.body());
     }
 
+    // Removed inline image+annotation upload method to keep endpoints separate as requested
+
+    /**
+     * Annotate an already-uploaded image in Roboflow using YOLO txt content and a labelmap.
+     * Path segment after /annotate/ is the dataset image item ID (e.g., "abc123").
+     * Sends JSON payload: {"annotationFile": "...", "labelmap": {"0":"faulty", ...}} with Content-Type: application/json
+     *
+     * @param thermalImageId The ID of the thermal image whose annotations to upload
+     * @param imageItemId Roboflow dataset image item ID (from upload response 'id'); if null, falls back to property 'roboflow.annotatePath'
+     */
+    public JsonNode annotateImageInRoboflow(UUID thermalImageId, String imageItemId) throws IOException {
+        // Resolve config
+        String apiKey = (roboflowApiKey != null && !roboflowApiKey.isBlank()) ? roboflowApiKey : DEFAULT_ROBOFLOW_API_KEY;
+        String dataset = (roboflowDataset != null && !roboflowDataset.isBlank()) ? roboflowDataset : DEFAULT_DATASET_NAME;
+        String resolvedPath = (imageItemId != null && !imageItemId.isBlank())
+                ? imageItemId
+                : ((roboflowAnnotatePath != null && !roboflowAnnotatePath.isBlank()) ? roboflowAnnotatePath : null);
+        if (resolvedPath == null || resolvedPath.isBlank()) {
+            throw new IllegalStateException("No annotate path segment (image item ID) provided. Supply the upload response 'id' or set 'roboflow.annotatePath'.");
+        }
+
+        // Load image to derive annotation file name
+        ThermalImage thermalImage = thermalImageRepository.findById(thermalImageId)
+            .orElseThrow(() -> new RuntimeException("Thermal image not found: " + thermalImageId));
+
+        String imageFileName = thermalImage.getImageUrl().substring(thermalImage.getImageUrl().lastIndexOf('/') + 1);
+        String baseName = imageFileName;
+        int dot = imageFileName.lastIndexOf('.');
+        if (dot > 0) {
+            baseName = imageFileName.substring(0, dot);
+        }
+        String annotationFileName = baseName + ".txt";
+
+        // Build YOLO txt content from our annotations
+        String yoloTxt = exportToYOLOFormat(thermalImageId);
+
+        // Build labelmap consistent with exportToYOLOFormat mapping
+        Map<String, Integer> classMapping = new HashMap<>();
+        classMapping.put("faulty", 0);
+        classMapping.put("potentially_faulty", 1);
+        classMapping.put("normal", 2);
+
+        ObjectNode labelmapNode = objectMapper.createObjectNode();
+        for (Map.Entry<String, Integer> e : classMapping.entrySet()) {
+            labelmapNode.put(String.valueOf(e.getValue()), e.getKey());
+        }
+
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("annotationFile", yoloTxt);
+        payload.set("labelmap", labelmapNode);
+
+    // Build annotate URL
+        String encodedName = URLEncoder.encode(annotationFileName, StandardCharsets.UTF_8);
+    String annotateUrl = "https://api.roboflow.com/dataset/" + dataset + "/annotate/" + resolvedPath
+                + "?api_key=" + apiKey
+                + "&name=" + encodedName;
+
+    String annotateUrlSafe = annotateUrl.replace(apiKey, "****");
+    String maskedKey = apiKey.length() > 8 ? apiKey.substring(0, 4) + "***" + apiKey.substring(apiKey.length() - 4) : "****";
+    logger.info("Annotating in Roboflow. dataset={}, pathSegment={}, annotationFile={}, yoloLength={}, url={}",
+        dataset, resolvedPath, annotationFileName, (yoloTxt != null ? yoloTxt.length() : 0), annotateUrlSafe);
+    if (yoloTxt == null || yoloTxt.isBlank()) {
+        logger.warn("YOLO annotation text is empty for image {}. Annotation may be ignored.", imageFileName);
+    } else {
+        String firstLine = yoloTxt.split("\\n", 2)[0];
+        logger.debug("YOLO first line preview='{}'", firstLine);
+    }
+    logger.debug("API key (masked)={}", maskedKey);
+
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(annotateUrl);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            // Send annotation JSON: { annotationFile: "...", labelmap: {...} }
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
+
+            String jsonBody = objectMapper.writeValueAsString(payload);
+            logger.debug("Annotate payload size={} bytes (application/json)", jsonBody.getBytes(StandardCharsets.UTF_8).length);
+            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+                wr.write(jsonBody.getBytes(StandardCharsets.UTF_8));
+                wr.flush();
+            }
+
+            int status = connection.getResponseCode();
+            InputStream is = (status >= 200 && status < 300) ? connection.getInputStream() : connection.getErrorStream();
+            StringBuilder responseBody = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBody.append(line);
+                }
+            }
+
+            logger.info("Roboflow annotate status: {}", status);
+            logger.info("Roboflow annotate body: {}", responseBody);
+
+            if (status != 200 && status != 201) {
+                throw new IOException("Failed to annotate in Roboflow. Status: " + status + ", body: " + responseBody);
+            }
+
+            return objectMapper.readTree(responseBody.toString());
+        } finally {
+            if (connection != null) connection.disconnect();
+        }
+    }
     /**
      * Upload multiple images with their annotations (batch upload)
      * 
@@ -318,30 +540,48 @@ public class RoboflowDatasetService {
      * Trigger model version generation on Roboflow
      * This creates a new version of the dataset and optionally trains a new model
      */
+
+
     public JsonNode triggerModelTraining(String datasetVersion) throws IOException, InterruptedException {
+        // Resolve config with fallback to existing defaults
+        String apiKey = (roboflowApiKey != null && !roboflowApiKey.isBlank()) ? roboflowApiKey : DEFAULT_ROBOFLOW_API_KEY;
+        String workspace = (roboflowWorkspace != null && !roboflowWorkspace.isBlank()) ? roboflowWorkspace : "";
+        // Use roboflow.project if set; otherwise fall back to dataset slug
+        String project = (roboflowProject != null && !roboflowProject.isBlank())
+                ? roboflowProject
+                : ((roboflowDataset != null && !roboflowDataset.isBlank()) ? roboflowDataset : DEFAULT_DATASET_NAME);
+
+        if (workspace.isBlank()) {
+            throw new IllegalStateException("roboflow.workspace is not configured");
+        }
+        if (project.isBlank()) {
+            throw new IllegalStateException("roboflow.project (or roboflow.dataset) is not configured");
+        }
+
         String trainUrl = String.format(
             "https://api.roboflow.com/%s/%s/train?api_key=%s",
-            WORKSPACE_ID, PROJECT_ID, ROBOFLOW_API_KEY
+            workspace, project, apiKey
         );
-        
+
         logger.info("Triggering model training at: {}", trainUrl);
-        
+
         ObjectNode requestBody = objectMapper.createObjectNode();
         if (datasetVersion != null) {
             requestBody.put("version", datasetVersion);
         }
-        
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(trainUrl))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
                 .build();
-        
+
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        
+
         logger.info("Training trigger response: {} - {}", response.statusCode(), response.body());
-        
+
         return objectMapper.readTree(response.body());
     }
-}
 
+// ...existing code...
+}
