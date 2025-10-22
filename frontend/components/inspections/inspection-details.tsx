@@ -12,6 +12,7 @@ import { ThermalImageUpload } from "./thermal-image-upload"
 import { ThermalImageCanvas, DetectionMetadata } from "./thermal-image-canvas"
 import { EditInspectionDialog } from "./edit-inspection-dialog"
 import { ModelRetrainingDialog } from "./model-retraining-dialog"
+import { FeedbackLogExport } from "./feedback-log-export"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { InspectionData, ThermalImageData, Detection } from "@/lib/api"
 import { api } from "@/lib/api"
@@ -332,11 +333,12 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           setImages(imgsRes.data)
         }
       } else {
-        setError(annotationRes.message || "Failed to save annotations")
+        console.error("❌ Annotation sync failed:", annotationRes.message)
+        setError(`Failed to sync annotations: ${annotationRes.message || "Unknown error"}`)
       }
     } catch (e: any) {
-      console.error("Failed to save annotations:", e)
-      setError(e.message || "Failed to save annotations")
+      console.error("❌ Failed to save annotations:", e)
+      setError(`Failed to sync annotations: ${e.message || "Network error"}`)
     }
   }
 
@@ -382,6 +384,7 @@ export function InspectionDetails({ inspectionId, onBack }: InspectionDetailsPro
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <FeedbackLogExport />
           <Button variant="outline" size="sm" onClick={() => setShowEditDialog(true)} className="gap-2">
             <Pencil className="w-4 h-4" />
             Edit Inspection

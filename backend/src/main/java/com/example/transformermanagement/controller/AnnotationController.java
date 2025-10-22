@@ -67,7 +67,7 @@ public class AnnotationController {
         } catch (Exception e) {
             System.err.println("Failed to sync annotations: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).body(null);
         }
     }
 }

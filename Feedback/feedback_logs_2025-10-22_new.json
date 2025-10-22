@@ -1,0 +1,140 @@
+[ {
+  "usedForTraining" : false,
+  "imageId" : "36c58469-e429-4215-b3be-9ba21ef1cf90",
+  "comments" : null,
+  "imageUrl" : "/uploads/0ad2a1c7-743c-465f-a1c6-b4b425237b4c_T13_faulty_001.jpg",
+  "finalAcceptedAnnotations" : null,
+  "modelPredictedAnomalies" : null,
+  "imageType" : "Maintenance",
+  "feedbackType" : "",
+  "annotatorMetadata" : {
+    "annotatorName" : null,
+    "annotatorId" : null,
+    "annotatorRole" : null,
+    "timestamp" : "2025-10-20T18:00:27.813743Z"
+  }
+}, {
+  "usedForTraining" : false,
+  "imageId" : "36c58469-e429-4215-b3be-9ba21ef1cf90",
+  "comments" : null,
+  "imageUrl" : "/uploads/0ad2a1c7-743c-465f-a1c6-b4b425237b4c_T13_faulty_001.jpg",
+  "finalAcceptedAnnotations" : null,
+  "modelPredictedAnomalies" : null,
+  "imageType" : "Maintenance",
+  "feedbackType" : "",
+  "annotatorMetadata" : {
+    "annotatorName" : null,
+    "annotatorId" : null,
+    "annotatorRole" : null,
+    "timestamp" : "2025-10-20T18:00:27.813170Z"
+  }
+}, {
+  "usedForTraining" : false,
+  "imageId" : "d3ee6f70-e1b5-4611-a26e-1363f44091fa",
+  "comments" : null,
+  "imageUrl" : "/uploads/561dfacb-d1ef-4bb5-96d6-b409491c0e36_T6_faulty_002.jpg",
+  "finalAcceptedAnnotations" : {
+    "comments" : null,
+    "modifiedAt" : "2025-10-22T15:49:44.068729+05:30",
+    "confidence" : 0.95,
+    "annotationType" : "user_added",
+    "detectionClass" : "faulty",
+    "createdAt" : "2025-10-22T15:49:44.068729+05:30",
+    "createdBy" : "system",
+    "x" : 1539.998782768518,
+    "width" : 338.0750837853834,
+    "y" : 591.5034965034965,
+    "modifiedBy" : "system",
+    "detectionId" : "manual_1761128384048",
+    "height" : 558.5454545454544
+  },
+  "modelPredictedAnomalies" : {
+    "note" : "User added new detection not found by AI",
+    "exists" : false
+  },
+  "imageType" : "Maintenance",
+  "feedbackType" : "addition",
+  "annotatorMetadata" : {
+    "annotatorName" : "system",
+    "annotatorId" : "system",
+    "annotatorRole" : "inspector",
+    "timestamp" : "2025-10-22T10:19:44.077548Z"
+  }
+}, {
+  "usedForTraining" : false,
+  "imageId" : "36c58469-e429-4215-b3be-9ba21ef1cf90",
+  "comments" : null,
+  "imageUrl" : "/uploads/0ad2a1c7-743c-465f-a1c6-b4b425237b4c_T13_faulty_001.jpg",
+  "finalAcceptedAnnotations" : null,
+  "modelPredictedAnomalies" : null,
+  "imageType" : "Maintenance",
+  "feedbackType" : "",
+  "annotatorMetadata" : {
+    "annotatorName" : null,
+    "annotatorId" : null,
+    "annotatorRole" : null,
+    "timestamp" : "2025-10-20T18:00:27.812295Z"
+  }
+}, {
+  "usedForTraining" : false,
+  "imageId" : "de1f5b5f-a48f-4fbf-a929-89b8563896e1",
+  "comments" : "Final test annotation",
+  "imageUrl" : "/uploads/bb9f4331-5760-4d6e-bf21-6c0b19326451_T6_faulty_001.jpg",
+  "finalAcceptedAnnotations" : {
+    "comments" : "Final test annotation",
+    "modifiedAt" : "2025-10-22T15:42:42.857370+05:30",
+    "confidence" : 0.95,
+    "annotationType" : "user_added",
+    "detectionClass" : "faulty",
+    "createdAt" : "2025-10-22T15:42:42.857370+05:30",
+    "createdBy" : "test-user",
+    "x" : 100.0,
+    "width" : 50.0,
+    "y" : 100.0,
+    "modifiedBy" : "test-user",
+    "detectionId" : "test-detection-final",
+    "height" : 50.0
+  },
+  "modelPredictedAnomalies" : {
+    "note" : "User added new detection not found by AI",
+    "exists" : false
+  },
+  "imageType" : "Maintenance",
+  "feedbackType" : "addition",
+  "annotatorMetadata" : {
+    "annotatorName" : "test-user",
+    "annotatorId" : "test-user",
+    "annotatorRole" : "inspector",
+    "timestamp" : "2025-10-22T10:12:42.872703Z"
+  }
+}, {
+  "usedForTraining" : false,
+  "imageId" : "36c58469-e429-4215-b3be-9ba21ef1cf90",
+  "comments" : null,
+  "imageUrl" : "/uploads/0ad2a1c7-743c-465f-a1c6-b4b425237b4c_T13_faulty_001.jpg",
+  "finalAcceptedAnnotations" : null,
+  "modelPredictedAnomalies" : null,
+  "imageType" : "Maintenance",
+  "feedbackType" : "",
+  "annotatorMetadata" : {
+    "annotatorName" : null,
+    "annotatorId" : null,
+    "annotatorRole" : null,
+    "timestamp" : "2025-10-20T18:00:27.812829Z"
+  }
+}, {
+  "usedForTraining" : false,
+  "imageId" : "36c58469-e429-4215-b3be-9ba21ef1cf90",
+  "comments" : null,
+  "imageUrl" : "/uploads/0ad2a1c7-743c-465f-a1c6-b4b425237b4c_T13_faulty_001.jpg",
+  "finalAcceptedAnnotations" : null,
+  "modelPredictedAnomalies" : null,
+  "imageType" : "Maintenance",
+  "feedbackType" : "",
+  "annotatorMetadata" : {
+    "annotatorName" : null,
+    "annotatorId" : null,
+    "annotatorRole" : null,
+    "timestamp" : "2025-10-20T18:00:27.813533Z"
+  }
+} ]

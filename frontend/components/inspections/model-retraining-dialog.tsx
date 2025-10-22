@@ -103,17 +103,6 @@ export function ModelRetrainingDialog({
             </p>
           </div>
 
-          {/* Upload Information */}
-          <div className="rounded-lg border p-3 bg-muted/30">
-            <h4 className="text-sm font-medium mb-2">What happens next?</h4>
-            <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
-              <li>Image(s) and annotations uploaded to Roboflow</li>
-              <li>Data added to your project dataset</li>
-              <li>You can generate a new dataset version</li>
-              <li>Train a new model with improved data</li>
-            </ol>
-          </div>
-
           {/* Error Display */}
           {error && (
             <Alert variant="destructive">

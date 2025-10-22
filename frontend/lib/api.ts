@@ -77,6 +77,32 @@ export interface AlertData {
     is_read?: boolean;
 }
 
+// FR3.3: Feedback Log interfaces
+export interface FeedbackLogData {
+  id?: string;
+  imageId: string;
+  imageUrl: string;
+  imageType: string;
+  modelPredictedAnomalies: any;
+  finalAcceptedAnnotations: any;
+  feedbackType: string;
+  annotatorMetadata: {
+    annotatorId: string;
+    annotatorName: string;
+    annotatorRole: string;
+    timestamp: string;
+  };
+  comments?: string;
+  usedForTraining: boolean;
+}
+
+export interface FeedbackLogStats {
+  totalLogs: number;
+  unusedLogs: number;
+  usedLogs: number;
+  feedbackTypeCounts: Record<string, number>;
+}
+
 class ApiService {
   // Transformer API methods
   async getTransformers(): Promise<ApiResponse<TransformerData[]>> {
@@ -437,7 +463,11 @@ class ApiService {
         },
         body: JSON.stringify(annotations),
       })
-      if (!response.ok) throw new Error("Failed to sync annotations")
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error("❌ Sync annotations failed:", response.status, errorText)
+        throw new Error(`Failed to sync annotations: ${response.status} ${errorText}`)
+      }
       const data = await response.json()
       return { data, success: true }
     } catch (error: any) {
@@ -522,6 +552,112 @@ class ApiService {
         : `${API_BASE_URL}/roboflow/train`
       const response = await fetch(url, { method: "POST" })
       if (!response.ok) throw new Error("Failed to trigger model training")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  // FR3.3: Feedback Log API methods
+  async getFeedbackLogs(): Promise<ApiResponse<FeedbackLogData[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedback-logs`)
+      if (!response.ok) throw new Error("Failed to fetch feedback logs")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
+
+  async getFeedbackLogsByImage(thermalImageId: string): Promise<ApiResponse<FeedbackLogData[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedback-logs/thermal-image/${thermalImageId}`)
+      if (!response.ok) throw new Error("Failed to fetch feedback logs for image")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
+
+  async getUnusedFeedbackLogs(): Promise<ApiResponse<FeedbackLogData[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedback-logs/unused`)
+      if (!response.ok) throw new Error("Failed to fetch unused feedback logs")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
+
+  async exportFeedbackLogsJSON(unused: boolean = false): Promise<void> {
+    try {
+      const url = unused 
+        ? `${API_BASE_URL}/feedback-logs/export/json/unused`
+        : `${API_BASE_URL}/feedback-logs/export/json`
+      
+      const response = await fetch(url)
+      if (!response.ok) throw new Error("Failed to export feedback logs")
+      
+      const blob = await response.blob()
+      const downloadUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = `feedback_logs_${unused ? 'unused_' : ''}${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(downloadUrl)
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  }
+
+  async exportFeedbackLogsCSV(unused: boolean = false): Promise<void> {
+    try {
+      const url = unused 
+        ? `${API_BASE_URL}/feedback-logs/export/csv/unused`
+        : `${API_BASE_URL}/feedback-logs/export/csv`
+      
+      const response = await fetch(url)
+      if (!response.ok) throw new Error("Failed to export feedback logs")
+      
+      const blob = await response.blob()
+      const downloadUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = `feedback_logs_${unused ? 'unused_' : ''}${new Date().toISOString().split('T')[0]}.csv`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(downloadUrl)
+    } catch (error: any) {
+      throw new Error(error.message)
+    }
+  }
+
+  async getFeedbackLogStats(): Promise<ApiResponse<FeedbackLogStats>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedback-logs/stats`)
+      if (!response.ok) throw new Error("Failed to fetch feedback log stats")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async markFeedbackLogsAsUsed(feedbackLogIds: string[]): Promise<ApiResponse<any>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/feedback-logs/mark-used`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(feedbackLogIds),
+      })
+      if (!response.ok) throw new Error("Failed to mark feedback logs as used")
       const data = await response.json()
       return { data, success: true }
     } catch (error: any) {
