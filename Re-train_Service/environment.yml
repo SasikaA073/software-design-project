@@ -1,0 +1,12 @@
+name: sdc_py_trainer_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - fastapi
+      - uvicorn[standard]
+      - roboflow>=1.1.53
+      - python-dotenv

@@ -18,7 +18,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
-.env*
+.env
 
 # vercel
 .vercel
@@ -26,3 +26,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# images
+/backend/uploads/*
+
+# ide configs
+.idea
+.vscode
