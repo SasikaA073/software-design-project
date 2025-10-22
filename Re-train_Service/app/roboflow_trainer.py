@@ -36,7 +36,7 @@ def trigger_training():
         # Train the version
         print("[INFO] Triggering model training...")
         job = version.train(
-            model_type="yolov11",
+            model_type="yolov11s",
             checkpoint=None,
             plot_in_notebook=False,
         )

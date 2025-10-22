@@ -165,6 +165,15 @@ public class RoboflowDatasetService {
             }
         }
 
+        try {
+            JsonNode response = triggerModelTraining();
+            System.out.println("Training Trigger Response:");
+            System.out.println(response.toPrettyString());
+        } catch (Exception e) {
+            System.err.println("Error triggering training: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return uploadResponse;
     }
 
@@ -492,6 +501,15 @@ public class RoboflowDatasetService {
             result.put("message", "No user-corrected annotations found");
             result.put("total", 0);
             return result;
+        }
+
+        try {
+            JsonNode response = triggerModelTraining();
+            System.out.println("Training Trigger Response:");
+            System.out.println(response.toPrettyString());
+        } catch (Exception e) {
+            System.err.println("Error triggering training: " + e.getMessage());
+            e.printStackTrace();
         }
         
         // Batch upload

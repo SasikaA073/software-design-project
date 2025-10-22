@@ -9,3 +9,7 @@ conda env create -f environment.yml
 ```bash
 conda activate sdc_py_trainer_env
 ```
+### Run the following to start the FastAPI server.
+``` bash
+uvicorn app.main:app --reload --port 8000
+```
