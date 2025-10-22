@@ -29,7 +29,10 @@ next-env.d.ts
 
 # images
 /backend/uploads/*
+/backend/target/*
 
 # ide configs
 .idea
 .vscode
+/uploads/*
+
