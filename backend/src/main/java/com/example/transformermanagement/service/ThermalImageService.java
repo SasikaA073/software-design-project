@@ -83,7 +83,7 @@ public class ThermalImageService {
                 
                 if (anomalyResponse.has("outputs") && anomalyResponse.get("outputs").isArray()) {
                     JsonNode outputs = anomalyResponse.get("outputs");
-                    if (outputs.size() > 0) {
+                    if (!outputs.isEmpty()) {
                         resultData = outputs.get(0);
                         System.out.println("✓ Found outputs array, using first element");
                     }
