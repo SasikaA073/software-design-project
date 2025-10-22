@@ -1,5 +1,6 @@
 package com.example.transformermanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
@@ -12,6 +13,7 @@ public class Annotation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "thermal_image_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private ThermalImage thermalImage;
 
     // FR3.2: Store transformer ID for easier querying
