@@ -1,7 +1,9 @@
 package com.example.transformermanagement.service;
 
+import com.example.transformermanagement.model.Annotation;
 import com.example.transformermanagement.model.Inspection;
 import com.example.transformermanagement.model.ThermalImage;
+import com.example.transformermanagement.repository.AnnotationRepository;
 import com.example.transformermanagement.repository.InspectionRepository;
 import com.example.transformermanagement.repository.ThermalImageRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,6 +27,9 @@ public class ThermalImageService {
 
     @Autowired
     private InspectionRepository inspectionRepository;
+
+    @Autowired
+    private AnnotationRepository annotationRepository;
 
     @Autowired
     private AnomalyDetectionService anomalyDetectionService;
@@ -140,10 +145,45 @@ public class ThermalImageService {
                         System.out.println("\n------------------------------------------");
                         System.out.println("Total detections processed: " + detectionsArray.size());
                         
-                        // Store detection data as JSON string in the database
+                        // Store detection data as JSON string in the database (legacy/backup)
                         savedImage.setDetectionData(detectionsArray.toString());
                         savedImage = thermalImageRepository.save(savedImage);
                         System.out.println("✅ Detection data saved to database");
+                        
+                        // Create Annotation entities for each AI detection (FR3.1 & FR3.2)
+                        System.out.println("\n📝 Creating Annotation entities for AI detections...");
+                        
+                        // Get transformer ID for FR3.2
+                        java.util.UUID transformerId = null;
+                        if (savedImage.getInspection() != null && savedImage.getInspection().getTransformer() != null) {
+                            transformerId = savedImage.getInspection().getTransformer().getId();
+                            System.out.println("  Transformer ID: " + transformerId);
+                        }
+                        
+                        for (JsonNode detection : detectionsArray) {
+                            try {
+                                Annotation annotation = new Annotation();
+                                annotation.setThermalImage(savedImage);
+                                annotation.setTransformerId(transformerId); // FR3.2
+                                annotation.setDetectionId(detection.has("detection_id") ? detection.get("detection_id").asText() : "ai_" + System.currentTimeMillis());
+                                annotation.setAnnotationType("ai_detected");
+                                annotation.setDetectionClass(detection.has("class") ? detection.get("class").asText() : "unknown");
+                                annotation.setConfidence(detection.has("confidence") ? detection.get("confidence").asDouble() : 0.0);
+                                annotation.setX(detection.has("x") ? detection.get("x").asDouble() : 0.0);
+                                annotation.setY(detection.has("y") ? detection.get("y").asDouble() : 0.0);
+                                annotation.setWidth(detection.has("width") ? detection.get("width").asDouble() : 0.0);
+                                annotation.setHeight(detection.has("height") ? detection.get("height").asDouble() : 0.0);
+                                annotation.setCreatedBy("ai_system");
+                                annotation.setModifiedBy("ai_system");
+                                annotation.setComments("Automatically detected by AI anomaly detection system");
+                                annotation.setIsDeleted(false);
+                                
+                                annotationRepository.save(annotation);
+                            } catch (Exception annotationEx) {
+                                System.err.println("⚠️ Failed to create annotation: " + annotationEx.getMessage());
+                            }
+                        }
+                        System.out.println("✅ Annotation entities created successfully");
                     } else {
                         System.out.println("⚠️ predictions.predictions is not an array");
                     }
