@@ -710,6 +710,50 @@ CREATE TABLE thermal_images (
     FOREIGN KEY (inspection_id) REFERENCES inspections(id) ON DELETE CASCADE
 );
 ```
+
+### Annotations Table
+```sql
+CREATE TABLE annotations (
+    id UUID PRIMARY KEY,
+    thermal_image_id UUID NOT NULL,
+    detection_id VARCHAR(255) NOT NULL,
+    annotation_type VARCHAR(50) NOT NULL,
+    detection_class VARCHAR(100) NOT NULL,
+    confidence DOUBLE NOT NULL,
+    x DOUBLE NOT NULL,
+    y DOUBLE NOT NULL,
+    width DOUBLE NOT NULL,
+    height DOUBLE NOT NULL,
+    comments TEXT,
+    created_by VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    modified_by VARCHAR(255),
+    modified_at TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (thermal_image_id) REFERENCES thermal_images(id)
+);
+```
+
+```sql
+CREATE TABLE maintenance_records (
+    record_id            UUID PRIMARY KEY,                                  -- Unique record ID
+    transformer_id       UUID NOT NULL,                                     -- FK linked to transformers.id
+    timestamp            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,               -- Inspection timestamp
+    image_path           VARCHAR(500),                                      -- Path to thermal image (from Phase 3)
+    anomalies            JSON,                                              -- Auto-detected anomaly details
+    inspector_name       VARCHAR(255),                                      -- Engineer name
+    transformer_status   VARCHAR(50) CHECK (transformer_status IN ('OK', 'Needs Maintenance', 'Urgent')),  -- Status dropdown
+    voltage              DECIMAL(10,2),                                     -- Electrical reading
+    current              DECIMAL(10,2),                                     -- Electrical reading
+    corrective_action    TEXT,                                              -- Maintenance actions
+    remarks              TEXT,                                              -- Additional notes
+    version              INT DEFAULT 1,                                     -- Version control for edits
+    last_updated         TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Auto-update timestamp
+
+    FOREIGN KEY (transformer_id) REFERENCES transformers (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+```
+
 ---
 ## Limitations
 
