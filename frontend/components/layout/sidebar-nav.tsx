@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Zap, ClipboardList, LayoutDashboard, Settings } from "lucide-react"
+import { Zap, ClipboardList, LayoutDashboard, Settings, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -17,6 +17,7 @@ const navItems: NavItem[] = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard, match: (p) => p === "/" },
   { href: "/transformers", label: "Transformers", icon: Zap, match: (p) => p.startsWith("/transformers") },
   { href: "/inspections", label: "Inspections", icon: ClipboardList, match: (p) => p.startsWith("/inspections") },
+  { href: "/maintenance-records", label: "Maintenance Records", icon: FileText, match: (p) => p.startsWith("/maintenance-records") },
 ]
 
 export function SidebarNav() {

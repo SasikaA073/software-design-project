@@ -77,6 +77,34 @@ export interface AlertData {
     is_read?: boolean;
 }
 
+export interface MaintenanceRecordData {
+  id?: string;
+  recordNo?: string;
+  transformerId: string;
+  transformerNo?: string;
+  inspectionId: string;
+  inspectionNo?: string;
+  inspectionTimestamp?: string;
+  thermalImageUrl?: string;
+  thermalImageThumbnailUrl?: string;
+  anomalyMarkersData?: string; // JSON string
+  inspectorName?: string;
+  transformerStatus?: "OK" | "NEEDS_MAINTENANCE" | "URGENT_ATTENTION";
+  voltage?: number;
+  current?: number;
+  frequency?: number;
+  loadPercentage?: number;
+  notes?: string;
+  comments?: string;
+  recommendedAction?: string;
+  additionalRemarks?: string;
+  actionDueDate?: string;
+  versionNumber?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  lastModifiedBy?: string;
+}
+
 class ApiService {
   // Transformer API methods
   async getTransformers(): Promise<ApiResponse<TransformerData[]>> {
@@ -526,6 +554,99 @@ class ApiService {
       return { data, success: true }
     } catch (error: any) {
       return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  // FR4: Maintenance Record Management
+  async createMaintenanceRecord(record: MaintenanceRecordData): Promise<ApiResponse<MaintenanceRecordData>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/maintenance-records`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record),
+      })
+      if (!response.ok) throw new Error("Failed to create maintenance record")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async updateMaintenanceRecord(id: string, record: Partial<MaintenanceRecordData>): Promise<ApiResponse<MaintenanceRecordData>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/maintenance-records/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record),
+      })
+      if (!response.ok) throw new Error("Failed to update maintenance record")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async getMaintenanceRecordById(id: string): Promise<ApiResponse<MaintenanceRecordData>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/maintenance-records/${id}`)
+      if (!response.ok) throw new Error("Failed to fetch maintenance record")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message }
+    }
+  }
+
+  async getMaintenanceRecords(transformerId?: string, inspectionId?: string): Promise<ApiResponse<MaintenanceRecordData[]>> {
+    try {
+      let url = `${API_BASE_URL}/maintenance-records`
+      const params = new URLSearchParams()
+      if (transformerId) params.append("transformerId", transformerId)
+      if (inspectionId) params.append("inspectionId", inspectionId)
+      if (params.toString()) url += `?${params.toString()}`
+      
+      const response = await fetch(url)
+      if (!response.ok) throw new Error("Failed to fetch maintenance records")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
+
+  async getTransformerRecordHistory(transformerId: string): Promise<ApiResponse<MaintenanceRecordData[]>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/maintenance-records/history/${transformerId}`)
+      if (!response.ok) throw new Error("Failed to fetch record history")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: [], success: false, message: error.message }
+    }
+  }
+
+  async deleteMaintenanceRecord(id: string): Promise<ApiResponse<null>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/maintenance-records/${id}`, {
+        method: "DELETE",
+      })
+      if (!response.ok) throw new Error("Failed to delete maintenance record")
+      return { data: null, success: true }
+    } catch (error: any) {
+      return { data: null, success: false, message: error.message }
+    }
+  }
+
+  async checkRecordExists(transformerId: string, inspectionId: string): Promise<ApiResponse<boolean>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/maintenance-records/check?transformerId=${transformerId}&inspectionId=${inspectionId}`)
+      if (!response.ok) throw new Error("Failed to check record existence")
+      const data = await response.json()
+      return { data, success: true }
+    } catch (error: any) {
+      return { data: false, success: false, message: error.message }
     }
   }
 }
