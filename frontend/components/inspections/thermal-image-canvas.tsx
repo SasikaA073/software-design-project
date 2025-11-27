@@ -113,7 +113,8 @@ export function ThermalImageCanvas({
       setImageLoaded(true)
     }
     img.onerror = () => {
-      console.error("Failed to load image:", imageUrl)
+      console.warn("Unable to load image (may have been deleted):", imageUrl)
+      setImageLoaded(false)
     }
     img.src = imageUrl
   }, [imageUrl])
