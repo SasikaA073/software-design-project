@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { api, MaintenanceRecordData, ThermalImageData } from "@/lib/api"
+import { useState, useEffect, useMemo } from "react"
+import { api, MaintenanceRecordData, ThermalImageData, Detection } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, Loader2, Edit, Download, ArrowLeft, Trash2, Thermometer } from "lucide-react"
+import { ThermalImageCanvas } from "@/components/inspections/thermal-image-canvas"
 import { format } from "date-fns"
 
 interface MaintenanceRecordDetailsProps {
@@ -22,6 +23,7 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [detections, setDetections] = useState<Detection[]>([])
 
   useEffect(() => {
     loadRecord()
@@ -50,6 +52,19 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
     const response = await api.getThermalImages(inspectionId)
     if (response.success) {
       setThermalImages(response.data)
+      // Parse detections from maintenance image
+      const maintenanceImage = response.data.find(img => img.imageType === "Maintenance")
+      if (maintenanceImage?.detectionData) {
+        try {
+          const parsedDetections = JSON.parse(maintenanceImage.detectionData)
+          setDetections(Array.isArray(parsedDetections) ? parsedDetections : [])
+        } catch (e) {
+          console.error("Failed to parse detection data:", e)
+          setDetections([])
+        }
+      } else {
+        setDetections([])
+      }
     }
   }
 
@@ -87,6 +102,16 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
     }
     const config = statusMap[status || ""] || { label: status || "Unknown", variant: "outline" }
     return <Badge variant={config.variant}>{config.label}</Badge>
+  }
+
+  const getAnomalyTypeVariant = (anomalyClass?: string): any => {
+    const variantMap: Record<string, string> = {
+      faulty: "destructive",
+      potentially_faulty: "secondary",
+      normal: "default",
+      default: "outline",
+    }
+    return variantMap[anomalyClass?.toLowerCase() || ""] || "outline"
   }
 
   const formatDate = (dateString?: string) => {
@@ -233,18 +258,19 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
                   )}
                 </div>
 
-                {/* Maintenance Image Section */}
+                {/* Maintenance Image Section with Anomaly Bounding Boxes */}
                 <div>
                   <h4 className="font-semibold text-sm mb-2">Maintenance Image (Current)</h4>
                   {thermalImages.find(img => img.imageType === "Maintenance") ? (
                     <div className="relative rounded-md overflow-hidden border print:border print:border-gray-300">
-                      <img
-                        src={thermalImages.find(img => img.imageType === "Maintenance")?.imageUrl || ""}
+                      <ThermalImageCanvas
+                        imageUrl={thermalImages.find(img => img.imageType === "Maintenance")?.imageUrl || ""}
+                        detections={detections}
                         alt="Thermal Maintenance"
-                        className="w-full h-[360px] object-cover print:h-auto print:max-h-96"
+                        className="w-full h-[360px]"
                       />
                       {thermalImages.find(img => img.imageType === "Maintenance")?.anomalyDetected && (
-                        <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                        <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold z-10">
                           Anomalies Detected
                         </div>
                       )}
@@ -277,6 +303,49 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
                             <p><span className="text-gray-600">Status:</span> {img.anomalyDetected ? "Anomalies Found" : "Normal"}</p>
                           )}
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Detected Anomalies Section */}
+              {detections.length > 0 && (
+                <div className="border-t pt-4 print:border-t print:pt-2">
+                  <h4 className="font-semibold text-sm mb-3 print:text-xs">Detected Anomalies ({detections.length})</h4>
+                  <div className="space-y-2">
+                    {detections.map((detection, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 bg-blue-50 border border-blue-200 rounded print:bg-white print:border print:border-gray-300"
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            <Badge variant={getAnomalyTypeVariant(detection.class)}>
+                              {detection.class}
+                            </Badge>
+                            <span className="text-xs font-semibold text-gray-600">
+                              Confidence: {(detection.confidence * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs print:text-xs">
+                          <div>
+                            <span className="text-gray-600">X:</span> {Math.round(detection.x)}px
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Y:</span> {Math.round(detection.y)}px
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Width:</span> {Math.round(detection.width)}px
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Height:</span> {Math.round(detection.height)}px
+                          </div>
+                        </div>
+                        {detection.comments && (
+                          <p className="text-xs text-gray-700 mt-2 print:text-xs">{detection.comments}</p>
+                        )}
                       </div>
                     ))}
                   </div>
