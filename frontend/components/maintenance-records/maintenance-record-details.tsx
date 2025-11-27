@@ -91,7 +91,149 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
   }
 
   const handlePrint = () => {
-    window.print()
+    if (!record) return
+
+    // Create a new window for printing
+    const printWindow = window.open("", "_blank")
+    if (!printWindow) {
+      alert("Please allow popups for printing")
+      return
+    }
+
+    // Build HTML for print - print complete page content
+    const detectionsHTML = detections.length > 0 ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${detections.length})</div>${detections.map((detection) => `<div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${detection.class}</span><span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(detection.confidence * 100).toFixed(1)}%</span></div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;"><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(detection.x)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(detection.y)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(detection.width)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(detection.height)}px</div></div>${detection.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${detection.comments}</div>` : ''}</div>`).join('')}</div>` : ""
+
+    const imageDetailsHTML = thermalImages.length > 0 ? `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">${thermalImages.map((img) => `<div style="padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px;"><div style="font-weight: 600; margin-bottom: 8px; font-size: 13px;">${img.imageType} Image</div><div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Uploaded:</span> ${formatDate(img.uploadedAt)}</div>${img.temperatureReading ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Temperature:</span> ${img.temperatureReading}°C</div>` : ""}${img.weatherCondition ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Weather:</span> ${img.weatherCondition}</div>` : ""}${img.anomalyDetected !== undefined ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Status:</span> ${img.anomalyDetected ? "Anomalies Found" : "Normal"}</div>` : ""}</div>`).join("")}</div>` : ""
+
+    const printHTML = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maintenance Record - ${record.recordNo}</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; color: #000; line-height: 1.5; padding: 20px; }
+.container { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 28px; font-weight: bold; margin-bottom: 5px; }
+.record-number { color: #666; font-size: 14px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+.card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; page-break-inside: avoid; }
+.card-header { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f3f4f6; }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
+.card-description { font-size: 12px; color: #666; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 15px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.field-label { font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 500; }
+.field-value { font-size: 14px; font-weight: 600; }
+.image-wrapper { border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; background: #f9fafb; height: 400px; display: flex; align-items: center; justify-content: center; }
+.image-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+.image-title { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+.badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.badge-default { background: #f3f4f6; color: #111; border: 1px solid #d1d5db; }
+.badge-secondary { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+.badge-destructive { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.footer { margin-top: 30px; padding-top: 20px; border-top: 2px solid #e5e7eb; font-size: 11px; color: #666; }
+@media print {
+  * { margin: 0; padding: 0; }
+  body { padding: 0; margin: 0; }
+  .card { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Maintenance Record</h1>
+<div class="record-number">${record.recordNo}</div>
+
+<div class="card">
+<div class="card-header">
+<div class="card-title">Transformer & Inspection Details</div>
+<div class="card-description">System-generated information</div>
+</div>
+<div class="grid">
+<div><div class="field-label">Record Number</div><div class="field-value">${record.recordNo}</div></div>
+<div><div class="field-label">Transformer</div><div class="field-value">${record.transformerNo}</div></div>
+<div><div class="field-label">Inspection</div><div class="field-value">${record.inspectionNo}</div></div>
+<div><div class="field-label">Inspection Date</div><div class="field-value">${formatDate(record.inspectionTimestamp)}</div></div>
+<div><div class="field-label">Record Version</div><div class="field-value">v${record.versionNumber || 1}</div></div>
+<div><div class="field-label">Last Modified</div><div class="field-value">${formatDate(record.updatedAt)}</div></div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<div class="card-title">Thermal Image Analysis</div>
+<div class="card-description">Baseline vs Maintenance Image Comparison</div>
+</div>
+${thermalImages.length === 0 ? '<div style="text-align: center; color: #999; padding: 20px;">No thermal images available</div>' : `<div class="grid-2"><div><div class="image-title">Baseline Image (Reference)</div><div class="image-wrapper">${baselineImageUrl ? `<img src="${baselineImageUrl}" alt="Baseline">` : '<div style="color: #999;">No baseline image</div>'}</div></div><div><div class="image-title">Maintenance Image (Current)</div><div class="image-wrapper">${thermalImages.find((img) => img.imageType === "Maintenance") ? `<img src="${thermalImages.find((img) => img.imageType === "Maintenance")?.imageUrl || ''}" alt="Maintenance">` : '<div style="color: #999;">No maintenance image</div>'}</div></div></div>${imageDetailsHTML}${detectionsHTML}`}
+</div>
+
+<div class="card">
+<div class="card-header">
+<div class="card-title">Engineer Assessment</div>
+<div class="card-description">Maintenance engineer inputs</div>
+</div>
+<div class="grid">
+<div><div class="field-label">Inspector Name</div><div class="field-value">${record.inspectorName || "-"}</div></div>
+<div><div class="field-label">Status</div><div style="margin-top: 5px;"><span class="badge badge-${getStatusBadgeType(record.transformerStatus)}">${getStatusLabel(record.transformerStatus)}</span></div></div>
+${record.actionDueDate ? `<div><div class="field-label">Action Due Date</div><div class="field-value">${formatDate(record.actionDueDate)}</div></div>` : ""}
+</div>
+
+${(record.voltage || record.current || record.frequency || record.loadPercentage) ? `<div style="border-top: 1px solid #e5e7eb; padding-top: 15px; margin-top: 15px;"><div style="font-weight: 600; margin-bottom: 10px;">Electrical Readings</div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">${record.voltage !== undefined ? `<div><div class="field-label">Voltage</div><div class="field-value">${record.voltage} V</div></div>` : ""}${record.current !== undefined ? `<div><div class="field-label">Current</div><div class="field-value">${record.current} A</div></div>` : ""}${record.frequency !== undefined ? `<div><div class="field-label">Frequency</div><div class="field-value">${record.frequency} Hz</div></div>` : ""}${record.loadPercentage !== undefined ? `<div><div class="field-label">Load</div><div class="field-value">${record.loadPercentage}%</div></div>` : ""}</div></div>` : ""}
+
+${record.notes ? `<div style="margin: 15px 0; border-top: 1px solid #e5e7eb; padding-top: 15px;"><div style="font-weight: 600; margin-bottom: 10px;">Notes</div><div style="white-space: pre-wrap; background: #f9fafb; padding: 10px; border-radius: 4px; border-left: 3px solid #3b82f6;">${record.notes}</div></div>` : ""}
+${record.comments ? `<div style="margin: 15px 0; border-top: 1px solid #e5e7eb; padding-top: 15px;"><div style="font-weight: 600; margin-bottom: 10px;">Comments</div><div style="white-space: pre-wrap; background: #f9fafb; padding: 10px; border-radius: 4px; border-left: 3px solid #3b82f6;">${record.comments}</div></div>` : ""}
+${record.recommendedAction ? `<div style="margin: 15px 0; border-top: 1px solid #e5e7eb; padding-top: 15px;"><div style="font-weight: 600; margin-bottom: 10px;">Recommended Action</div><div style="white-space: pre-wrap; background: #f9fafb; padding: 10px; border-radius: 4px; border-left: 3px solid #3b82f6;">${record.recommendedAction}</div></div>` : ""}
+${record.additionalRemarks ? `<div style="margin: 15px 0; border-top: 1px solid #e5e7eb; padding-top: 15px;"><div style="font-weight: 600; margin-bottom: 10px;">Additional Remarks</div><div style="white-space: pre-wrap; background: #f9fafb; padding: 10px; border-radius: 4px; border-left: 3px solid #3b82f6;">${record.additionalRemarks}</div></div>` : ""}
+
+<div style="font-size: 11px; color: #666; margin-top: 15px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+<div>Created: ${formatDate(record.createdAt)}</div>
+${record.lastModifiedBy ? `<div>Last modified by: ${record.lastModifiedBy}</div>` : ""}
+</div>
+</div>
+
+<div class="footer">
+<p>This is an automatically generated maintenance record from the Transformer Management System</p>
+<p>For official use only</p>
+<p>Generated on: ${new Date().toLocaleString()}</p>
+</div>
+</div>
+</body>
+</html>`
+
+    printWindow.document.write(printHTML)
+    printWindow.document.close()
+    
+    // Wait for images to load then print
+    setTimeout(() => {
+      printWindow.print()
+    }, 500)
+  }
+
+  const getStatusLabel = (status?: string): string => {
+    switch (status) {
+      case "OK":
+        return "OK"
+      case "NEEDS_MAINTENANCE":
+        return "Needs Maintenance"
+      case "URGENT_ATTENTION":
+        return "Urgent Attention"
+      default:
+        return "Unknown"
+    }
+  }
+
+  const getStatusBadgeType = (status?: string): string => {
+    switch (status) {
+      case "OK":
+        return "default"
+      case "NEEDS_MAINTENANCE":
+        return "secondary"
+      case "URGENT_ATTENTION":
+        return "destructive"
+      default:
+        return "outline"
+    }
   }
 
   const getStatusBadge = (status?: string) => {

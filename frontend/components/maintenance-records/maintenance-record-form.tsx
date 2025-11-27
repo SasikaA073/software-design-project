@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { api, MaintenanceRecordData, InspectionData, TransformerData } from "@/lib/api"
+import { api, MaintenanceRecordData, InspectionData, TransformerData, ThermalImageData, Detection } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2, Save, ArrowLeft } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { AlertCircle, Loader2, Save, ArrowLeft, Thermometer } from "lucide-react"
+import { ThermalImageCanvas } from "@/components/inspections/thermal-image-canvas"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 
@@ -27,6 +29,10 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
   const [inspections, setInspections] = useState<InspectionData[]>([])
   const [selectedTransformer, setSelectedTransformer] = useState<string>("")
   const [selectedInspection, setSelectedInspection] = useState<string>("")
+  const [baselineImageUrl, setBaselineImageUrl] = useState<string | null>(null)
+  const [thermalImages, setThermalImages] = useState<ThermalImageData[]>([])
+  const [detections, setDetections] = useState<Detection[]>([])
+  const [loadingAuxData, setLoadingAuxData] = useState(false)
 
   const [formData, setFormData] = useState<Partial<MaintenanceRecordData>>({
     transformerStatus: "OK",
@@ -46,8 +52,15 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
   useEffect(() => {
     if (selectedTransformer) {
       loadInspections(selectedTransformer)
+      loadBaselineImage(selectedTransformer)
     }
   }, [selectedTransformer])
+
+  useEffect(() => {
+    if (selectedInspection) {
+      autoFillFromInspection()
+    }
+  }, [selectedInspection])
 
   const loadTransformers = async () => {
     const response = await api.getTransformers()
@@ -61,6 +74,75 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
     if (response.success) {
       setInspections(response.data)
     }
+  }
+
+  const loadBaselineImage = async (transformerId: string) => {
+    const response = await api.getTransformer(transformerId)
+    if (response.success) {
+      const transformer = response.data
+      // Use Sunny as default, or Cloudy/Rainy if Sunny is not available
+      const baselineUrl = transformer.sunnyBaselineImageUrl || transformer.cloudyBaselineImageUrl || transformer.rainyBaselineImageUrl
+      setBaselineImageUrl(baselineUrl || null)
+    }
+  }
+
+  const autoFillFromInspection = async () => {
+    if (!selectedInspection) return
+    
+    setLoadingAuxData(true)
+    try {
+      // Get inspection details
+      const inspectionResponse = await api.getInspection(selectedInspection)
+      if (!inspectionResponse.success) {
+        throw new Error("Failed to load inspection")
+      }
+
+      const inspection = inspectionResponse.data
+
+      // Update form with inspection data
+      setFormData((prev) => ({
+        ...prev,
+        inspectorName: inspection.inspectedBy || "", // Auto-fill inspector name
+        inspectionTimestamp: inspection.inspectedDate,
+      }))
+
+      // Load thermal images and anomalies
+      const thermalResponse = await api.getThermalImages(selectedInspection)
+      if (thermalResponse.success) {
+        setThermalImages(thermalResponse.data)
+
+        // Parse detections from maintenance image
+        const maintenanceImage = thermalResponse.data.find((img) => img.imageType === "Maintenance")
+        if (maintenanceImage?.detectionData) {
+          try {
+            const parsedDetections = JSON.parse(maintenanceImage.detectionData)
+            setDetections(Array.isArray(parsedDetections) ? parsedDetections : [])
+          } catch (e) {
+            console.error("Failed to parse detection data:", e)
+            setDetections([])
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error loading inspection data:", err)
+    } finally {
+      setLoadingAuxData(false)
+    }
+  }
+
+  const getAnomalyTypeVariant = (anomalyClass?: string): any => {
+    const variantMap: Record<string, string> = {
+      faulty: "destructive",
+      potentially_faulty: "secondary",
+      normal: "default",
+      default: "outline",
+    }
+    return variantMap[anomalyClass?.toLowerCase() || ""] || "outline"
+  }
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "-"
+    return format(new Date(dateString), "PPP p")
   }
 
   const loadRecord = async () => {
@@ -191,20 +273,110 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
               </div>
             </div>
 
+            {selectedInspection && loadingAuxData && (
+              <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded text-sm">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Loading inspection data...</span>
+              </div>
+            )}
+
             {formData.inspectionTimestamp && (
               <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm">
                 <strong>Inspection Date:</strong> {formatDate(formData.inspectionTimestamp)}
               </div>
             )}
 
-            {formData.thermalImageThumbnailUrl && (
-              <div className="space-y-2">
-                <Label>Thermal Image (with anomaly markers)</Label>
-                <img
-                  src={formData.thermalImageThumbnailUrl}
-                  alt="Thermal image with anomalies"
-                  className="w-full max-w-md rounded border"
-                />
+            {/* Thermal Image Comparison - Side by Side */}
+            {(baselineImageUrl || thermalImages.find((img) => img.imageType === "Maintenance")) && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Thermometer className="w-5 h-5 text-primary" />
+                  <Label className="text-base font-semibold">Thermal Image Analysis</Label>
+                  {detections.length > 0 && <Badge variant="destructive">{detections.length} Anomalies</Badge>}
+                </div>
+
+                {/* Images Grid - Side by Side */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Baseline Image */}
+                  {baselineImageUrl && (
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">Baseline Image (Reference)</h4>
+                      <div className="relative rounded-md overflow-hidden border border-gray-300 bg-gray-100">
+                        <img
+                          src={baselineImageUrl}
+                          alt="Baseline thermal image"
+                          className="w-full h-[360px] object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Maintenance Image with Bounding Boxes */}
+                  {thermalImages.find((img) => img.imageType === "Maintenance") && (
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">Maintenance Image (with Anomalies)</h4>
+                      <div className="relative rounded-md overflow-hidden border border-gray-300 bg-gray-100">
+                        <ThermalImageCanvas
+                          imageUrl={thermalImages.find((img) => img.imageType === "Maintenance")?.imageUrl || ""}
+                          detections={detections}
+                          alt="Maintenance thermal image with anomaly bounding boxes"
+                          className="w-full h-[360px]"
+                        />
+                        {detections.length > 0 && (
+                          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold z-10">
+                            {detections.length} Anomalies
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Detected Anomalies List */}
+            {detections.length > 0 && (
+              <div className="space-y-3 mt-4">
+                <div className="flex items-center gap-2">
+                  <Label className="text-base font-semibold">Detected Anomalies ({detections.length})</Label>
+                  <Badge variant="destructive">Auto-detected</Badge>
+                </div>
+                <div className="grid gap-3 max-h-96 overflow-y-auto">
+                  {detections.map((detection, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Badge variant={getAnomalyTypeVariant(detection.class)}>
+                          {detection.class}
+                        </Badge>
+                        <span className="text-xs font-semibold text-gray-600">
+                          Confidence: {(detection.confidence * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                        <div>
+                          <span className="text-gray-600">X:</span> {Math.round(detection.x)}px
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Y:</span> {Math.round(detection.y)}px
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Width:</span> {Math.round(detection.width)}px
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Height:</span> {Math.round(detection.height)}px
+                        </div>
+                      </div>
+                      {detection.comments && (
+                        <p className="text-xs text-gray-700 bg-white p-2 rounded border border-blue-100">
+                          {detection.comments}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>

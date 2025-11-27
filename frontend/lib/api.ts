@@ -68,15 +68,6 @@ export interface ThermalImageData {
   detectionData?: string; // JSON string of Detection[]
 }
 
-export interface AlertData {
-    id?: string;
-    transformer_id: string;
-    alert_type: string;
-    message: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
-    is_read?: boolean;
-}
-
 export interface MaintenanceRecordData {
   id?: string;
   recordNo?: string;
@@ -118,6 +109,24 @@ class ApiService {
     } catch (error: any) {
       return { data: [], success: false, message: error.message };
     }
+  }
+
+  async getTransformer(id: string): Promise<ApiResponse<TransformerData>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/transformers/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch transformer");
+      }
+      const data = await response.json();
+      return { data, success: true };
+    } catch (error: any) {
+      return { data: null as any, success: false, message: error.message };
+    }
+  }
+
+  async getTransformerDetails(id: string): Promise<ApiResponse<TransformerData>> {
+    // Alias for getTransformer for convenience
+    return this.getTransformer(id);
   }
 
   async addTransformer(transformer: TransformerData): Promise<ApiResponse<TransformerData>> {
@@ -470,23 +479,6 @@ class ApiService {
       return { data, success: true }
     } catch (error: any) {
       return { data: [], success: false, message: error.message }
-    }
-  }
-
-  // Alert API methods
-  async getAlerts(transformerId?: string): Promise<ApiResponse<AlertData[]>> {
-    try {
-        const url = transformerId
-        ? `${API_BASE_URL}/alerts?transformerId=${transformerId}`
-        : `${API_BASE_URL}/alerts`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Failed to fetch alerts");
-      }
-      const data = await response.json();
-      return { data, success: true };
-    } catch (error: any) {
-      return { data: [], success: false, message: error.message };
     }
   }
 

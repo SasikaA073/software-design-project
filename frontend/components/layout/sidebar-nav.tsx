@@ -1,8 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Zap, ClipboardList, LayoutDashboard, Settings, FileText } from "lucide-react"
+import { Zap, ClipboardList, LayoutDashboard, Settings, FileText, ChevronLeft, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -22,50 +23,85 @@ const navItems: NavItem[] = [
 
 export function SidebarNav() {
   const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
-      <div className="p-6">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Zap className="w-5 h-5 text-primary-foreground" />
+    <>
+      {/* Sidebar */}
+      <div
+        className={cn(
+          "bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ease-in-out overflow-hidden",
+          isOpen ? "w-64" : "w-20"
+        )}
+      >
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-8">
+            {isOpen && (
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <h1 className="text-xl font-bold text-sidebar-foreground whitespace-nowrap">Oversight</h1>
+              </div>
+            )}
+            {!isOpen && (
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                <Zap className="w-5 h-5 text-primary-foreground" />
+              </div>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex-shrink-0"
+              onClick={() => setIsOpen(!isOpen)}
+              title={isOpen ? "Close sidebar" : "Open sidebar"}
+            >
+              {isOpen ? <ChevronLeft className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
           </div>
-          <h1 className="text-xl font-bold text-sidebar-foreground">Oversight</h1>
+
+          <nav className="space-y-2">
+            {navItems.map((item) => {
+              const active = item.match(pathname)
+              const Icon = item.icon
+              return (
+                <Button
+                  key={item.href}
+                  asChild
+                  variant={active ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start gap-3 h-11 flex-shrink-0",
+                    active
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    !isOpen && "justify-center"
+                  )}
+                  title={!isOpen ? item.label : ""}
+                >
+                  <Link href={item.href} className="flex items-center gap-3 w-full">
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    {isOpen && <span className="whitespace-nowrap">{item.label}</span>}
+                  </Link>
+                </Button>
+              )
+            })}
+          </nav>
         </div>
-        <nav className="space-y-2">
-          {navItems.map((item) => {
-            const active = item.match(pathname)
-            const Icon = item.icon
-            return (
-              <Button
-                key={item.href}
-                asChild
-                variant={active ? "default" : "ghost"}
-                className={cn(
-                  "w-full justify-start gap-3 h-11",
-                  active
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                )}
-              >
-                <Link href={item.href}>
-                  <Icon className="w-5 h-5" />
-                  {item.label}
-                </Link>
-              </Button>
-            )
-          })}
-        </nav>
+
+        <div className="mt-auto p-6">
+          <Button
+            variant="ghost"
+            className={cn(
+              "w-full justify-start gap-3 h-11 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex-shrink-0",
+              !isOpen && "justify-center"
+            )}
+            title={!isOpen ? "Settings" : ""}
+          >
+            <Settings className="w-5 h-5 flex-shrink-0" />
+            {isOpen && <span className="whitespace-nowrap">Settings</span>}
+          </Button>
+        </div>
       </div>
-      <div className="mt-auto p-6">
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 h-11 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        >
-          <Settings className="w-5 h-5" />
-          Settings
-        </Button>
-      </div>
-    </div>
+    </>
   )
 }

@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Bell, Search, User } from "lucide-react"
+import { Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -12,11 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { AlertsPanel } from "@/components/alerts/alerts-panel"  // ⬅️ import alerts panel
 
 export function Header() {
-  const [alertsOpen, setAlertsOpen] = useState(false)
 
   return (
     <header className="h-16 border-b border-border bg-card px-6 flex items-center justify-between relative">
@@ -28,19 +24,6 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* 🔔 Bell icon toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          onClick={() => setAlertsOpen(!alertsOpen)}
-        >
-          <Bell className="w-5 h-5" />
-          <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 flex items-center justify-center text-xs bg-accent">
-            3
-          </Badge>
-        </Button>
-
         {/* 👤 User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -64,9 +47,6 @@ export function Header() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      {/* 🔽 Alerts Panel (dropdown under bell) */}
-      <AlertsPanel open={alertsOpen} />
     </header>
   )
 }
