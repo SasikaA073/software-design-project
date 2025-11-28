@@ -38,6 +38,9 @@ const CLASS_COLORS: Record<string, string> = {
 }
 
 function getColorForClass(className: string): string {
+  if (!className || typeof className !== 'string') {
+    return CLASS_COLORS.default
+  }
   return CLASS_COLORS[className.toLowerCase()] || CLASS_COLORS.default
 }
 
