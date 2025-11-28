@@ -601,9 +601,12 @@ public class RoboflowDatasetService {
 //        return objectMapper.readTree(response.body());
 //    }
 
+    @Value("${trainer.service.url}")
+    private String trainerServiceUrl;
+
     public JsonNode triggerModelTraining() throws IOException, InterruptedException {
         // Use the Python microservice URL (adjust host/port if running in Docker Compose)
-        String trainerServiceUrl = "http://localhost:8000/train";
+        // String trainerServiceUrl = "http://localhost:8000/train";
 
         logger.info("Triggering model training via Python microservice at: {}", trainerServiceUrl);
 
