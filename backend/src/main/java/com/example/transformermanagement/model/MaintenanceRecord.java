@@ -3,6 +3,7 @@ package com.example.transformermanagement.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -55,7 +56,7 @@ public class MaintenanceRecord {
     @Column(columnDefinition = "TEXT")
     private String additionalRemarks;
 
-    private OffsetDateTime actionDueDate;
+    private LocalDateTime actionDueDate;
 
     // FR4.3: Record Versioning and Traceability
     @Column(nullable = false)
@@ -236,11 +237,11 @@ public class MaintenanceRecord {
         this.additionalRemarks = additionalRemarks;
     }
 
-    public OffsetDateTime getActionDueDate() {
+    public LocalDateTime getActionDueDate() {
         return actionDueDate;
     }
 
-    public void setActionDueDate(OffsetDateTime actionDueDate) {
+    public void setActionDueDate(LocalDateTime actionDueDate) {
         this.actionDueDate = actionDueDate;
     }
 

@@ -56,6 +56,24 @@ export interface Detection {
   modifiedBy?: string; // User ID
 }
 
+export interface AnomalyDetail {
+  id: string;
+  detectionId: string;
+  annotationType: "ai_detected" | "user_added" | "user_edited";
+  detectionClass: string;
+  confidence: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  comments?: string;
+  createdBy: string;
+  createdAt: string;
+  modifiedBy?: string;
+  modifiedAt?: string;
+  thermalImageId: string;
+}
+
 export interface ThermalImageData {
   id?: string;
   inspectionId: string;
@@ -78,7 +96,8 @@ export interface MaintenanceRecordData {
   inspectionTimestamp?: string;
   thermalImageUrl?: string;
   thermalImageThumbnailUrl?: string;
-  anomalyMarkersData?: string; // JSON string
+  anomalyMarkersData?: string; // JSON string (legacy)
+  anomalyDetails?: AnomalyDetail[]; // NEW: Detailed anomaly information with source tracking
   inspectorName?: string;
   transformerStatus?: "OK" | "NEEDS_MAINTENANCE" | "URGENT_ATTENTION";
   voltage?: number;

@@ -72,6 +72,14 @@ public class Inspection {
         this.transformer = transformer;
     }
 
+    public java.util.List<ThermalImage> getThermalImages() {
+        return thermalImages;
+    }
+
+    public void setThermalImages(java.util.List<ThermalImage> thermalImages) {
+        this.thermalImages = thermalImages;
+    }
+
     public OffsetDateTime getInspectedDate() {
         return inspectedDate;
     }

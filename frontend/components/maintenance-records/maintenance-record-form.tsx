@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { api, MaintenanceRecordData, InspectionData, TransformerData, ThermalImageData, Detection } from "@/lib/api"
+import { api, MaintenanceRecordData, InspectionData, TransformerData, ThermalImageData, Detection, AnomalyDetail } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, Loader2, Save, ArrowLeft, Thermometer } from "lucide-react"
+import { AlertCircle, Loader2, Save, ArrowLeft, Thermometer, Bot, User, UserPen } from "lucide-react"
 import { ThermalImageCanvas } from "@/components/inspections/thermal-image-canvas"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
@@ -32,6 +32,7 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
   const [baselineImageUrl, setBaselineImageUrl] = useState<string | null>(null)
   const [thermalImages, setThermalImages] = useState<ThermalImageData[]>([])
   const [detections, setDetections] = useState<Detection[]>([])
+  const [anomalyDetails, setAnomalyDetails] = useState<AnomalyDetail[]>([])
   const [loadingAuxData, setLoadingAuxData] = useState(false)
 
   const [formData, setFormData] = useState<Partial<MaintenanceRecordData>>({
@@ -111,17 +112,50 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
       if (thermalResponse.success) {
         setThermalImages(thermalResponse.data)
 
-        // Parse detections from maintenance image
-        const maintenanceImage = thermalResponse.data.find((img) => img.imageType === "Maintenance")
-        if (maintenanceImage?.detectionData) {
-          try {
-            const parsedDetections = JSON.parse(maintenanceImage.detectionData)
-            setDetections(Array.isArray(parsedDetections) ? parsedDetections : [])
-          } catch (e) {
-            console.error("Failed to parse detection data:", e)
-            setDetections([])
+        // Load annotations from thermal images with proper source tracking
+        const allAnomalies: AnomalyDetail[] = []
+        const fallbackDetections: Detection[] = []
+        
+        for (const img of thermalResponse.data) {
+          // Get annotations for this thermal image
+          const annotationsResponse = await api.getAnnotations(img.id!)
+          if (annotationsResponse.success && annotationsResponse.data.length > 0) {
+            // Convert annotations to AnomalyDetail format
+            const anomalies: AnomalyDetail[] = annotationsResponse.data.map((annotation) => ({
+              id: annotation.detection_id || `temp_${Math.random()}`,
+              detectionId: annotation.detection_id || `temp_${Math.random()}`,
+              annotationType: annotation.annotationType || "ai_detected",
+              detectionClass: annotation.class,
+              confidence: annotation.confidence,
+              x: annotation.x,
+              y: annotation.y,
+              width: annotation.width,
+              height: annotation.height,
+              comments: annotation.comments,
+              createdBy: annotation.createdBy || "system",
+              createdAt: annotation.createdAt || new Date().toISOString(),
+              modifiedBy: annotation.modifiedBy,
+              modifiedAt: annotation.modifiedAt,
+              thermalImageId: img.id!
+            }))
+            allAnomalies.push(...anomalies)
+          }
+          
+          // Fallback: Parse detections from maintenance image (legacy support)
+          if (img.imageType === "Maintenance" && img.detectionData) {
+            try {
+              const parsedDetections = JSON.parse(img.detectionData)
+              if (Array.isArray(parsedDetections)) {
+                fallbackDetections.push(...parsedDetections)
+              }
+            } catch (e) {
+              console.error("Failed to parse detection data:", e)
+            }
           }
         }
+        
+        setAnomalyDetails(allAnomalies)
+        setDetections(fallbackDetections)
       }
     } catch (err) {
       console.error("Error loading inspection data:", err)
@@ -292,7 +326,11 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
                 <div className="flex items-center gap-2">
                   <Thermometer className="w-5 h-5 text-primary" />
                   <Label className="text-base font-semibold">Thermal Image Analysis</Label>
-                  {detections.length > 0 && <Badge variant="destructive">{detections.length} Anomalies</Badge>}
+                  {(anomalyDetails.length > 0 || detections.length > 0) && (
+                    <Badge variant="destructive">
+                      {anomalyDetails.length > 0 ? anomalyDetails.length : detections.length} Anomalies
+                    </Badge>
+                  )}
                 </div>
 
                 {/* Images Grid - Side by Side */}
@@ -318,13 +356,23 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
                       <div className="relative rounded-md overflow-hidden border border-gray-300 bg-gray-100">
                         <ThermalImageCanvas
                           imageUrl={thermalImages.find((img) => img.imageType === "Maintenance")?.imageUrl || ""}
-                          detections={detections}
+                          detections={anomalyDetails.length > 0 ? anomalyDetails.map(a => ({
+                            detection_id: a.detectionId,
+                            class: a.detectionClass,
+                            confidence: a.confidence,
+                            x: a.x,
+                            y: a.y,
+                            width: a.width,
+                            height: a.height,
+                            comments: a.comments,
+                            annotationType: a.annotationType
+                          })) : detections}
                           alt="Maintenance thermal image with anomaly bounding boxes"
                           className="w-full h-[360px]"
                         />
-                        {detections.length > 0 && (
+                        {(anomalyDetails.length > 0 || detections.length > 0) && (
                           <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold z-10">
-                            {detections.length} Anomalies
+                            {anomalyDetails.length > 0 ? anomalyDetails.length : detections.length} Anomalies
                           </div>
                         )}
                       </div>
@@ -334,12 +382,84 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
               </div>
             )}
 
-            {/* Detected Anomalies List */}
-            {detections.length > 0 && (
+            {/* Detected Anomalies List with Source Tracking */}
+            {anomalyDetails.length > 0 && (
+              <div className="space-y-3 mt-4">
+                <div className="flex items-center gap-2">
+                  <Label className="text-base font-semibold">Detected Anomalies ({anomalyDetails.length})</Label>
+                </div>
+                <div className="grid gap-3 max-h-96 overflow-y-auto">
+                  {anomalyDetails.map((anomaly) => (
+                    <div
+                      key={anomaly.id}
+                      className="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-2"
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge variant={getAnomalyTypeVariant(anomaly.detectionClass)}>
+                            {anomaly.detectionClass}
+                          </Badge>
+                          <span className="text-xs font-semibold text-gray-600">
+                            Confidence: {(anomaly.confidence * 100).toFixed(1)}%
+                          </span>
+                          {/* Source Badge */}
+                          {anomaly.annotationType === "ai_detected" && (
+                            <Badge variant="outline" className="gap-1">
+                              <Bot className="h-3 w-3" />
+                              AI Detected
+                            </Badge>
+                          )}
+                          {anomaly.annotationType === "user_added" && (
+                            <Badge variant="outline" className="gap-1 bg-green-50 border-green-300 text-green-700">
+                              <User className="h-3 w-3" />
+                              User Added
+                            </Badge>
+                          )}
+                          {anomaly.annotationType === "user_edited" && (
+                            <Badge variant="outline" className="gap-1 bg-amber-50 border-amber-300 text-amber-700">
+                              <UserPen className="h-3 w-3" />
+                              User Edited
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                        <div>
+                          <span className="text-gray-600">X:</span> {Math.round(anomaly.x)}px
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Y:</span> {Math.round(anomaly.y)}px
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Width:</span> {Math.round(anomaly.width)}px
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Height:</span> {Math.round(anomaly.height)}px
+                        </div>
+                      </div>
+                      {anomaly.comments && (
+                        <p className="text-xs text-gray-700 bg-white p-2 rounded border border-blue-100">
+                          {anomaly.comments}
+                        </p>
+                      )}
+                      <div className="text-xs text-gray-600 border-t border-blue-200 pt-2 mt-2">
+                        Created by: {anomaly.createdBy}
+                        {anomaly.modifiedBy && anomaly.modifiedBy !== anomaly.createdBy && (
+                          <> | Modified by: {anomaly.modifiedBy}</>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Fallback: Legacy Detection Display (when no anomaly details available) */}
+            {anomalyDetails.length === 0 && detections.length > 0 && (
               <div className="space-y-3 mt-4">
                 <div className="flex items-center gap-2">
                   <Label className="text-base font-semibold">Detected Anomalies ({detections.length})</Label>
-                  <Badge variant="destructive">Auto-detected</Badge>
+                  <Badge variant="outline">Legacy Format</Badge>
                 </div>
                 <div className="grid gap-3 max-h-96 overflow-y-auto">
                   {detections.map((detection, idx) => (
@@ -354,6 +474,10 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
                         <span className="text-xs font-semibold text-gray-600">
                           Confidence: {(detection.confidence * 100).toFixed(1)}%
                         </span>
+                        <Badge variant="outline" className="gap-1">
+                          <Bot className="h-3 w-3" />
+                          AI Detected
+                        </Badge>
                       </div>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
                         <div>
@@ -536,9 +660,4 @@ export function MaintenanceRecordForm({ recordId, onSuccess }: MaintenanceRecord
       </form>
     </div>
   )
-}
-
-function formatDate(dateString?: string) {
-  if (!dateString) return "-"
-  return format(new Date(dateString), "PPP")
 }
