@@ -1,16 +1,21 @@
 package com.example.transformermanagement.service;
 
+import com.example.transformermanagement.dto.AnomalyDetailDTO;
 import com.example.transformermanagement.dto.MaintenanceRecordRequest;
 import com.example.transformermanagement.dto.MaintenanceRecordResponse;
+import com.example.transformermanagement.model.Annotation;
 import com.example.transformermanagement.model.Inspection;
 import com.example.transformermanagement.model.MaintenanceRecord;
+import com.example.transformermanagement.model.ThermalImage;
 import com.example.transformermanagement.model.Transformer;
+import com.example.transformermanagement.repository.AnnotationRepository;
 import com.example.transformermanagement.repository.InspectionRepository;
 import com.example.transformermanagement.repository.MaintenanceRecordRepository;
 import com.example.transformermanagement.repository.TransformerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +32,9 @@ public class MaintenanceRecordService {
 
     @Autowired
     private InspectionRepository inspectionRepository;
+
+    @Autowired
+    private AnnotationRepository annotationRepository;
 
     public MaintenanceRecordResponse createMaintenanceRecord(MaintenanceRecordRequest request) {
         MaintenanceRecord record = new MaintenanceRecord();
@@ -51,6 +59,9 @@ public class MaintenanceRecordService {
         MaintenanceRecord record = maintenanceRecordRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Maintenance record not found"));
             
+        // Increment version number on update
+        record.setVersionNumber(record.getVersionNumber() != null ? record.getVersionNumber() + 1 : 2);
+        
         updateRecordFromRequest(record, request);
         
         if (!record.getTransformer().getId().equals(request.transformerId())) {
@@ -135,6 +146,36 @@ public class MaintenanceRecordService {
     }
 
     private MaintenanceRecordResponse mapToResponse(MaintenanceRecord record) {
+        // Fetch anomaly details from all thermal images in the inspection
+        List<AnomalyDetailDTO> anomalyDetails = new ArrayList<>();
+        Inspection inspection = record.getInspection();
+        
+        if (inspection != null && inspection.getThermalImages() != null) {
+            for (ThermalImage thermalImage : inspection.getThermalImages()) {
+                List<Annotation> annotations = annotationRepository.findByThermalImageIdAndNotDeleted(thermalImage.getId());
+                
+                for (Annotation annotation : annotations) {
+                    anomalyDetails.add(new AnomalyDetailDTO(
+                        annotation.getId(),
+                        annotation.getDetectionId(),
+                        annotation.getAnnotationType(),
+                        annotation.getDetectionClass(),
+                        annotation.getConfidence(),
+                        annotation.getX(),
+                        annotation.getY(),
+                        annotation.getWidth(),
+                        annotation.getHeight(),
+                        annotation.getComments(),
+                        annotation.getCreatedBy(),
+                        annotation.getCreatedAt(),
+                        annotation.getModifiedBy(),
+                        annotation.getModifiedAt(),
+                        thermalImage.getId()
+                    ));
+                }
+            }
+        }
+        
         return new MaintenanceRecordResponse(
             record.getId(),
             record.getRecordNo(),
@@ -146,6 +187,7 @@ public class MaintenanceRecordService {
             record.getThermalImageUrl(),
             record.getThermalImageThumbnailUrl(),
             record.getAnomalyMarkersData(),
+            anomalyDetails, // Include the detailed anomaly list
             record.getInspectorName(),
             record.getTransformerStatus() != null ? record.getTransformerStatus().name() : null,
             record.getVoltage(),

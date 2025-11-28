@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { api, MaintenanceRecordData, ThermalImageData, Detection } from "@/lib/api"
+import { api, MaintenanceRecordData, ThermalImageData, Detection, AnomalyDetail } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2, Edit, Download, ArrowLeft, Trash2, Thermometer } from "lucide-react"
+import { AlertCircle, Loader2, Edit, Download, ArrowLeft, Trash2, Thermometer, Bot, User, UserPen } from "lucide-react"
 import { ThermalImageCanvas } from "@/components/inspections/thermal-image-canvas"
 import { format } from "date-fns"
 
@@ -101,7 +101,18 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
     }
 
     // Build HTML for print - print complete page content
-    const detectionsHTML = detections.length > 0 ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${detections.length})</div>${detections.map((detection) => `<div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${detection.class}</span><span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(detection.confidence * 100).toFixed(1)}%</span></div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;"><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(detection.x)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(detection.y)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(detection.width)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(detection.height)}px</div></div>${detection.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${detection.comments}</div>` : ''}</div>`).join('')}</div>` : ""
+    const getSourceBadge = (annotationType: string) => {
+      if (annotationType === "ai_detected") return `<span style="padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;">🤖 AI Detected</span>`
+      if (annotationType === "user_added") return `<span style="padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #dcfce7; color: #166534; border: 1px solid #86efac;">👤 User Added</span>`
+      if (annotationType === "user_edited") return `<span style="padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #fef3c7; color: #92400e; border: 1px solid #fbbf24;">✏️ User Edited</span>`
+      return ""
+    }
+    
+    const detectionsHTML = record.anomalyDetails && record.anomalyDetails.length > 0 
+      ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${record.anomalyDetails.length})</div>${record.anomalyDetails.map((anomaly) => `<div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;"><span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${anomaly.detectionClass}</span><span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(anomaly.confidence * 100).toFixed(1)}%</span>${getSourceBadge(anomaly.annotationType)}</div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;"><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(anomaly.x)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(anomaly.y)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(anomaly.width)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(anomaly.height)}px</div></div>${anomaly.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${anomaly.comments}</div>` : ''}<div style="font-size: 10px; color: #666; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">Created by: ${anomaly.createdBy}${anomaly.modifiedBy && anomaly.modifiedBy !== anomaly.createdBy ? ` | Modified by: ${anomaly.modifiedBy}` : ''}</div></div>`).join('')}</div>`
+      : detections.length > 0 
+        ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${detections.length})</div>${detections.map((detection) => `<div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${detection.class}</span><span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(detection.confidence * 100).toFixed(1)}%</span></div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;"><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(detection.x)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(detection.y)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(detection.width)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(detection.height)}px</div></div>${detection.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${detection.comments}</div>` : ''}</div>`).join('')}</div>`
+        : ""
 
     const imageDetailsHTML = thermalImages.length > 0 ? `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">${thermalImages.map((img) => `<div style="padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px;"><div style="font-weight: 600; margin-bottom: 8px; font-size: 13px;">${img.imageType} Image</div><div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Uploaded:</span> ${formatDate(img.uploadedAt)}</div>${img.temperatureReading ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Temperature:</span> ${img.temperatureReading}°C</div>` : ""}${img.weatherCondition ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Weather:</span> ${img.weatherCondition}</div>` : ""}${img.anomalyDetected !== undefined ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Status:</span> ${img.anomalyDetected ? "Anomalies Found" : "Normal"}</div>` : ""}</div>`).join("")}</div>` : ""
 
@@ -451,8 +462,76 @@ ${record.lastModifiedBy ? `<div>Last modified by: ${record.lastModifiedBy}</div>
                 </div>
               )}
 
-              {/* Detected Anomalies Section */}
-              {detections.length > 0 && (
+              {/* Detected Anomalies Section with Source Tracking */}
+              {record.anomalyDetails && record.anomalyDetails.length > 0 && (
+                <div className="border-t pt-4 print:border-t print:pt-2">
+                  <h4 className="font-semibold text-sm mb-3 print:text-xs">Detected Anomalies ({record.anomalyDetails.length})</h4>
+                  <div className="space-y-2">
+                    {record.anomalyDetails.map((anomaly) => (
+                      <div
+                        key={anomaly.id}
+                        className="p-3 bg-blue-50 border border-blue-200 rounded print:bg-white print:border print:border-gray-300"
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge variant={getAnomalyTypeVariant(anomaly.detectionClass)}>
+                              {anomaly.detectionClass}
+                            </Badge>
+                            <span className="text-xs font-semibold text-gray-600">
+                              Confidence: {(anomaly.confidence * 100).toFixed(1)}%
+                            </span>
+                            {/* Source Badge */}
+                            {anomaly.annotationType === "ai_detected" && (
+                              <Badge variant="outline" className="gap-1">
+                                <Bot className="h-3 w-3" />
+                                AI Detected
+                              </Badge>
+                            )}
+                            {anomaly.annotationType === "user_added" && (
+                              <Badge variant="outline" className="gap-1 bg-green-50 border-green-300 text-green-700">
+                                <User className="h-3 w-3" />
+                                User Added
+                              </Badge>
+                            )}
+                            {anomaly.annotationType === "user_edited" && (
+                              <Badge variant="outline" className="gap-1 bg-amber-50 border-amber-300 text-amber-700">
+                                <UserPen className="h-3 w-3" />
+                                User Edited
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs print:text-xs">
+                          <div>
+                            <span className="text-gray-600">X:</span> {Math.round(anomaly.x)}px
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Y:</span> {Math.round(anomaly.y)}px
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Width:</span> {Math.round(anomaly.width)}px
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Height:</span> {Math.round(anomaly.height)}px
+                          </div>
+                        </div>
+                        {anomaly.comments && (
+                          <p className="text-xs text-gray-700 mt-2 print:text-xs">{anomaly.comments}</p>
+                        )}
+                        <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
+                          <span>Created by: {anomaly.createdBy}</span>
+                          {anomaly.modifiedBy && anomaly.modifiedBy !== anomaly.createdBy && (
+                            <span className="ml-3">Modified by: {anomaly.modifiedBy}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Legacy Detections Fallback (for backward compatibility) */}
+              {(!record.anomalyDetails || record.anomalyDetails.length === 0) && detections.length > 0 && (
                 <div className="border-t pt-4 print:border-t print:pt-2">
                   <h4 className="font-semibold text-sm mb-3 print:text-xs">Detected Anomalies ({detections.length})</h4>
                   <div className="space-y-2">

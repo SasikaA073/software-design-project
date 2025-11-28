@@ -9,6 +9,7 @@ com/example/transformermanagement/dto/MaintenanceRecordResponse.class
 com/example/transformermanagement/repository/AnnotationRepository.class
 com/example/transformermanagement/service/RoboflowDatasetService.class
 com/example/transformermanagement/dto/DetectionDTO.class
+com/example/transformermanagement/dto/AnomalyDetailDTO.class
 com/example/transformermanagement/TransformerManagementApplication.class
 com/example/transformermanagement/dto/MaintenanceRecordRequest.class
 com/example/transformermanagement/model/Inspection.class

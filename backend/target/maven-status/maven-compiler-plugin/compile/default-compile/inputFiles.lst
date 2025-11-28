@@ -9,6 +9,7 @@
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/controller/RoboflowDatasetController.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/controller/ThermalImageController.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/controller/TransformerController.java
+/workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/dto/AnomalyDetailDTO.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/dto/DetectionDTO.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/dto/InspectionRequest.java
 /workspaces/software-design-project/backend/src/main/java/com/example/transformermanagement/dto/MaintenanceRecordRequest.java
