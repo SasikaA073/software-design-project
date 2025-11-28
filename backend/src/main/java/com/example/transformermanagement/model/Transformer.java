@@ -39,6 +39,10 @@ public class Transformer {
     @OneToMany(mappedBy = "transformer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private java.util.List<Inspection> inspections = new java.util.ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "transformer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private java.util.List<MaintenanceRecord> maintenanceRecords = new java.util.ArrayList<>();
+
     @Column(updatable = false)
     private OffsetDateTime createdAt;
 

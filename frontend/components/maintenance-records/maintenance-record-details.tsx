@@ -100,23 +100,138 @@ export function MaintenanceRecordDetails({ recordId, onBack, onEdit }: Maintenan
       return
     }
 
-    // Build HTML for print - print complete page content
+    // Helper for badges
     const getSourceBadge = (annotationType: string) => {
-      if (annotationType === "ai_detected") return `<span style="padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #f3f4f6; color: #374151; border: 1px solid #d1d5db;">🤖 AI Detected</span>`
-      if (annotationType === "user_added") return `<span style="padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #dcfce7; color: #166534; border: 1px solid #86efac;">👤 User Added</span>`
-      if (annotationType === "user_edited") return `<span style="padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #fef3c7; color: #92400e; border: 1px solid #fbbf24;">✏️ User Edited</span>`
+      if (annotationType === "ai_detected") return `<span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; white-space: nowrap;">🤖 AI Detected</span>`
+      if (annotationType === "user_added") return `<span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #dcfce7; color: #166534; border: 1px solid #86efac; white-space: nowrap;">👤 User Added</span>`
+      if (annotationType === "user_edited") return `<span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; white-space: nowrap;">✏️ User Edited</span>`
       return ""
     }
     
-    const detectionsHTML = record.anomalyDetails && record.anomalyDetails.length > 0 
-      ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${record.anomalyDetails.length})</div>${record.anomalyDetails.map((anomaly) => `<div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;"><span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${anomaly.detectionClass}</span><span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(anomaly.confidence * 100).toFixed(1)}%</span>${getSourceBadge(anomaly.annotationType)}</div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;"><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(anomaly.x)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(anomaly.y)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(anomaly.width)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(anomaly.height)}px</div></div>${anomaly.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${anomaly.comments}</div>` : ''}<div style="font-size: 10px; color: #666; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">Created by: ${anomaly.createdBy}${anomaly.modifiedBy && anomaly.modifiedBy !== anomaly.createdBy ? ` | Modified by: ${anomaly.modifiedBy}` : ''}</div></div>`).join('')}</div>`
-      : detections.length > 0 
-        ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;"><div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${detections.length})</div>${detections.map((detection) => `<div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;"><span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${detection.class}</span><span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(detection.confidence * 100).toFixed(1)}%</span></div><div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;"><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(detection.x)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(detection.y)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(detection.width)}px</div><div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(detection.height)}px</div></div>${detection.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${detection.comments}</div>` : ''}</div>`).join('')}</div>`
-        : ""
+    // Build detections HTML - Use either anomalyDetails (backend) or detections (frontend state)
+    // Prefer anomalyDetails as it has complete metadata
+    const anomaliesList = (record.anomalyDetails && record.anomalyDetails.length > 0) 
+      ? record.anomalyDetails 
+      : (detections && detections.length > 0 ? detections.map(d => ({
+          id: d.detection_id || "",
+          detectionClass: d.class,
+          confidence: d.confidence,
+          x: d.x,
+          y: d.y,
+          width: d.width,
+          height: d.height,
+          annotationType: d.annotationType || "ai_detected",
+          comments: d.comments,
+          createdBy: d.createdBy || "system",
+          modifiedBy: d.modifiedBy
+        })) : []);
 
+    const detectionsHTML = anomaliesList.length > 0 
+      ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+           <div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">Detected Anomalies (${anomaliesList.length})</div>
+           ${anomaliesList.map((anomaly) => `
+             <div style="padding: 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; margin-bottom: 10px;">
+               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+                 <span style="display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;">${anomaly.detectionClass}</span>
+                 <span style="font-size: 11px; font-weight: 600; color: #666;">Confidence: ${(anomaly.confidence * 100).toFixed(1)}%</span>
+                 ${getSourceBadge(anomaly.annotationType)}
+               </div>
+               <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; font-size: 11px;">
+                 <div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">X:</span> ${Math.round(anomaly.x)}px</div>
+                 <div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Y:</span> ${Math.round(anomaly.y)}px</div>
+                 <div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Width:</span> ${Math.round(anomaly.width)}px</div>
+                 <div style="padding: 6px; background: white; border: 1px solid #bfdbfe; border-radius: 4px;"><span style="color: #666; font-weight: 500;">Height:</span> ${Math.round(anomaly.height)}px</div>
+               </div>
+               ${anomaly.comments ? `<div style="font-size: 12px; color: #333; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">${anomaly.comments}</div>` : ''}
+               <div style="font-size: 10px; color: #666; margin-top: 8px; padding-top: 8px; border-top: 1px solid #bfdbfe;">
+                 Created by: ${anomaly.createdBy}${anomaly.modifiedBy && anomaly.modifiedBy !== anomaly.createdBy ? ` | Modified by: ${anomaly.modifiedBy}` : ''}
+               </div>
+             </div>
+           `).join('')}
+         </div>`
+      : "";
+
+    // Image Details HTML
     const imageDetailsHTML = thermalImages.length > 0 ? `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">${thermalImages.map((img) => `<div style="padding: 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px;"><div style="font-weight: 600; margin-bottom: 8px; font-size: 13px;">${img.imageType} Image</div><div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Uploaded:</span> ${formatDate(img.uploadedAt)}</div>${img.temperatureReading ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Temperature:</span> ${img.temperatureReading}°C</div>` : ""}${img.weatherCondition ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Weather:</span> ${img.weatherCondition}</div>` : ""}${img.anomalyDetected !== undefined ? `<div style="margin-bottom: 5px; color: #374151;"><span style="color: #666;">Status:</span> ${img.anomalyDetected ? "Anomalies Found" : "Normal"}</div>` : ""}</div>`).join("")}</div>` : ""
 
-    const printHTML = `<!DOCTYPE html>
+    // Pre-generate the Maintenance Image WITH bounding boxes using a canvas
+    // This solves the issue where canvas overlays are lost in print
+    const maintenanceImg = thermalImages.find((img) => img.imageType === "Maintenance");
+    const maintenanceImgUrl = maintenanceImg?.imageUrl || "";
+    let maintenanceCanvasDataUrl = "";
+
+    // We need to generate this asynchronously before writing to print window
+    const generatePrintContent = async () => {
+      if (maintenanceImgUrl && anomaliesList.length > 0) {
+        try {
+          // Create an off-screen canvas to draw image + boxes
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = maintenanceImgUrl;
+          });
+
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          if (ctx) {
+            // Draw image
+            ctx.drawImage(img, 0, 0);
+            
+            // Draw boxes
+            anomaliesList.forEach(anomaly => {
+              // Colors
+              let color = "#00bcd4"; // default cyan
+              if (anomaly.detectionClass.toLowerCase() === "faulty") color = "#ff0000";
+              if (anomaly.detectionClass.toLowerCase() === "potentially_faulty") color = "#ff9800";
+              if (anomaly.detectionClass.toLowerCase() === "normal") color = "#00ff00";
+              
+              // Box
+              ctx.strokeStyle = color;
+              ctx.lineWidth = Math.max(3, img.width * 0.005); // Scale line width relative to image
+              ctx.strokeRect(anomaly.x - anomaly.width/2, anomaly.y - anomaly.height/2, anomaly.width, anomaly.height);
+              
+              // Label background
+              const fontSize = Math.max(12, img.width * 0.02);
+              ctx.font = `${fontSize}px Arial`;
+              const label = `${anomaly.detectionClass}`;
+              const textMetrics = ctx.measureText(label);
+              const padding = fontSize * 0.4;
+              
+              ctx.fillStyle = color + "cc"; // semi-transparent
+              ctx.fillRect(
+                anomaly.x - anomaly.width/2, 
+                anomaly.y - anomaly.height/2 - fontSize - padding*2, 
+                textMetrics.width + padding*2, 
+                fontSize + padding*2
+              );
+              
+              // Label text
+              ctx.fillStyle = "#ffffff";
+              ctx.fillText(
+                label, 
+                anomaly.x - anomaly.width/2 + padding, 
+                anomaly.y - anomaly.height/2 - padding
+              );
+            });
+            
+            maintenanceCanvasDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+          }
+        } catch (e) {
+          console.error("Failed to generate annotated image for print", e);
+          // Fallback to original image if generation fails
+          maintenanceCanvasDataUrl = maintenanceImgUrl;
+        }
+      } else {
+        maintenanceCanvasDataUrl = maintenanceImgUrl;
+      }
+
+      const printHTML = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -148,6 +263,7 @@ h1 { font-size: 28px; font-weight: bold; margin-bottom: 5px; }
   * { margin: 0; padding: 0; }
   body { padding: 0; margin: 0; }
   .card { page-break-inside: avoid; }
+  .container { max-width: 100%; }
 }
 </style>
 </head>
@@ -176,7 +292,7 @@ h1 { font-size: 28px; font-weight: bold; margin-bottom: 5px; }
 <div class="card-title">Thermal Image Analysis</div>
 <div class="card-description">Baseline vs Maintenance Image Comparison</div>
 </div>
-${thermalImages.length === 0 ? '<div style="text-align: center; color: #999; padding: 20px;">No thermal images available</div>' : `<div class="grid-2"><div><div class="image-title">Baseline Image (Reference)</div><div class="image-wrapper">${baselineImageUrl ? `<img src="${baselineImageUrl}" alt="Baseline">` : '<div style="color: #999;">No baseline image</div>'}</div></div><div><div class="image-title">Maintenance Image (Current)</div><div class="image-wrapper">${thermalImages.find((img) => img.imageType === "Maintenance") ? `<img src="${thermalImages.find((img) => img.imageType === "Maintenance")?.imageUrl || ''}" alt="Maintenance">` : '<div style="color: #999;">No maintenance image</div>'}</div></div></div>${imageDetailsHTML}${detectionsHTML}`}
+${thermalImages.length === 0 ? '<div style="text-align: center; color: #999; padding: 20px;">No thermal images available</div>' : `<div class="grid-2"><div><div class="image-title">Baseline Image (Reference)</div><div class="image-wrapper">${baselineImageUrl ? `<img src="${baselineImageUrl}" alt="Baseline">` : '<div style="color: #999;">No baseline image</div>'}</div></div><div><div class="image-title">Maintenance Image (Current)</div><div class="image-wrapper">${maintenanceCanvasDataUrl ? `<img src="${maintenanceCanvasDataUrl}" alt="Maintenance with Annotations">` : '<div style="color: #999;">No maintenance image</div>'}</div></div></div>${imageDetailsHTML}${detectionsHTML}`}
 </div>
 
 <div class="card">
@@ -212,13 +328,17 @@ ${record.lastModifiedBy ? `<div>Last modified by: ${record.lastModifiedBy}</div>
 </body>
 </html>`
 
-    printWindow.document.write(printHTML)
-    printWindow.document.close()
-    
-    // Wait for images to load then print
-    setTimeout(() => {
-      printWindow.print()
-    }, 500)
+      printWindow.document.write(printHTML)
+      printWindow.document.close()
+      
+      // Wait for images to load then print
+      setTimeout(() => {
+        printWindow.print()
+      }, 500)
+    };
+
+    // Run the async generation
+    generatePrintContent();
   }
 
   const getStatusLabel = (status?: string): string => {
