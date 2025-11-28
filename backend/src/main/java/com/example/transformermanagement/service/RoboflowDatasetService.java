@@ -53,6 +53,7 @@ public class RoboflowDatasetService {
     private ThermalImageRepository thermalImageRepository;
     
     @Autowired
+    
     private AnnotationRepository annotationRepository;
     
     @Value("${file.upload-dir}")
