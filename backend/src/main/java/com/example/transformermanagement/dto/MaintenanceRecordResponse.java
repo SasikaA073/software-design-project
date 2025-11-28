@@ -1,6 +1,8 @@
 package com.example.transformermanagement.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -25,7 +27,8 @@ public record MaintenanceRecordResponse(
     String comments,
     String recommendedAction,
     String additionalRemarks,
-    OffsetDateTime actionDueDate,
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime actionDueDate,
     Integer versionNumber,
     OffsetDateTime createdAt,
     OffsetDateTime updatedAt,
