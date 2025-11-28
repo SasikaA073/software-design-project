@@ -20,9 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                    .allowedOriginPatterns("*")
-                    .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                registry.addMapping("/**")  // Changed from /api/** to allow all paths including static uploads
+                    .allowedOriginPatterns("*") // Allow all origins
+                    .allowedMethods("GET","POST","PUT","DELETE","OPTIONS","HEAD","PATCH")
                     .allowedHeaders("*")
                     .allowCredentials(true);
             }
