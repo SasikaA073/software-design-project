@@ -1,5 +1,13 @@
 # Phase 4 - Maintenance Record Sheet Generation
 
+Team : Jewel001
+Project Link : https://github.com/SasikaA073/software-design-project
+Members : 
+- 210035A
+- 210041M 
+- 210234H
+- 210732H
+
 ## Overview
 
 Phase 4 implements a comprehensive maintenance record management system that automatically generates thermal inspection reports. Engineers can auto-fill forms from inspection data, edit technical parameters, save versioned records, and generate print-ready documentation.
